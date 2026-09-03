@@ -3,17 +3,24 @@ package dev.slne.surf.gecko.server.gecko
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.database.repository.GeckoGameRepository
+import dev.slne.surf.gecko.server.gecko.map.GeckoMapManager
+import dev.slne.surf.gecko.server.gecko.player.lobby.GeckoLobbyPlayer
 import dev.slne.surf.gecko.server.gecko.settings.GeckoGameSettings
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
+import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
+import java.util.UUID
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.time.Duration.Companion.seconds
 
 object GeckoGameManager {
     private const val MAX_GAMES = 5
 
+    private val lock = Any()
     private val games = mutableSetOf<GeckoGame>()
+    private val starting = AtomicBoolean()
     private lateinit var gameJob: Job
 
     fun init() {
@@ -22,35 +29,40 @@ object GeckoGameManager {
         }
     }
 
-    fun getGames(): Set<GeckoGame> = games.toSet()
+    fun getGames(): Set<GeckoGame> = synchronized(lock) { games.toSet() }
 
     suspend fun shutdown() {
         if (::gameJob.isInitialized && gameJob.isActive) {
             gameJob.cancel()
         }
 
-        for (game in games) {
+        for (game in getGames()) {
             endGame(game, GeckoGameEndReason.SHUTDOWN)
         }
     }
 
-
     private suspend fun testFor() {
-        if (requiresGame()) {
-            geckoLogger.info("Starting new game (${games.size + 1}/${MAX_GAMES})...")
+        if (!requiresGame()) return
+        if (!starting.compareAndSet(false, true)) return
+
+        try {
+            geckoLogger.info("Starting new game (${getGames().size + 1}/${MAX_GAMES})...")
             startNewGame()
+        } finally {
+            starting.set(false)
         }
     }
 
-    suspend fun startNewGame(settings: GeckoGameSettings = GeckoGameSettings.default()): GeckoGame =
-        withContext(Dispatchers.IO) {
-            val gameId = GeckoGameRepository.saveGame(settings)
-            val game = GeckoGame(gameId, settings)
+    suspend fun startNewGame(settings: GeckoGameSettings = GeckoGameSettings.default()): GeckoGame {
+        val gameId = withContext(Dispatchers.IO) { GeckoGameRepository.saveGame(settings) }
+        val instance = GeckoMapManager.prepareMap(settings.map)
+        val game = GeckoGame(gameId, settings, instance)
 
-            games.add(game)
-            return@withContext game
-        }
+        game.state = GeckoGameState.LOBBY
+        synchronized(lock) { games.add(game) }
 
+        return game
+    }
 
     suspend fun endGame(game: GeckoGame, reason: GeckoGameEndReason) = withContext(Dispatchers.IO) {
         if (reason.canMovePlayers()) {
@@ -61,9 +73,32 @@ object GeckoGameManager {
             }
         }
 
-        games.remove(game)
+        synchronized(lock) { games.remove(game) }
         GeckoGameRepository.updateGameEndReason(game, reason)
     }
 
-    fun requiresGame() = games.size < MAX_GAMES && games.none { it.state.acceptsPlayers() }
+    fun reserveLobbySlot(playerUuid: UUID): GeckoGame? = synchronized(lock) {
+        val game = games.filter { it.joinable }.minByOrNull { it.freeSlots } ?: return null
+
+        game.lobbyPlayers.add(GeckoLobbyPlayer(playerUuid))
+        game
+    }
+
+    fun findGame(playerUuid: UUID): GeckoGame? = synchronized(lock) {
+        games.firstOrNull { game ->
+            game.lobbyPlayers.any { it.playerUuid == playerUuid } ||
+                    game.gamePlayers.any { it.playerUuid == playerUuid }
+        }
+    }
+
+    fun releasePlayer(playerUuid: UUID): Unit = synchronized(lock) {
+        for (game in games) {
+            game.lobbyPlayers.removeAll { it.playerUuid == playerUuid }
+            game.gamePlayers.removeAll { it.playerUuid == playerUuid }
+        }
+    }
+
+    fun requiresGame() = synchronized(lock) {
+        games.size < MAX_GAMES && games.none { it.joinable }
+    }
 }
