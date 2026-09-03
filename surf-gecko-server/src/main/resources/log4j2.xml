@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration shutdownHook="disable" status="WARN">
+  <Appenders>
+    <Async name="Async">
+      <AppenderRef ref="File"/>
+      <AppenderRef ref="Console"/>
+    </Async>
+
+    <RollingRandomAccessFile
+      fileName="logs/latest.log"
+      filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz"
+      name="File">
+
+      <DefaultRolloverStrategy max="30"/>
+
+      <PatternLayout>
+        <LoggerNamePatternSelector
+          defaultPattern="[%d{HH:mm:ss}] [%t/%level]: [%logger] %minecraftFormatting{%msg}{strip}%n%xEx{full}">
+
+          <PatternMatch
+            key="net.minestom"
+            pattern="[%d{HH:mm:ss}] [%t/%level]: %minecraftFormatting{%msg}{strip}%n%xEx{full}"/>
+
+          <PatternMatch
+            key="com.mojang"
+            pattern="[%d{HH:mm:ss}] [%t/%level]: %minecraftFormatting{%msg}{strip}%n%xEx{full}"/>
+        </LoggerNamePatternSelector>
+      </PatternLayout>
+
+      <Policies>
+        <OnStartupTriggeringPolicy/>
+        <SizeBasedTriggeringPolicy size="100 MB"/>
+        <TimeBasedTriggeringPolicy interval="1"/>
+      </Policies>
+    </RollingRandomAccessFile>
+
+    <TerminalConsole name="Console">
+      <PatternLayout>
+        <LoggerNamePatternSelector
+          defaultPattern="%highlightError{[%d{HH:mm:ss} %level]: [%logger{1}] %msg%n%xEx{full}}">
+
+          <PatternMatch
+            key="net.minestom"
+            pattern="%highlightError{[%d{HH:mm:ss} %level]: %msg%n%xEx{full}}"/>
+
+          <PatternMatch
+            key="com.mojang"
+            pattern="%highlightError{[%d{HH:mm:ss} %level]: %msg%n%xEx{full}}"/>
+        </LoggerNamePatternSelector>
+      </PatternLayout>
+    </TerminalConsole>
+  </Appenders>
+
+  <Loggers>
+    <!--
+      "Block ... does not have any corresponding handler, default to dummy." — one line per block
+      entity type in the lobby world. The dummy handler still reports the right namespace, so
+      saving is unaffected; it only withholds client-visible NBT, and LobbyBlockHandlers registers
+      real handlers for the block entities where that is actually visible.
+    -->
+    <Logger level="error" name="net.minestom.server.instance.block.BlockManager"/>
+
+    <Root level="info">
+      <AppenderRef ref="Async"/>
+
+      <Filters>
+        <MarkerFilter
+          marker="NETWORK_PACKETS"
+          onMatch="DENY"
+          onMismatch="NEUTRAL"/>
+      </Filters>
+    </Root>
+  </Loggers>
+</Configuration>

@@ -37,7 +37,11 @@ dependencies {
     compileOnly(libs.configurate.kotlin)
     compileOnly(libs.polar)
     compileOnly(libs.brigadier)
-    compileOnly(libs.surf.database.r2dbc)
+    compileOnly(libs.surf.database.r2dbc) {
+        artifact {
+            classifier = "all"
+        }
+    }
 
     runtimeDownload(libs.minestom)
     implementation(libs.coroutines.core)
@@ -60,7 +64,9 @@ dependencies {
     runtimeDownload(libs.hikari)
     runtimeDownload(libs.mariadb.jdbc)
     runtimeDownload(libs.postgresql.jdbc)
-    runtimeDownload(libs.surf.database.r2dbc)
+    runtimeDownload(libs.surf.database.r2dbc) {
+        artifact { classifier = "all" }
+    }
 
     implementation(libs.fabric.mixin)
     annotationProcessor(libs.fabric.mixin)
