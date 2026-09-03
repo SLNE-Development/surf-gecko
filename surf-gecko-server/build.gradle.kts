@@ -74,10 +74,6 @@ dependencies {
 
     runtimeDownload(libs.configurate.yaml)
     runtimeDownload(libs.configurate.kotlin)
-    // LuckPerms:common pins gson 2.7 and guava 19 - the versions its Bukkit-era hosts provided.
-    // Shading them into the fat jar shadows the current copies gremlin appends to the system
-    // class loader, which breaks Minestom (needs gson 2.9.1+) and Guice 7 (needs guava 31+).
-    // Keep them out of the jar and download the pinned versions instead.
     implementation(libs.luckperms.minestom) {
         exclude(group = "com.google.code.gson", module = "gson")
         exclude(group = "com.google.guava", module = "guava")

@@ -10,13 +10,6 @@ import dev.slne.surf.gecko.server.integration.spark.SparkService
 import net.minestom.server.MinecraftServer.LOGGER
 import java.util.concurrent.atomic.AtomicBoolean
 
-/**
- * Starts the core components in a fixed order and stops them in the reverse one.
- *
- * Events go first so every registrar - the server's own and the extensions' - is attached before
- * anything can fire; LuckPerms next because permission checks resolve through it; the command API
- * platform before the commands that register onto it.
- */
 @Singleton
 class ServerLifecycle @Inject constructor(
     events: GeckoEventService,
@@ -50,7 +43,9 @@ class ServerLifecycle @Inject constructor(
     }
 
     suspend fun stop() {
-        if (!running.compareAndSet(true, false)) return
+        if (!running.compareAndSet(true, false)) {
+            return
+        }
 
         var failure: Throwable? = null
 
