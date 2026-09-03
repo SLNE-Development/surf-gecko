@@ -15,7 +15,7 @@ public final class GeckoRunner {
   private GeckoRunner() {
   }
 
-  public static void agentMain(String agentArgs, Instrumentation instrumentation) {
+  public static void agentmain(String agentArgs, Instrumentation instrumentation) {
     try {
       DependencyInstaller.install(instrumentation);
 
