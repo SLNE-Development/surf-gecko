@@ -1,5 +1,7 @@
 package dev.slne.surf.gecko.server
 
+import dev.slne.surf.gecko.server.command.ServerGeckoCommandRegistrar
+import dev.slne.surf.gecko.server.command.stopCommand
 import dev.slne.surf.gecko.server.config.Config
 import dev.slne.surf.gecko.server.console.GeckoConsole
 import dev.slne.surf.gecko.server.gecko.GeckoInstance
@@ -48,13 +50,14 @@ class GeckoServer(
             )
         } catch (startupFailure: Throwable) {
             LOGGER.error(
-                "Failed to start Surf gecko.",
+                "Failed to start Surf gecko server.",
                 startupFailure,
             )
 
             throw startupFailure
         }
 
+        ServerGeckoCommandRegistrar.registerAll()
         GeckoInstance.enable()
     }
 
@@ -73,7 +76,10 @@ class GeckoServer(
     }
 
     fun beginShutdown() {
-        if (stopped.get()) return
+        if (stopped.get()) {
+            return
+        }
+
         thread(isDaemon = false, name = "shutdown-thread") {
             shutdownAndExit("command")
         }
