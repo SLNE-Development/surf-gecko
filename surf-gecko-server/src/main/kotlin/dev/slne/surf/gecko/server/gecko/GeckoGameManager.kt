@@ -2,8 +2,12 @@ package dev.slne.surf.gecko.server.gecko
 
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.gecko.server.database.repository.GeckoGameRepository
 import dev.slne.surf.gecko.server.gecko.settings.GeckoGameSettings
+import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.seconds
 
 object GeckoGameManager {
@@ -32,8 +36,19 @@ object GeckoGameManager {
         }
     }
 
-    suspend fun startNewGame(settings: GeckoGameSettings = GeckoGameSettings.default()) {
-        
+    suspend fun startNewGame(settings: GeckoGameSettings = GeckoGameSettings.default()): GeckoGame =
+        withContext(Dispatchers.IO) {
+            val gameId = GeckoGameRepository.saveGame(settings)
+            val game = GeckoGame(gameId, settings)
+
+            games.add(game)
+            return@withContext game
+        }
+
+
+    suspend fun endGame(game: GeckoGame, reason: GeckoGameEndReason) = withContext(Dispatchers.IO) {
+        games.remove(game)
+        GeckoGameRepository.updateGameEndReason(game, reason)
     }
 
     fun requiresGame() = games.size < MAX_GAMES && games.none { it.state.acceptsPlayers() }

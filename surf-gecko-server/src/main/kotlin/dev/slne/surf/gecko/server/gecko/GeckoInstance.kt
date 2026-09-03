@@ -1,7 +1,7 @@
 package dev.slne.surf.gecko.server.gecko
 
 import dev.slne.surf.gecko.server.database.GeckoDatabaseManager
-import dev.slne.surf.gecko.server.gecko.settings.map.convert.GeckoMapConverter
+import dev.slne.surf.gecko.server.gecko.map.convert.GeckoMapConverter
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

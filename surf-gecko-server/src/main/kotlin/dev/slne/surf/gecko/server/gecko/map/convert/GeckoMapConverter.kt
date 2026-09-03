@@ -1,4 +1,4 @@
-package dev.slne.surf.gecko.server.gecko.settings.map.convert
+package dev.slne.surf.gecko.server.gecko.map.convert
 
 import dev.slne.surf.gecko.server.bootstrapLogger
 import kotlinx.coroutines.Dispatchers

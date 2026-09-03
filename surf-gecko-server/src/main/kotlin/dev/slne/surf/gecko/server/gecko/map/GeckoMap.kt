@@ -1,10 +1,11 @@
-package dev.slne.surf.gecko.server.gecko.settings.map
+package dev.slne.surf.gecko.server.gecko.map
 
 import net.minestom.server.coordinate.Pos
 import java.time.OffsetDateTime
 import java.util.*
 
 data class GeckoMap(
+    val mapUuid: UUID,
     val mapName: String,
     val mapDisplayName: String,
     val mapAuthors: List<MapAuthor>,

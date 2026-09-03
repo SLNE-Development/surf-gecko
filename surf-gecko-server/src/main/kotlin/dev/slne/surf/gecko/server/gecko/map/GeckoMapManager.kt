@@ -1,4 +1,4 @@
-package dev.slne.surf.gecko.server.gecko.settings.map
+package dev.slne.surf.gecko.server.gecko.map
 
 import kotlinx.coroutines.coroutineScope
 import net.hollowcube.polar.PolarLoader
@@ -8,7 +8,13 @@ import kotlin.io.path.Path
 
 object GeckoMapManager {
     suspend fun prepareMap(map: GeckoMap): InstanceContainer = coroutineScope {
-        MinecraftServer.getInstanceManager()
+        val map = MinecraftServer.getInstanceManager()
             .createInstanceContainer(PolarLoader(Path("maps/${map.mapName}")))
+
+        map.chunks.forEach {
+            map.loadChunk(it.toPosition())
+        }
+
+        map
     }
 }

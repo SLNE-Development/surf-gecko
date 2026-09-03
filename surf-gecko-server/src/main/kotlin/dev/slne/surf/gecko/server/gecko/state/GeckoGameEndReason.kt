@@ -5,5 +5,6 @@ enum class GeckoGameEndReason {
     ERROR,
     SEEKER_WIN,
     HIDER_WIN,
-    NO_PLAYERS
+    NO_PLAYERS,
+    UNSET
 }

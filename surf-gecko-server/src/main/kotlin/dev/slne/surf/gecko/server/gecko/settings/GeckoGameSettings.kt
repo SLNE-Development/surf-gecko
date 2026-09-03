@@ -1,7 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.settings
 
-import dev.slne.surf.gecko.server.gecko.settings.map.GeckoMap
-import dev.slne.surf.gecko.server.gecko.settings.map.GeckoMaps
+import dev.slne.surf.gecko.server.gecko.map.GeckoMap
+import dev.slne.surf.gecko.server.gecko.map.GeckoMaps
 import java.util.*
 
 private const val DEFAULT_MIN_PLAYERS = 2
