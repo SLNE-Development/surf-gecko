@@ -12,9 +12,6 @@ data class BoundChatType(
     val name: Component,
     val targetName: Component? = null
 ) {
-    /**
-     * The value the chat packets carry for this chat type.
-     */
     val id: Int
         get() {
             val registryId = ChatTypeRegistry.getId(chatType)

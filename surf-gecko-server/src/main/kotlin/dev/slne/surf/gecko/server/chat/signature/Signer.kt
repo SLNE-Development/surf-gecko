@@ -3,7 +3,6 @@ package dev.slne.surf.gecko.server.chat.signature
 import java.security.PrivateKey
 import java.security.Signature
 
-
 fun interface Signer {
     fun sign(updater: SignatureUpdater): ByteArray
 

@@ -1,6 +1,5 @@
 package dev.slne.surf.gecko.server.player.config
 
-import com.google.inject.Singleton
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger
 import net.minestom.server.event.player.PlayerDisconnectEvent
 import net.minestom.server.event.player.PlayerSettingsChangeEvent
@@ -10,18 +9,11 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
-/**
- * Waits until the settings of the client have arrived.
- */
-@Singleton
-class AwaitSettingsTask : ConfigurationTask {
+object AwaitSettingsTask : ConfigurationTask {
 
-    private companion object {
-        val LOGGER = ComponentLogger.logger()
+    private val LOGGER = ComponentLogger.logger()
 
-        /** How long the client gets to send its settings before the defaults are used. */
-        const val SETTINGS_TIMEOUT_SECONDS = 2L
-    }
+    private const val SETTINGS_TIMEOUT_SECONDS = 2L
 
     private val received = ConcurrentHashMap<UUID, CompletableFuture<Unit>>()
 

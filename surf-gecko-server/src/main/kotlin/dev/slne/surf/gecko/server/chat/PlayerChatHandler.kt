@@ -72,7 +72,6 @@ class PlayerChatHandler(
     private var signedMessageDecoder: SignedMessageChain.Decoder =
         SignedMessageChain.Decoder.unsigned(player.uuid) { config.enforceSecureProfile }
 
-
     @Volatile
     var chatSession: RemoteChatSession? = null
         private set
@@ -87,7 +86,6 @@ class PlayerChatHandler(
     override fun close() {
         chatMessageChain.close()
     }
-
 
     fun handleChat(packet: ClientChatMessagePacket, onMessage: suspend (PlayerChatMessage) -> Unit) {
         if (MinecraftServer.isStopping()) return
@@ -144,7 +142,6 @@ class PlayerChatHandler(
         }
     }
 
-
     fun handleChatSessionUpdate(
         packet: ClientChatSessionUpdatePacket,
         onSessionReset: (RemoteChatSession) -> Unit
@@ -199,10 +196,6 @@ class PlayerChatHandler(
         return signedMessageDecoder.unpack(packet.signature(), body)
     }
 
-    /**
-     * The message the sender signed for every signable argument of [packet]'s command, keyed by node
-     * name, or `null` when the command must not run.
-     */
     private fun getSignedArguments(
         packet: ClientSignedCommandChatPacket,
         lastSeenMessages: LastSeenMessages

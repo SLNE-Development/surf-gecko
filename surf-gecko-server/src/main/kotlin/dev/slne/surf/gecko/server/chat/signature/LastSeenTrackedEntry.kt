@@ -2,7 +2,6 @@ package dev.slne.surf.gecko.server.chat.signature
 
 import net.minestom.server.crypto.MessageSignature
 
-
 data class LastSeenTrackedEntry(
     val signature: MessageSignature,
     val pending: Boolean

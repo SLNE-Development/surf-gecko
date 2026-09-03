@@ -4,7 +4,6 @@ import dev.slne.surf.gecko.server.chat.signature.PlayerChatMessage
 import dev.slne.surf.gecko.server.player.GeckoPlayer
 import net.kyori.adventure.text.Component
 
-
 sealed interface OutgoingChatMessage {
 
     val content: Component
@@ -16,7 +15,6 @@ sealed interface OutgoingChatMessage {
         unsigned: Component? = null
     )
 
-
     data class Disguised(override val content: Component) : OutgoingChatMessage {
         override fun sendToPlayer(
             player: GeckoPlayer,
@@ -27,7 +25,6 @@ sealed interface OutgoingChatMessage {
             player.chatHandler.sendDisguisedChatMessage(unsigned ?: content, chatType)
         }
     }
-
 
     data class Signed(val message: PlayerChatMessage) : OutgoingChatMessage {
         override val content: Component get() = message.decoratedContent()

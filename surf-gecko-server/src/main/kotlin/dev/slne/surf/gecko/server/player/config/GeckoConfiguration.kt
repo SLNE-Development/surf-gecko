@@ -14,10 +14,6 @@ import net.minestom.server.network.ConnectionManager
 import net.minestom.server.network.packet.server.common.PluginMessagePacket
 import org.jetbrains.annotations.Blocking
 
-/**
- * Runs the configuration phase as the ordered task sequence vanilla uses, in place of Minestom's own
- * `ConnectionManager#doConfiguration`, which the mixin cancels.
- */
 object GeckoConfiguration {
     @Volatile
     private var tasks: List<ConfigurationTask> = emptyList()

@@ -1,7 +1,5 @@
 package dev.slne.surf.gecko.server.player
 
-import com.google.inject.assistedinject.Assisted
-import com.google.inject.assistedinject.AssistedInject
 import dev.slne.minestom.lobby.api.chat.RemoteChatSender
 import dev.slne.minestom.lobby.api.chat.RemoteSignedMessage
 import dev.slne.minestom.lobby.api.extension.ConnectionManager
@@ -32,12 +30,9 @@ import net.minestom.server.network.player.GameProfile
 import net.minestom.server.network.player.PlayerConnection
 import java.util.EnumSet
 
-/**
- * The [LobbyPlayer] this server hands to Minestom, and the owner of that player's secure chat state.
- */
-class GeckoPlayer @AssistedInject constructor(
-    @Assisted playerConnection: PlayerConnection,
-    @Assisted gameProfile: GameProfile,
+class GeckoPlayer(
+    playerConnection: PlayerConnection,
+    gameProfile: GameProfile,
     private val luckPermsService: LuckPermsService,
     chatConfig: Config.ChatConfig,
 ) : LobbyPlayer(playerConnection, gameProfile) {

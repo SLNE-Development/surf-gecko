@@ -1,6 +1,5 @@
 package dev.slne.surf.gecko.server.chat
 
-import com.google.inject.Inject
 import com.google.inject.Singleton
 import dev.slne.minestom.lobby.api.event.EventRegistrar
 import dev.slne.minestom.lobby.api.extension.CommandManager
@@ -21,11 +20,8 @@ import net.minestom.server.network.packet.client.play.ClientCommandChatPacket
 import net.minestom.server.network.packet.client.play.ClientSignedCommandChatPacket
 import net.minestom.server.utils.PacketSendingUtils
 
-/**
- * Sets up secure chat and handles chat processing.
- */
 @Singleton
-class GeckoChatService @Inject constructor() : GeckoService, EventRegistrar {
+class GeckoChatService : GeckoService, EventRegistrar {
 
     override suspend fun start() {
         GeckoChatTypes.register()

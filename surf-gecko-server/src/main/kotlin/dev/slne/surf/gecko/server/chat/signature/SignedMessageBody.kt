@@ -1,10 +1,8 @@
 package dev.slne.surf.gecko.server.chat.signature
 
-import com.google.common.primitives.Ints
-import com.google.common.primitives.Longs
+import dev.slne.surf.gecko.server.util.toByteArray
 import java.time.Instant
 import net.minestom.server.crypto.SignedMessageBody as NetworkSignedMessageBody
-
 
 data class SignedMessageBody(
     val content: String,
@@ -19,11 +17,11 @@ data class SignedMessageBody(
     }
 
     fun updateSignature(output: SignatureUpdater.Output) {
-        output.update(Longs.toByteArray(salt))
-        output.update(Longs.toByteArray(timeStamp.epochSecond))
+        output.update(salt.toByteArray())
+        output.update(timeStamp.epochSecond.toByteArray())
 
         val contentBytes = content.toByteArray()
-        output.update(Ints.toByteArray(contentBytes.size))
+        output.update(contentBytes.size.toByteArray())
         output.update(contentBytes)
 
         lastSeen.updateSignature(output)

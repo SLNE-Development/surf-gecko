@@ -1,6 +1,7 @@
 package dev.slne.surf.gecko.server.mixin;
 
 import dev.slne.surf.gecko.server.duck.ConnectionManagerDuck;
+import dev.slne.surf.gecko.server.player.config.GeckoConfiguration;
 import java.util.Set;
 import net.minestom.server.entity.Player;
 import net.minestom.server.network.ConnectionManager;
@@ -11,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * Hands the configuration phase to {@link LobbyConfiguration}, which runs it as the ordered task
+ * Hands the configuration phase to {@link GeckoConfiguration}, which runs it as the ordered task
  * sequence vanilla uses.
  */
 @Mixin(ConnectionManager.class)
@@ -38,6 +39,6 @@ abstract class ConnectionManagerMixin implements ConnectionManagerDuck {
       CallbackInfo ci
   ) {
     ci.cancel();
-    //LobbyConfiguration.doConfiguration(player, isFirstConfig); TODO: Uncomment when LobbyConfiguration is implemented
+    GeckoConfiguration.doConfiguration(player, isFirstConfig);
   }
 }

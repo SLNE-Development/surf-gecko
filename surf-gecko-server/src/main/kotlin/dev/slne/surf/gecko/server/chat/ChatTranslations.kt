@@ -6,7 +6,6 @@ import net.kyori.adventure.translation.TranslationStore
 import java.text.MessageFormat
 import java.util.Locale
 
-
 object ChatTranslations {
 
     private val STORE_KEY = Key.key("surf", "chat")

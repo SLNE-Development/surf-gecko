@@ -1,6 +1,6 @@
 package dev.slne.surf.gecko.server.chat.signature
 
-import com.google.common.primitives.Ints
+import dev.slne.surf.gecko.server.util.toByteArray
 import dev.slne.surf.gecko.server.util.NIL_UUID
 import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.identity.Identity
@@ -10,7 +10,6 @@ import net.minestom.server.crypto.MessageSignature
 import java.time.Duration
 import java.time.Instant
 import java.util.UUID
-
 
 data class PlayerChatMessage(
     val link: SignedMessageLink,
@@ -41,7 +40,7 @@ data class PlayerChatMessage(
             link: SignedMessageLink,
             body: SignedMessageBody
         ) {
-            output.update(Ints.toByteArray(1))
+            output.update(1.toByteArray())
             link.updateSignature(output)
             body.updateSignature(output)
         }

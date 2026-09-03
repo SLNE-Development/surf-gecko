@@ -1,11 +1,8 @@
 package dev.slne.surf.gecko.server.player.config
 
-import com.google.inject.Singleton
 import net.minestom.server.network.packet.server.configuration.FinishConfigurationPacket
 
-/** Hands the player over to the play phase, the last step of the configuration. */
-@Singleton
-class JoinWorldTask : ConfigurationTask {
+object JoinWorldTask : ConfigurationTask {
 
     @Suppress("UnstableApiUsage")
     override fun run(context: ConfigurationContext) {

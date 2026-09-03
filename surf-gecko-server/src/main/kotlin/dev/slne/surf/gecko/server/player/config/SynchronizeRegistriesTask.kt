@@ -1,6 +1,5 @@
 package dev.slne.surf.gecko.server.player.config
 
-import com.google.inject.Singleton
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger
 import net.minestom.server.MinecraftServer
 import net.minestom.server.ServerFlag
@@ -9,16 +8,9 @@ import net.minestom.server.registry.Registries
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
-/**
- * Negotiates the known packs and sends the registry data, the same way Minestom does it inside
- * `ConnectionManager#doConfiguration`.
- */
-@Singleton
-class SynchronizeRegistriesTask : ConfigurationTask {
+object SynchronizeRegistriesTask : ConfigurationTask {
 
-    private companion object {
-        val LOGGER = ComponentLogger.logger()
-    }
+    private val LOGGER = ComponentLogger.logger()
 
     @Suppress("UnstableApiUsage")
     override fun run(context: ConfigurationContext) {

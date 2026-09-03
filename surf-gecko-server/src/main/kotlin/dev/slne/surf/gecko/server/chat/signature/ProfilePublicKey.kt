@@ -16,7 +16,6 @@ val EXPIRED_PROFILE_PUBLIC_KEY: Component =
 val INVALID_PROFILE_PUBLIC_KEY_SIGNATURE: Component =
     Component.translatable("multiplayer.disconnect.invalid_public_key_signature")
 
-
 class ProfilePublicKeyValidationException(val component: Component) : Exception(null, null, false, false) {
     companion object {
         @Serial

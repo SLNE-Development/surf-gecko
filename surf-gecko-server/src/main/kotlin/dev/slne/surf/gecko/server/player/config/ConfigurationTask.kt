@@ -5,14 +5,10 @@ import net.minestom.server.event.player.AsyncPlayerConfigurationEvent
 import net.minestom.server.instance.Instance
 import org.jetbrains.annotations.Blocking
 
-/**
- * One step of the configuration phase, run in order by [GeckoConfiguration].
- */
 interface ConfigurationTask {
 
     val taskName: String get() = javaClass.simpleName
 
-    /** Runs the step and blocks until the client has answered it. */
     @Blocking
     fun run(context: ConfigurationContext)
 }

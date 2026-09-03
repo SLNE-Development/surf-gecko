@@ -1,6 +1,5 @@
 package dev.slne.surf.gecko.server.chat.signature
 
-import com.google.common.primitives.Ints
 import dev.slne.surf.gecko.server.util.NIL_UUID
 import dev.slne.surf.gecko.server.util.toByteArray
 import java.util.UUID
@@ -26,6 +25,6 @@ data class SignedMessageLink(
     fun updateSignature(output: SignatureUpdater.Output) {
         output.update(sender.toByteArray())
         output.update(sessionId.toByteArray())
-        output.update(Ints.toByteArray(index))
+        output.update(index.toByteArray())
     }
 }

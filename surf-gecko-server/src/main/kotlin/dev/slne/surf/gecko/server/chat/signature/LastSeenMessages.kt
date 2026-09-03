@@ -1,6 +1,6 @@
 package dev.slne.surf.gecko.server.chat.signature
 
-import com.google.common.primitives.Ints
+import dev.slne.surf.gecko.server.util.toByteArray
 import dev.slne.surf.gecko.server.chat.signature.LastSeenMessages.Update.Companion.IGNORE_CHECKSUM
 import net.minestom.server.crypto.MessageSignature
 import net.minestom.server.network.packet.client.play.ClientChatMessagePacket
@@ -30,7 +30,7 @@ value class LastSeenMessages(val entries: List<MessageSignature>) {
     }
 
     fun updateSignature(output: SignatureUpdater.Output) {
-        output.update(Ints.toByteArray(entries.size))
+        output.update(entries.size.toByteArray())
 
         for (entry in entries) {
             output.update(entry.signature())

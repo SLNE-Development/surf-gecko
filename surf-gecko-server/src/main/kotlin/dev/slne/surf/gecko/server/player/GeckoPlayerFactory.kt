@@ -1,17 +1,17 @@
 package dev.slne.surf.gecko.server.player
 
-import dev.slne.minestom.lobby.api.player.LobbyPlayer
+import dev.slne.surf.gecko.server.config.Config
+import dev.slne.surf.gecko.server.integration.luckperms.LuckPermsService
 import net.minestom.server.network.player.GameProfile
 import net.minestom.server.network.player.PlayerConnection
 
-/**
- * Assisted-inject factory Minestom's player provider is pointed at, so every player is created with
- * its server-side dependencies already wired.
- */
-interface GeckoPlayerFactory {
+class GeckoPlayerFactory(
+    private val luckPermsService: LuckPermsService,
+    private val chatConfig: Config.ChatConfig,
+) {
 
     fun create(
         playerConnection: PlayerConnection,
         gameProfile: GameProfile,
-    ): LobbyPlayer
+    ): GeckoPlayer = GeckoPlayer(playerConnection, gameProfile, luckPermsService, chatConfig)
 }

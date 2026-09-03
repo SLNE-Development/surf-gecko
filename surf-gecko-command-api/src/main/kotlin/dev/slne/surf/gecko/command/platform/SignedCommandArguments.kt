@@ -14,7 +14,7 @@ import net.minestom.server.crypto.ArgumentSignatures
 /**
  * The messages the sender of the command being dispatched signed, keyed by argument node name.
  */
-internal object SignedCommandArguments {
+object SignedCommandArguments {
     private val current = ThreadLocal<Map<String, SignedMessage>>()
 
     /** Runs [block] with [messages] visible to every signed message argument parsed within it. */
@@ -36,7 +36,7 @@ internal object SignedCommandArguments {
 /**
  * The text a client signs for [input], keyed by the node name of the argument it is read from.
  */
-internal fun signableCommandArguments(
+fun signableCommandArguments(
     sender: CommandSender,
     input: String,
 ): Map<String, String> {
@@ -74,7 +74,7 @@ internal fun signableArgumentsOf(
 /**
  * Whether [signatures] covers exactly the signable arguments in [values].
  */
-internal fun signaturesCoverArguments(
+fun signaturesCoverArguments(
     signatures: ArgumentSignatures,
     values: Map<String, String>,
 ): Boolean {

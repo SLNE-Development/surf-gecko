@@ -1,12 +1,9 @@
 package dev.slne.surf.gecko.server.player.config
 
-import com.google.inject.Singleton
 import net.minestom.server.network.packet.server.configuration.ResetChatPacket
 import net.minestom.server.network.packet.server.configuration.UpdateEnabledFeaturesPacket
 
-/** Sends the feature flags the configuration event collected, before the registry negotiation. */
-@Singleton
-class EnabledFeaturesTask : ConfigurationTask {
+object EnabledFeaturesTask : ConfigurationTask {
 
     override fun run(context: ConfigurationContext) {
         val event = context.event

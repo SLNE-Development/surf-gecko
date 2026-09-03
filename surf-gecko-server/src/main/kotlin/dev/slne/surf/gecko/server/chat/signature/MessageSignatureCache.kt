@@ -3,7 +3,6 @@ package dev.slne.surf.gecko.server.chat.signature
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
 import net.minestom.server.crypto.MessageSignature
 
-
 class MessageSignatureCache(capacity: Int = DEFAULT_CAPACITY) {
 
     private class Entry(val signature: MessageSignature) {
