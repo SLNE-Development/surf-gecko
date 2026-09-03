@@ -13,9 +13,6 @@ data class Config(
     @Setting("velocity")
     val velocity: VelocityConfig = VelocityConfig(),
 
-    @Setting("database")
-    val database: DatabaseConfig = DatabaseConfig(),
-
     @Setting("performance")
     val performance: PerformanceConfig = PerformanceConfig(),
 ) {
@@ -39,30 +36,6 @@ data class Config(
         } else {
             Auth.Online()
         }
-    }
-
-    @ConfigSerializable
-    data class DatabaseConfig(
-        @Comment("Database system used by the lobby.")
-        val type: DatabaseType = DatabaseType.MARIADB,
-
-        @Comment("JDBC connection URL.")
-        val url: String = "jdbc:mariadb://127.0.0.1:3306/surf_lobby",
-
-        @Comment("Database schema. Only used for PostgreSQL.")
-        val schema: String = "surf_minestom_lobby",
-
-        val username: String = "surf_lobby",
-
-        val password: String = "change-me",
-
-        @Setting("pool")
-        val pool: DatabasePoolConfig = DatabasePoolConfig(),
-    )
-
-    enum class DatabaseType {
-        MARIADB,
-        POSTGRESQL,
     }
 
     @ConfigSerializable
