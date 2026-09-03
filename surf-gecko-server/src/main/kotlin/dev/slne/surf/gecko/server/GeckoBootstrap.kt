@@ -1,7 +1,5 @@
 package dev.slne.surf.gecko.server
 
-import com.google.inject.Guice
-import com.google.inject.Stage
 import dev.slne.surf.gecko.server.config.Config
 import dev.slne.surf.gecko.server.config.ConfigLoader
 import dev.slne.surf.gecko.server.performance.EntityTickFilter
@@ -20,16 +18,14 @@ object GeckoBootstrap {
         bootstrapLogger.info("Booting server...")
 
         val config = ConfigLoader(Path("config.yml")).load()
-        val injector = Guice.createInjector(Stage.PRODUCTION, emptyList())
-
-        initMinecraftServer(config)
+        val minecraftServer = initMinecraftServer(config)
 
         config.applyTickDispatcherThreads()
         applyKeepAliveDelay()
         EntityTickFilter.configure(EntityTypeKeys.ARMOR_STAND.key())
 
         runBlocking {
-            injector.getInstance(GeckoServer::class.java).start(startupStartedAt)
+            GeckoServer(minecraftServer, config).start(startupStartedAt)
         }
     }
 

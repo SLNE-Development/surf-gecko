@@ -1,7 +1,5 @@
 package dev.slne.surf.gecko.command.platform
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
 import dev.slne.surf.gecko.command.commandapi.CommandAPI
 import dev.slne.surf.gecko.command.internal.extension.CommandManager
 
@@ -13,8 +11,7 @@ import dev.slne.surf.gecko.command.internal.extension.CommandManager
  * lifecycle the host owns - the port carries no lifecycle interface of its own, only the two
  * suspending entry points.
  */
-@Singleton
-class MinestomCommandAPIService @Inject constructor(
+class MinestomCommandAPIService(
     private val ownership: MinestomCommandOwnership,
 ) {
     private var platform: MinestomCommandAPIPlatform? = null

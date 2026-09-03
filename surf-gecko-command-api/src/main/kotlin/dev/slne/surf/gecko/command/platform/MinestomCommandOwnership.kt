@@ -1,14 +1,11 @@
 package dev.slne.surf.gecko.command.platform
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet
 import java.util.Locale
 import java.util.concurrent.ConcurrentHashMap
 
-@Singleton
-class MinestomCommandOwnership @Inject constructor() {
+class MinestomCommandOwnership {
     private val registrations = ConcurrentHashMap<String, CompiledRegistration>()
 
     internal fun contains(name: String): Boolean = registrations.containsKey(normalize(name))

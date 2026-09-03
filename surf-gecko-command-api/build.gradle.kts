@@ -13,7 +13,6 @@ repositories {
 dependencies {
     compileOnlyApi(libs.minestom)
     compileOnlyApi(libs.brigadier)
-    compileOnlyApi(libs.guice)
     compileOnlyApi(libs.coroutines.core)
     compileOnlyApi(libs.fastutil)
     compileOnlyApi(libs.adventure.text.minimessage)

@@ -48,6 +48,16 @@ public final class InstrumentationMixinService extends MixinServiceAbstract impl
     InstrumentationMixinService.instrumentation = instrumentation;
   }
 
+  private static ClassLoader getLoader() {
+    ClassLoader context = Thread.currentThread().getContextClassLoader();
+
+    if (context != null) {
+      return context;
+    }
+
+    return InstrumentationMixinService.class.getClassLoader();
+  }
+
   @Override
   public String getName() {
     return "SurfLobbyInstrumentation";
@@ -199,16 +209,6 @@ public final class InstrumentationMixinService extends MixinServiceAbstract impl
     return node;
   }
 
-  private static ClassLoader getLoader() {
-    ClassLoader context = Thread.currentThread().getContextClassLoader();
-
-    if (context != null) {
-      return context;
-    }
-
-    return InstrumentationMixinService.class.getClassLoader();
-  }
-
   private record TransformerAdapter(IMixinTransformer transformer) implements ClassFileTransformer {
 
     @Override
@@ -228,7 +228,7 @@ public final class InstrumentationMixinService extends MixinServiceAbstract impl
         return null;
       }
 
-      if (className.startsWith("dev/slne/minestom/lobby/server/mixin/")) {
+      if (className.startsWith("dev/slne/surf/gecko/server/mixin/")) {
         return null;
       }
 

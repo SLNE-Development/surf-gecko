@@ -4,7 +4,6 @@ shadow = "9.6.1"
 gremlim = "0.0.9"
 
 minestom = "2026.08.28-26.2"
-guice = "7.0.0"
 coroutines = "1.10.2"
 configurate = "1.0.0"
 junit = "6.1.2"
@@ -34,8 +33,6 @@ spark = "1.10.181-SNAPSHOT" # substituted by the vendor/spark-minestom included 
 [libraries]
 minestom = { module = "net.minestom:minestom", version.ref = "minestom" }
 
-guice = { module = "com.google.inject:guice", version.ref = "guice" }
-guice-assistedinject = { module = "com.google.inject.extensions:guice-assistedinject", version.ref = "guice" }
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }
 flare-fastutil = { module = "space.vectrix.flare:flare-fastutil", version.ref = "flare" }

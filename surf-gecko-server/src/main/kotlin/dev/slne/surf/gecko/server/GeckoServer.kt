@@ -1,13 +1,7 @@
 package dev.slne.surf.gecko.server
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import dev.slne.minestom.lobby.server.config.ServerConfig
-import dev.slne.minestom.lobby.server.console.LobbyTerminalConsole
-import dev.slne.minestom.lobby.server.plugin.MinestomPluginManager
-import dev.slne.minestom.lobby.server.version.LobbyVersionService
-import dev.slne.minestom.lobby.server.version.logVersionBanner
-import dev.slne.minestom.lobby.server.world.LobbyWorldService
+import dev.slne.surf.gecko.server.config.Config
+import dev.slne.surf.gecko.server.console.LobbyTerminalConsole
 import kotlinx.coroutines.runBlocking
 import net.minestom.server.MinecraftServer
 import net.minestom.server.MinecraftServer.LOGGER
@@ -18,14 +12,9 @@ import kotlin.system.exitProcess
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.nanoseconds
 
-@Singleton
-class GeckoServer @Inject constructor(
+class GeckoServer(
     private val minecraftServer: MinecraftServer,
-    private val config: ServerConfig,
-    private val serverLifecycle: ServerLifecycle,
-    private val pluginManager: MinestomPluginManager,
-    private val versionService: LobbyVersionService,
-    private val worldService: LobbyWorldService,
+    private val config: Config,
 ) {
     private val started = AtomicBoolean()
     private val stopped = AtomicBoolean()
@@ -34,22 +23,10 @@ class GeckoServer @Inject constructor(
 
     suspend fun start(startupStartedAt: Long) {
         check(started.compareAndSet(false, true)) {
-            "Lobby server has already been started"
+            "Gecko server has already been started"
         }
 
         try {
-            LOGGER.info("Initializing core server components.")
-            serverLifecycle.start()
-            LOGGER.info("Core server components initialized.")
-
-            LOGGER.info("Starting server plugins.")
-            pluginManager.startAll()
-            LOGGER.info("Server plugins started.")
-
-            LOGGER.info("Warming chunk packets.")
-            worldService.warmChunkPackets()
-            LOGGER.info("Chunk packets warmed.")
-
             installShutdownHook()
 
             LOGGER.info(
@@ -65,38 +42,14 @@ class GeckoServer @Inject constructor(
                 (System.nanoTime() - startupStartedAt).nanoseconds.inWholeMilliseconds.milliseconds
 
             LOGGER.info(
-                "Surf Minestom Lobby is ready in {}.",
+                "Surf gecko is ready in {}.",
                 startupDuration,
             )
-
-            logVersionBanner(versionService, LOGGER)
         } catch (startupFailure: Throwable) {
             LOGGER.error(
-                "Failed to start Surf Minestom Lobby.",
+                "Failed to start Surf gecko.",
                 startupFailure,
             )
-
-            runCatching {
-                LOGGER.info("Stopping plugins after failed startup.")
-                pluginManager.stopAll()
-            }.onFailure {
-                startupFailure.addSuppressed(it)
-                LOGGER.error(
-                    "Failed to stop plugins after startup failure.",
-                    it,
-                )
-            }
-
-            runCatching {
-                LOGGER.info("Shutting down core components after failed startup.")
-                serverLifecycle.stop()
-            }.onFailure {
-                startupFailure.addSuppressed(it)
-                LOGGER.error(
-                    "Failed to shut down core components after startup failure.",
-                    it,
-                )
-            }
 
             throw startupFailure
         }
@@ -109,7 +62,7 @@ class GeckoServer @Inject constructor(
 
         consoleThread = Thread(
             console::start,
-            "surf-minestom-lobby-console",
+            "surf-gecko-console",
         ).apply {
             isDaemon = true
             start()
@@ -130,7 +83,7 @@ class GeckoServer @Inject constructor(
                 stop()
             }.onFailure {
                 LOGGER.error(
-                    "Failed to stop Surf Minestom Lobby from {}.",
+                    "Failed to stop Surf gecko server from {}.",
                     source,
                     it,
                 )
@@ -145,55 +98,21 @@ class GeckoServer @Inject constructor(
             return
         }
 
-        LOGGER.info("Stopping Surf Minestom Lobby.")
-
-        var failure: Throwable? = null
+        LOGGER.info("Stopping Surf gecko.")
 
         if (MinecraftServer.isStarted() && !MinecraftServer.isStopping()) {
             try {
                 MinecraftServer.stopCleanly()
             } catch (currentFailure: Throwable) {
                 LOGGER.error(
-                    "Failed to stop the Minestom server cleanly.",
+                    "Failed to stop the gecko server cleanly.",
                     currentFailure,
                 )
-                failure = currentFailure
+                throw currentFailure
             }
         }
 
-        try {
-            LOGGER.info("Stopping server plugins.")
-            pluginManager.stopAll()
-            LOGGER.info("Server plugins stopped.")
-        } catch (currentFailure: Throwable) {
-            LOGGER.error("Failed to stop server plugins.", currentFailure)
-
-            if (failure == null) {
-                failure = currentFailure
-            } else {
-                failure.addSuppressed(currentFailure)
-            }
-        }
-
-        try {
-            LOGGER.info("Shutting down core server components.")
-            serverLifecycle.stop()
-            LOGGER.info("Core server components shut down.")
-        } catch (currentFailure: Throwable) {
-            LOGGER.error("Failed to shut down core server components.", currentFailure)
-
-            if (failure == null) {
-                failure = currentFailure
-            } else {
-                failure.addSuppressed(currentFailure)
-            }
-        }
-
-        if (failure == null) {
-            LOGGER.info("Surf Minestom Lobby stopped successfully.")
-        } else {
-            throw failure
-        }
+        LOGGER.info("Surf gecko stopped successfully.")
     }
 
     private fun installShutdownHook() {
@@ -206,7 +125,7 @@ class GeckoServer @Inject constructor(
                         }.onFailure(Throwable::printStackTrace)
                     }
                 },
-                "surf-minestom-lobby-shutdown",
+                "surf-gecko-shutdown",
             )
         )
     }

@@ -1,7 +1,5 @@
 package dev.slne.surf.gecko.command.platform
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
 import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.suggestion.Suggestions
 import dev.slne.surf.gecko.command.commandapi.exception.componentOrNull
@@ -21,8 +19,7 @@ import net.minestom.server.network.packet.server.play.TabCompletePacket
  * [register] has to be called with the node the host wants tab completion answered on - the port
  * carries no event-registrar interface of its own.
  */
-@Singleton
-class MinestomSuggestionListener @Inject constructor(
+class MinestomSuggestionListener(
     private val ownership: MinestomCommandOwnership,
 ) {
 

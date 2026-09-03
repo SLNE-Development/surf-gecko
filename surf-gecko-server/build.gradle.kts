@@ -24,22 +24,19 @@ repositories {
 dependencies {
     implementation(projects.surfGeckoCommandApi)
 
-    compileOnlyApi(libs.minestom)
-    compileOnlyApi(libs.guice)
-    compileOnlyApi(libs.guice.assistedinject)
-    compileOnlyApi(libs.coroutines.core)
-    compileOnlyApi(libs.bundles.log4j)
-    compileOnlyApi(libs.fastutil)
-    compileOnlyApi(libs.npc)
-    compileOnlyApi(libs.adventure.text.minimessage)
-    compileOnlyApi(libs.configurate.yaml)
-    compileOnlyApi(libs.configurate.kotlin)
+    compileOnly(libs.surf.api.minestom)
+    compileOnly(libs.minestom)
+    compileOnly(libs.coroutines.core)
+    compileOnly(libs.bundles.log4j)
+    compileOnly(libs.fastutil)
+    compileOnly(libs.npc)
+    compileOnly(libs.adventure.text.minimessage)
+    compileOnly(libs.configurate.yaml)
+    compileOnly(libs.configurate.kotlin)
 
-    compileOnlyApi(libs.brigadier)
+    compileOnly(libs.brigadier)
 
     runtimeDownload(libs.minestom)
-    runtimeDownload(libs.guice)
-    runtimeDownload(libs.guice.assistedinject)
     implementation(libs.coroutines.core)
     implementation(libs.bundles.log4j)
     implementation(libs.slf4j.api)
@@ -107,7 +104,7 @@ tasks.shadowJar {
     manifest {
         attributes["Main-Class"] = serverMainClass
         attributes["Launcher-Agent-Class"] =
-            "dev.slne.minestom.lobby.server.instrumentation.LobbyAgent"
+            "dev.slne.surf.gecko.server.instrumentation.GeckoRunner"
 
         attributes["Can-Redefine-Classes"] = "true"
         attributes["Can-Retransform-Classes"] = "true"

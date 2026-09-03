@@ -125,7 +125,7 @@ internal class MinestomCommandAPIPlatform(
         /**
          * The merger of the currently installed platform, or `null` while none is installed.
          *
-         * The platform is created by the CommandAPI rather than by the injector, so the mixin that
+         * The platform is created by the CommandAPI rather than by the host, so the mixin that
          * reaches it through [CommandAPIHook] cannot be given it.
          */
         fun activeMerger(): DeclareCommandsMerger? = installed.get()?.merger
