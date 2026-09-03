@@ -1,0 +1,13 @@
+package dev.slne.surf.gecko.server.util
+
+import net.minestom.server.listener.manager.PacketListenerManager
+import net.minestom.server.listener.manager.PacketPlayListenerConsumer
+import net.minestom.server.network.packet.client.ClientPacket
+
+inline fun <reified T : ClientPacket> PacketListenerManager.setPlayListener(consumer: PacketPlayListenerConsumer<T>) {
+    setPlayListener(T::class.java, consumer)
+}
+
+inline fun <reified T : ClientPacket> PacketListenerManager.setConfigurationListener(consumer: PacketPlayListenerConsumer<T>) {
+    setConfigurationListener(T::class.java, consumer)
+}

@@ -11,6 +11,7 @@ import dev.slne.minestom.lobby.api.player.PlayerLimit
 import dev.slne.surf.gecko.command.platform.MinestomCommandOwnership
 import dev.slne.surf.gecko.server.command.GeckoCommandApiService
 import dev.slne.surf.gecko.server.config.Config
+import dev.slne.surf.gecko.server.player.PlayerConnectionService
 import dev.slne.surf.gecko.server.player.PlayerLimitService
 import dev.slne.surf.gecko.server.plugin.PluginCatalog
 import net.minestom.server.MinecraftServer
@@ -38,6 +39,7 @@ class GeckoServerModule(
         bind(PlayerLimit::class.java).to(PlayerLimitService::class.java)
 
         binder().bindEventRegistrar<PlayerLimitService>()
+        binder().bindEventRegistrar<PlayerConnectionService>()
         binder().bindEventRegistrar<GeckoCommandApiService>()
 
         binder().setBinder<EventRegistrar>()

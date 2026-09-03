@@ -22,6 +22,8 @@ object GeckoGameManager {
         }
     }
 
+    fun getGames(): Set<GeckoGame> = games.toSet()
+
     suspend fun shutdown() {
         if (::gameJob.isInitialized && gameJob.isActive) {
             gameJob.cancel()

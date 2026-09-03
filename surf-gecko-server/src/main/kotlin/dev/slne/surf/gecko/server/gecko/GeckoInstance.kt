@@ -1,6 +1,7 @@
 package dev.slne.surf.gecko.server.gecko
 
 import dev.slne.surf.gecko.server.database.GeckoDatabaseManager
+import dev.slne.surf.gecko.server.gecko.command.geckoCommand
 import dev.slne.surf.gecko.server.gecko.map.convert.GeckoMapConverter
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -13,6 +14,8 @@ object GeckoInstance {
         GeckoMapConverter.convertAll()
         GeckoDatabaseManager.create()
         GeckoGameManager.init()
+
+        geckoCommand()
 
         geckoLogger.info("Enabled GeckoInstance.")
     }
