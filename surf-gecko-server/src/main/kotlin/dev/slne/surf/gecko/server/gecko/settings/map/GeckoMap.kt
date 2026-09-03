@@ -1,4 +1,4 @@
-package dev.slne.surf.gecko.server.gecko.map
+package dev.slne.surf.gecko.server.gecko.settings.map
 
 import net.minestom.server.coordinate.Pos
 import java.time.OffsetDateTime

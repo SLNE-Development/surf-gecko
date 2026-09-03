@@ -2,6 +2,7 @@ package dev.slne.surf.gecko.server
 
 import dev.slne.surf.gecko.server.config.Config
 import dev.slne.surf.gecko.server.console.LobbyTerminalConsole
+import dev.slne.surf.gecko.server.gecko.GeckoInstance
 import kotlinx.coroutines.runBlocking
 import net.minestom.server.MinecraftServer
 import net.minestom.server.MinecraftServer.LOGGER
@@ -53,6 +54,8 @@ class GeckoServer(
 
             throw startupFailure
         }
+
+        GeckoInstance.enable()
     }
 
     private fun startConsole() {
@@ -99,6 +102,8 @@ class GeckoServer(
         }
 
         LOGGER.info("Stopping Surf gecko.")
+
+        GeckoInstance.shutdown()
 
         if (MinecraftServer.isStarted() && !MinecraftServer.isStopping()) {
             try {

@@ -24,7 +24,9 @@ repositories {
 dependencies {
     implementation(projects.surfGeckoCommandApi)
 
-    compileOnly(libs.surf.api.minestom)
+    compileOnly(libs.surf.api.minestom) {
+        exclude(group = "dev.slne.minestom.lobby", module = "surf-minestom-lobby-api")
+    }
     compileOnly(libs.minestom)
     compileOnly(libs.coroutines.core)
     compileOnly(libs.bundles.log4j)

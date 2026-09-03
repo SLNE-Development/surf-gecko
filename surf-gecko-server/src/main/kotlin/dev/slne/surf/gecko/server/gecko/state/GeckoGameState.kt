@@ -1,7 +1,5 @@
 package dev.slne.surf.gecko.server.gecko.state
 
-import net.minestom.server.entity.Player
-
 enum class GeckoGameState {
     OFFLINE,
     PREPARING,
@@ -11,5 +9,5 @@ enum class GeckoGameState {
     ENDING,
     ENDED;
 
-    fun acceptPlayers(player: Player) = this in listOf(LOBBY, STARTING)
+    fun acceptsPlayers() = this in listOf(LOBBY, STARTING)
 }
