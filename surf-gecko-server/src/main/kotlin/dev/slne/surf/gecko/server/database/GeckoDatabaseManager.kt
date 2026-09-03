@@ -9,11 +9,19 @@ import dev.slne.surf.gecko.server.database.table.GeckoPunishmentsTable
 import kotlin.io.path.Path
 
 object GeckoDatabaseManager {
+    private lateinit var databaseApi: DatabaseApi
+
     suspend fun create() {
-        DatabaseApi.create(Path("."))
+        databaseApi = DatabaseApi.create(Path("."))
 
         suspendTransaction {
             SchemaUtils.create(GeckoGamesTable, GeckoGameStatsTable, GeckoPunishmentsTable)
+        }
+    }
+
+    fun shutdown() {
+        if(::databaseApi.isInitialized) {
+            databaseApi.shutdown()
         }
     }
 }

@@ -1,5 +1,6 @@
 package dev.slne.surf.gecko.server.gecko
 
+import dev.slne.surf.gecko.server.database.GeckoDatabaseManager
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -9,6 +10,7 @@ object GeckoInstance {
     suspend fun enable() {
         geckoLogger.info("Enabling GeckoInstance...")
         GeckoGameManager.init()
+        GeckoDatabaseManager.create()
 
         geckoLogger.info("Enabled GeckoInstance.")
     }
@@ -16,6 +18,7 @@ object GeckoInstance {
     suspend fun shutdown() {
         geckoLogger.info("Stopping GeckoInstance...")
         GeckoGameManager.shutdown()
+        GeckoDatabaseManager.shutdown()
 
         geckoLogger.info("Stopped GeckoInstance.")
     }
