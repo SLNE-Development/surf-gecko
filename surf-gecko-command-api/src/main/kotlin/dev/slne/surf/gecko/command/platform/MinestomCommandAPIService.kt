@@ -1,6 +1,6 @@
 package dev.slne.surf.gecko.command.platform
 
-import dev.slne.surf.gecko.command.commandapi.CommandAPI
+import dev.slne.minestom.lobby.api.command.commandapi.CommandAPI
 import dev.slne.surf.gecko.command.internal.extension.CommandManager
 
 /**

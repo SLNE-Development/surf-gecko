@@ -11,8 +11,8 @@ object GeckoInstance {
     suspend fun enable() {
         geckoLogger.info("Enabling GeckoInstance...")
         GeckoMapConverter.convertAll()
-        GeckoGameManager.init()
         GeckoDatabaseManager.create()
+        GeckoGameManager.init()
 
         geckoLogger.info("Enabled GeckoInstance.")
     }

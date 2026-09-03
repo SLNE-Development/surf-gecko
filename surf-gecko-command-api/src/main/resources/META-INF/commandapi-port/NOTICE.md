@@ -1,6 +1,7 @@
 # CommandAPI provenance
 
-This Kotlin command API port retains concepts
+This module supplies the Minestom backend for the Kotlin command API that ships in
+`dev.slne.minestom.lobby:surf-minestom-lobby-api`, which retains concepts
 from [CommandAPI](https://github.com/CommandAPI/CommandAPI), version 12.0.0, revision
 `740a093a7d111863067eb3f94a3041e69ade02fa`.
 

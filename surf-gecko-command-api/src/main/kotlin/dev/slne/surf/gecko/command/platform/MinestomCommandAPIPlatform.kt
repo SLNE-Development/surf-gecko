@@ -1,9 +1,9 @@
 package dev.slne.surf.gecko.command.platform
 
 import com.mojang.brigadier.CommandDispatcher
-import dev.slne.surf.gecko.command.commandapi.CommandDefinition
-import dev.slne.surf.gecko.command.commandapi.RegisteredCommand
-import dev.slne.surf.gecko.command.commandapi.internal.CommandAPIPlatform
+import dev.slne.minestom.lobby.api.command.commandapi.CommandDefinition
+import dev.slne.minestom.lobby.api.command.commandapi.RegisteredCommand
+import dev.slne.minestom.lobby.api.command.commandapi.internal.CommandAPIPlatform
 import dev.slne.surf.gecko.command.internal.coroutine.minestomAsyncScope
 import dev.slne.surf.gecko.command.platform.brigadier.BrigadierCommandTree
 import dev.slne.surf.gecko.command.platform.brigadier.DeclareCommandsMerger

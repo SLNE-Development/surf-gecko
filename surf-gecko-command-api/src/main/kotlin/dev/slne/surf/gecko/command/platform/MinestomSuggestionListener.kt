@@ -2,7 +2,7 @@ package dev.slne.surf.gecko.command.platform
 
 import com.mojang.brigadier.StringReader
 import com.mojang.brigadier.suggestion.Suggestions
-import dev.slne.surf.gecko.command.commandapi.exception.componentOrNull
+import dev.slne.minestom.lobby.api.command.commandapi.exception.componentOrNull
 import dev.slne.surf.gecko.command.internal.extension.addListener
 import net.minestom.server.event.Event
 import net.minestom.server.event.EventNode

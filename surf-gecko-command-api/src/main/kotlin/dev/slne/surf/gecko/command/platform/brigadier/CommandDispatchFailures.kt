@@ -1,7 +1,7 @@
 package dev.slne.surf.gecko.command.platform.brigadier
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException
-import dev.slne.surf.gecko.command.commandapi.exception.componentOrNull
+import dev.slne.minestom.lobby.api.command.commandapi.exception.componentOrNull
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.Component.translatable

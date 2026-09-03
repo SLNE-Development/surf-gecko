@@ -1,10 +1,10 @@
 package dev.slne.surf.gecko.command.platform
 
-import dev.slne.surf.gecko.command.commandapi.CommandDefinition
-import dev.slne.surf.gecko.command.commandapi.RegisteredCommand
-import dev.slne.surf.gecko.command.commandapi.argument.ArgumentKind
-import dev.slne.surf.gecko.command.commandapi.argument.SuggestionMode
-import dev.slne.surf.gecko.command.commandapi.exception.CommandValidationException
+import dev.slne.minestom.lobby.api.command.commandapi.CommandDefinition
+import dev.slne.minestom.lobby.api.command.commandapi.RegisteredCommand
+import dev.slne.minestom.lobby.api.command.commandapi.argument.ArgumentKind
+import dev.slne.minestom.lobby.api.command.commandapi.argument.SuggestionMode
+import dev.slne.minestom.lobby.api.command.commandapi.exception.CommandValidationException
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet
 import java.util.Locale

@@ -15,6 +15,10 @@ data class Config(
 
     @Setting("performance")
     val performance: PerformanceConfig = PerformanceConfig(),
+
+    @Setting("max-players")
+    @Comment("Player limit reported on the server list and enforced by the extensions.")
+    val maxPlayers: Int = 100,
 ) {
 
     @ConfigSerializable

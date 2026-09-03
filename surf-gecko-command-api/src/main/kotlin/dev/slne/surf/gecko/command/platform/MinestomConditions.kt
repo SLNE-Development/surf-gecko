@@ -1,7 +1,7 @@
 package dev.slne.surf.gecko.command.platform
 
-import dev.slne.surf.gecko.command.commandapi.CommandPath
-import dev.slne.surf.gecko.command.commandapi.argument.ArgumentDefinition
+import dev.slne.minestom.lobby.api.command.commandapi.CommandPath
+import dev.slne.minestom.lobby.api.command.commandapi.argument.ArgumentDefinition
 import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet

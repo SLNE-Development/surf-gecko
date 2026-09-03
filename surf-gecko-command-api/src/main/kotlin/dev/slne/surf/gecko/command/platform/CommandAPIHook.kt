@@ -1,8 +1,8 @@
 package dev.slne.surf.gecko.command.platform
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException
-import dev.slne.surf.gecko.command.commandapi.CommandAPI
-import dev.slne.surf.gecko.command.commandapi.executor.GENERIC_COMMAND_FAILURE
+import dev.slne.minestom.lobby.api.command.commandapi.CommandAPI
+import dev.slne.minestom.lobby.api.command.commandapi.executor.GENERIC_COMMAND_FAILURE
 import dev.slne.surf.gecko.command.platform.brigadier.reportSyntaxFailure
 import dev.slne.surf.gecko.command.platform.brigadier.reportUnknownCommand
 import net.minestom.server.MinecraftServer

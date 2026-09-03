@@ -11,6 +11,9 @@ repositories {
 }
 
 dependencies {
+    // The command API itself lives in the lobby API - this module only supplies the Minestom
+    // platform it compiles onto, so the surf-*-minestom plugins register against the same one.
+    compileOnlyApi(libs.minestom.lobby.api)
     compileOnlyApi(libs.minestom)
     compileOnlyApi(libs.brigadier)
     compileOnlyApi(libs.coroutines.core)

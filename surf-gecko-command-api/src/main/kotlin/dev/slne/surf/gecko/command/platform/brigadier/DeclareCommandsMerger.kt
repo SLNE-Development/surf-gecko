@@ -1,9 +1,9 @@
 package dev.slne.surf.gecko.command.platform.brigadier
 
-import dev.slne.surf.gecko.command.commandapi.CommandDefinition
-import dev.slne.surf.gecko.command.commandapi.CommandPath
-import dev.slne.surf.gecko.command.commandapi.argument.ArgumentDefinition
-import dev.slne.surf.gecko.command.commandapi.argument.ArgumentKind
+import dev.slne.minestom.lobby.api.command.commandapi.CommandDefinition
+import dev.slne.minestom.lobby.api.command.commandapi.CommandPath
+import dev.slne.minestom.lobby.api.command.commandapi.argument.ArgumentDefinition
+import dev.slne.minestom.lobby.api.command.commandapi.argument.ArgumentKind
 import dev.slne.surf.gecko.command.platform.MinestomConditions
 import it.unimi.dsi.fastutil.ints.IntArrayList
 import it.unimi.dsi.fastutil.objects.ObjectArrayList

@@ -60,7 +60,7 @@ public final class InstrumentationMixinService extends MixinServiceAbstract impl
 
   @Override
   public String getName() {
-    return "SurfLobbyInstrumentation";
+    return "SurfGeckoInstrumentation";
   }
 
   @Override

@@ -24,10 +24,10 @@ repositories {
 dependencies {
     implementation(projects.surfGeckoCommandApi)
 
-    compileOnly(libs.surf.api.minestom) {
-        exclude(group = "dev.slne.minestom.lobby", module = "surf-minestom-lobby-api")
-    }
+    compileOnly(libs.surf.api.minestom)
     compileOnly(libs.minestom)
+    compileOnly(libs.minestom.lobby.api)
+    compileOnly(libs.guice)
     compileOnly(libs.coroutines.core)
     compileOnly(libs.bundles.log4j)
     compileOnly(libs.fastutil)
@@ -37,13 +37,12 @@ dependencies {
     compileOnly(libs.configurate.kotlin)
     compileOnly(libs.polar)
     compileOnly(libs.brigadier)
-    compileOnly(libs.surf.database.r2dbc) {
-        artifact {
-            classifier = "all"
-        }
-    }
+    compileOnly(libs.surf.database.r2dbc)
 
     runtimeDownload(libs.minestom)
+    runtimeDownload(libs.minestom.lobby.api)
+    runtimeDownload(libs.guice)
+    runtimeDownload(libs.guice.assistedinject)
     implementation(libs.coroutines.core)
     implementation(libs.bundles.log4j)
     implementation(libs.slf4j.api)
@@ -75,7 +74,16 @@ dependencies {
 
     runtimeDownload(libs.configurate.yaml)
     runtimeDownload(libs.configurate.kotlin)
-    implementation(libs.luckperms.minestom)
+    // LuckPerms:common pins gson 2.7 and guava 19 - the versions its Bukkit-era hosts provided.
+    // Shading them into the fat jar shadows the current copies gremlin appends to the system
+    // class loader, which breaks Minestom (needs gson 2.9.1+) and Guice 7 (needs guava 31+).
+    // Keep them out of the jar and download the pinned versions instead.
+    implementation(libs.luckperms.minestom) {
+        exclude(group = "com.google.code.gson", module = "gson")
+        exclude(group = "com.google.guava", module = "guava")
+    }
+    runtimeDownload(libs.gson)
+    runtimeDownload(libs.guava)
     implementation(libs.spark.minestom)
 
     runtimeDownload(libs.surf.api.minestom)
@@ -105,7 +113,6 @@ tasks.jar {
 }
 
 tasks.shadowJar {
-    archiveClassifier = ""
     isZip64 = true
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     mergeServiceFiles()

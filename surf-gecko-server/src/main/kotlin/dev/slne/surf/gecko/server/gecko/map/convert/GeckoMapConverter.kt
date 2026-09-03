@@ -17,6 +17,7 @@ object GeckoMapConverter {
     suspend fun convertAll() = withContext(Dispatchers.IO) {
         POLAR_DIR.createDirectories()
         ANVIL_CONVERTED_DIR.createDirectories()
+        ANVIL_DIR.createDirectories()
 
         if (!ANVIL_DIR.isDirectory()) {
             return@withContext
@@ -24,9 +25,15 @@ object GeckoMapConverter {
 
         val anvilMaps = ANVIL_DIR.listDirectoryEntries().filter { it.isDirectory() }
 
+        if(anvilMaps.isNotEmpty()) {
+            bootstrapLogger.info("Found ${anvilMaps.size} anvil maps to convert.")
+        }
+
         for (anvilMap in anvilMaps) {
             val mapName = anvilMap.name
             val polarFile = POLAR_DIR.resolve("$mapName.polar")
+
+            bootstrapLogger.info("Converting map '$mapName'...")
 
             if (polarFile.exists()) {
                 bootstrapLogger.info("Map '$mapName' already converted, skipping.")
@@ -41,6 +48,8 @@ object GeckoMapConverter {
 
                 val target = ANVIL_CONVERTED_DIR.resolve(mapName)
                 Files.move(anvilMap, target, StandardCopyOption.REPLACE_EXISTING)
+
+                bootstrapLogger.info("Successfully converted map '$mapName'.")
             } catch (e: Exception) {
                 bootstrapLogger.error("Failed to convert map '$mapName': ${e.message}", e)
             }
