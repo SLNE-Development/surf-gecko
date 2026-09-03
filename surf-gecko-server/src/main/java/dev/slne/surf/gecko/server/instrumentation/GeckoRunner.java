@@ -3,6 +3,7 @@ package dev.slne.surf.gecko.server.instrumentation;
 import com.llamalad7.mixinextras.MixinExtrasBootstrap;
 import dev.slne.surf.gecko.server.instrumentation.mixin.InstrumentationMixinService;
 import java.lang.instrument.Instrumentation;
+import me.lucko.luckperms.minestom.dependencies.LuckPermsAgent;
 import org.jspecify.annotations.NullMarked;
 import org.spongepowered.asm.launch.MixinBootstrap;
 import org.spongepowered.asm.mixin.MixinEnvironment;
@@ -24,7 +25,7 @@ public final class GeckoRunner {
       Mixins.addConfiguration("mixins.surf-gecko.json");
       advanceMixinPhases();
 
-      //LuckPermsAgent.agentmain(agentArgs, instrumentation);
+      LuckPermsAgent.agentmain(agentArgs, instrumentation);
     } catch (Throwable e) {
       e.printStackTrace();
       throw new RuntimeException("Failed to bootstrap surf gecko instrumentation", e);

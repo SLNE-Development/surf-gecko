@@ -5,6 +5,7 @@ import xyz.jpenilla.gremlin.gradle.ShadowGremlin
 plugins {
     application
     `maven-publish`
+    `java-library`
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ksp)
     alias(libs.plugins.shadow)
@@ -21,6 +22,21 @@ repositories {
 }
 
 dependencies {
+    implementation(projects.surfGeckoCommandApi)
+
+    compileOnlyApi(libs.minestom)
+    compileOnlyApi(libs.guice)
+    compileOnlyApi(libs.guice.assistedinject)
+    compileOnlyApi(libs.coroutines.core)
+    compileOnlyApi(libs.bundles.log4j)
+    compileOnlyApi(libs.fastutil)
+    compileOnlyApi(libs.npc)
+    compileOnlyApi(libs.adventure.text.minimessage)
+    compileOnlyApi(libs.configurate.yaml)
+    compileOnlyApi(libs.configurate.kotlin)
+
+    compileOnlyApi(libs.brigadier)
+
     runtimeDownload(libs.minestom)
     runtimeDownload(libs.guice)
     runtimeDownload(libs.guice.assistedinject)

@@ -1,5 +1,3 @@
 package dev.slne.surf.gecko.server
 
-fun main() {
-
-}
+fun main() = GeckoBootstrap.boot()
