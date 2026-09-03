@@ -35,8 +35,9 @@ dependencies {
     compileOnly(libs.adventure.text.minimessage)
     compileOnly(libs.configurate.yaml)
     compileOnly(libs.configurate.kotlin)
-
+    compileOnly(libs.polar)
     compileOnly(libs.brigadier)
+    compileOnly(libs.surf.database.r2dbc)
 
     runtimeDownload(libs.minestom)
     implementation(libs.coroutines.core)
@@ -59,6 +60,7 @@ dependencies {
     runtimeDownload(libs.hikari)
     runtimeDownload(libs.mariadb.jdbc)
     runtimeDownload(libs.postgresql.jdbc)
+    runtimeDownload(libs.surf.database.r2dbc)
 
     implementation(libs.fabric.mixin)
     annotationProcessor(libs.fabric.mixin)

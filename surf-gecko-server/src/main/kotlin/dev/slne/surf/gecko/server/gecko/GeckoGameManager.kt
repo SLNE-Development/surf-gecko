@@ -19,7 +19,7 @@ object GeckoGameManager {
     }
 
     fun shutdown() {
-        if(::gameJob.isInitialized && gameJob.isActive) {
+        if (::gameJob.isInitialized && gameJob.isActive) {
             gameJob.cancel()
         }
     }
@@ -27,12 +27,13 @@ object GeckoGameManager {
 
     private suspend fun testFor() {
         if (requiresGame()) {
+            geckoLogger.info("Starting new game (${games.size + 1}/${MAX_GAMES})...")
             startNewGame()
         }
     }
 
     suspend fun startNewGame(settings: GeckoGameSettings = GeckoGameSettings.default()) {
-
+        
     }
 
     fun requiresGame() = games.size < MAX_GAMES && games.none { it.state.acceptsPlayers() }
