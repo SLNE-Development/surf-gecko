@@ -1,7 +1,7 @@
 package dev.slne.surf.gecko.server
 
 import dev.slne.surf.gecko.server.config.Config
-import dev.slne.surf.gecko.server.console.LobbyTerminalConsole
+import dev.slne.surf.gecko.server.console.GeckoConsole
 import dev.slne.surf.gecko.server.gecko.GeckoInstance
 import kotlinx.coroutines.runBlocking
 import net.minestom.server.MinecraftServer
@@ -59,7 +59,7 @@ class GeckoServer(
     }
 
     private fun startConsole() {
-        val console = LobbyTerminalConsole {
+        val console = GeckoConsole {
             shutdownAndExit("console")
         }
 

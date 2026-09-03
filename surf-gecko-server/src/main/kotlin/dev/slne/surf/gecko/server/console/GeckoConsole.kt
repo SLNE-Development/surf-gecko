@@ -3,7 +3,7 @@ package dev.slne.surf.gecko.server.console
 import net.minecrell.terminalconsole.SimpleTerminalConsole
 import net.minestom.server.MinecraftServer
 
-class LobbyTerminalConsole(
+class GeckoConsole(
     private val shutdownHandler: () -> Unit
 ) : SimpleTerminalConsole() {
     override fun isRunning(): Boolean {
