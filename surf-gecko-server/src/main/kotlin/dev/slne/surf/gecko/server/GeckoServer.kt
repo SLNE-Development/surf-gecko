@@ -1,7 +1,6 @@
 package dev.slne.surf.gecko.server
 
 import dev.slne.surf.gecko.server.command.ServerGeckoCommandRegistrar
-import dev.slne.surf.gecko.server.command.stopCommand
 import dev.slne.surf.gecko.server.config.Config
 import dev.slne.surf.gecko.server.console.GeckoConsole
 import dev.slne.surf.gecko.server.gecko.GeckoInstance

@@ -6,5 +6,8 @@ enum class GeckoGameEndReason {
     SEEKER_WIN,
     HIDER_WIN,
     NO_PLAYERS,
-    UNSET
+    UNSET,
+    SHUTDOWN;
+
+    fun canMovePlayers() = this !in listOf(SHUTDOWN)
 }

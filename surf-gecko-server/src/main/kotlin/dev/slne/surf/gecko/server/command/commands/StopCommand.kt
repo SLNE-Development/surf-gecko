@@ -1,4 +1,4 @@
-package dev.slne.surf.gecko.server.command
+package dev.slne.surf.gecko.server.command.commands
 
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.gecko.command.commandapi.dsl.anyExecutor

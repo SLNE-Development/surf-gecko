@@ -22,9 +22,13 @@ object GeckoGameManager {
         }
     }
 
-    fun shutdown() {
+    suspend fun shutdown() {
         if (::gameJob.isInitialized && gameJob.isActive) {
             gameJob.cancel()
+        }
+
+        for (game in games) {
+            endGame(game, GeckoGameEndReason.SHUTDOWN)
         }
     }
 
@@ -47,6 +51,14 @@ object GeckoGameManager {
 
 
     suspend fun endGame(game: GeckoGame, reason: GeckoGameEndReason) = withContext(Dispatchers.IO) {
+        if (reason.canMovePlayers()) {
+            val players = game.players
+
+            players.forEach {
+                // TODO: Move to another lobby
+            }
+        }
+
         games.remove(game)
         GeckoGameRepository.updateGameEndReason(game, reason)
     }
