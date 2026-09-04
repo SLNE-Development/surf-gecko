@@ -2,7 +2,9 @@ package dev.slne.surf.gecko.server.gecko.death
 
 import com.google.inject.Singleton
 import dev.slne.minestom.lobby.api.event.EventRegistrar
+import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
+import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import net.minestom.server.entity.Player
 import net.minestom.server.event.Event
 import net.minestom.server.event.EventNode
@@ -34,6 +36,24 @@ class GeckoDeathListener : EventRegistrar {
 
         if (event.damage.amount < player.health) {
             return
+        }
+
+        attackingGamePlayer?.player?.sendActionBar(buildText {
+            spacer("Du hast ")
+            variableValue(gamePlayer.player.username)
+            spacer(" getötet")
+        })
+
+        game.sendText {
+            appendInfoPrefix()
+            text(gamePlayer.player.username, gamePlayer.role.color)
+
+            if(attackingGamePlayer != null) {
+                spacer(" wurde von ")
+                text(attackingGamePlayer.player.username, attackingGamePlayer.role.color)
+            } else {
+                spacer(" ist gestorben")
+            }
         }
 
         event.isCancelled = true

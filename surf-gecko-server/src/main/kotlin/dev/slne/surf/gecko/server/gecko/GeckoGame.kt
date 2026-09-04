@@ -1,6 +1,7 @@
 package dev.slne.surf.gecko.server.gecko
 
 import dev.slne.surf.api.core.messages.adventure.*
+import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
@@ -12,6 +13,7 @@ import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
 import kotlinx.coroutines.*
 import net.minestom.server.MinecraftServer
+import net.minestom.server.entity.Player
 import net.minestom.server.instance.Instance
 import java.util.*
 import kotlin.time.Duration.Companion.seconds
@@ -111,7 +113,7 @@ class GeckoGame(
 
         gamePlayer.player.sendText {
             appendInfoPrefix()
-            info("Du wurdest ausgeschaltet und respawnst in ")
+            info("Du wurdest getötet und respawnst in ")
             variableValue(settings.seekerRespawnTimeSeconds)
             info(" Sekunden als ")
             append(GeckoGameRole.SEEKER.displayText)
@@ -252,6 +254,11 @@ class GeckoGame(
                 it.player.teleport(settings.map.mapLocations.spawn)
             }
 
+            sendText {
+                appendInfoPrefix()
+                spacer("Die Suche beginnt.")
+            }
+
             gamePlayers.forEach {
                 it.player.playSound(true) {
                     type(key("item.goat_horn.sound.1"))
@@ -288,4 +295,16 @@ class GeckoGame(
             else -> 60
         }
     }
+
+    fun forEachGamePlayer(action: (player: GeckoGamePlayer) -> Unit) {
+        gamePlayers.forEach(action)
+    }
+
+    fun forEachPlayer(action: (player: Player) -> Unit) {
+        gamePlayers.forEach { player ->
+            player.playerOrNull?.let(action)
+        }
+    }
+
+    fun sendText(builder: SurfComponentBuilder.() -> Unit) = forEachPlayer { it.sendText(builder) }
 }
