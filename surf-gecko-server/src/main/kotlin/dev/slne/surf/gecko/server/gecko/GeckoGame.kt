@@ -35,7 +35,7 @@ class GeckoGame(
     val gamePlayers = mutableSetOf<GeckoGamePlayer>()
 
     val countdownBossBar2 = buildText {
-        primary("Warte auf weitere Spieler..")
+        primary("Warte auf weitere Spieler.. ")
     }
 
     val countdownBossBar3 = buildText {
@@ -47,6 +47,8 @@ class GeckoGame(
             append(countdownBossBar3)
         }
     }
+
+    private val placeholderBossBar = bossBar {}
 
     fun countDownBossBar(seconds: Int) = buildText {
         primary("Spiel startet in ")
@@ -138,6 +140,7 @@ class GeckoGame(
 
         bossBar.name(text)
         players.filterNotNull().forEach { player ->
+            player.showBossBar(placeholderBossBar)
             player.showBossBar(bossBar)
         }
     }

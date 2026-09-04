@@ -32,11 +32,10 @@ object GeckoGameTablistManager {
                 note("CASTCRAFTER.DE")
                 appendNewline()
                 info("Hide 'n Seek")
-                spacer(" >> ")
+                spacer(" » ")
                 info(currentState(it))
                 appendNewline()
             }, buildText {
-                appendNewline()
                 appendNewline()
                 primary("castcrafter.de".toSmallCaps())
                 appendNewline()
