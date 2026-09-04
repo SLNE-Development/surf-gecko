@@ -1,10 +1,6 @@
 package dev.slne.surf.gecko.server.gecko
 
-import dev.slne.surf.api.core.messages.adventure.bossBar
-import dev.slne.surf.api.core.messages.adventure.buildText
-import dev.slne.surf.api.core.messages.adventure.key
-import dev.slne.surf.api.core.messages.adventure.playSound
-import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.api.core.messages.adventure.*
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
@@ -121,6 +117,9 @@ class GeckoGame(
             append(GeckoGameRole.SEEKER.displayText)
             info(".")
         }
+
+        gamePlayer.applyGameMode()
+        gamePlayer.applyEquipment()
     }
 
     private fun tickRespawns() {

@@ -86,8 +86,6 @@ data class GeckoGamePlayer(
     }
 
     fun respawnAsSeeker(map: GeckoMap) {
-        applyGameMode()
-        applyEquipment()
         player.isInvulnerable = false
         player.heal()
         player.teleport(map.mapLocations.spawn)
