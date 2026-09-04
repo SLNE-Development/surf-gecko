@@ -8,7 +8,9 @@ import net.minestom.server.entity.EquipmentSlot
 import net.minestom.server.entity.GameMode
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
-import net.minestom.server.item.MaterialKeys
+import net.minestom.server.item.component.EnchantmentList
+import net.minestom.server.item.component.TooltipDisplay
+import net.minestom.server.item.enchant.Enchantment
 import java.util.*
 
 data class GeckoGamePlayer(
@@ -25,16 +27,19 @@ data class GeckoGamePlayer(
                 player.inventory.clear()
                 player.inventory.setEquipment(EquipmentSlot.HELMET, player.heldSlot, SEEKER_HELMET)
                 player.inventory.setEquipment(
-                    EquipmentSlot.HELMET,
+                    EquipmentSlot.CHESTPLATE,
                     player.heldSlot,
                     SEEKER_CHESTPLATE
                 )
                 player.inventory.setEquipment(
-                    EquipmentSlot.HELMET,
+                    EquipmentSlot.LEGGINGS,
                     player.heldSlot,
                     SEEKER_LEGGINGS
                 )
-                player.inventory.setEquipment(EquipmentSlot.HELMET, player.heldSlot, SEEKER_BOOTS)
+                player.inventory.setEquipment(EquipmentSlot.BOOTS, player.heldSlot, SEEKER_BOOTS)
+                player.inventory.setItemStack(0, SEEKER_SWORD)
+                player.inventory.setItemStack(1, SEEKER_BOW)
+                player.inventory.setItemStack(17, ItemStack.of(Material.ARROW))
             }
         }
 
@@ -68,24 +73,55 @@ data class GeckoGamePlayer(
     }
 
     companion object {
+        private val SEEKER_COLOR = TextColor.color(194, 58, 58)
         private val SEEKER_HELMET =
-            ItemStack.of(Material.fromKey(MaterialKeys.LEATHER_HELMET.key())).builder().set(
-                DataComponents.DYED_COLOR, TextColor.color(194, 58, 58)
-            ).build()
+            ItemStack.of(Material.LEATHER_HELMET).builder()
+                .set(DataComponents.DYED_COLOR, SEEKER_COLOR)
+                .set(
+                    DataComponents.TOOLTIP_DISPLAY,
+                    TooltipDisplay(true, setOf(DataComponents.ENCHANTMENTS))
+                )
+                .build()
 
         private val SEEKER_CHESTPLATE =
-            ItemStack.of(Material.fromKey(MaterialKeys.LEATHER_CHESTPLATE.key())).builder().set(
-                DataComponents.DYED_COLOR, TextColor.color(194, 58, 58)
-            ).build()
+            ItemStack.of(Material.LEATHER_CHESTPLATE).builder()
+                .set(DataComponents.DYED_COLOR, SEEKER_COLOR)
+                .set(
+                    DataComponents.TOOLTIP_DISPLAY,
+                    TooltipDisplay(true, setOf(DataComponents.ENCHANTMENTS))
+                )
+                .build()
 
         private val SEEKER_LEGGINGS =
-            ItemStack.of(Material.fromKey(MaterialKeys.LEATHER_LEGGINGS.key())).builder().set(
-                DataComponents.DYED_COLOR, TextColor.color(194, 58, 58)
-            ).build()
+            ItemStack.of(Material.LEATHER_LEGGINGS).builder()
+                .set(DataComponents.DYED_COLOR, SEEKER_COLOR)
+                .set(
+                    DataComponents.TOOLTIP_DISPLAY,
+                    TooltipDisplay(true, setOf(DataComponents.ENCHANTMENTS))
+                )
+                .build()
 
         private val SEEKER_BOOTS =
-            ItemStack.of(Material.fromKey(MaterialKeys.LEATHER_BOOTS.key())).builder().set(
-                DataComponents.DYED_COLOR, TextColor.color(194, 58, 58)
-            ).build()
+            ItemStack.of(Material.LEATHER_BOOTS).builder()
+                .set(DataComponents.DYED_COLOR, SEEKER_COLOR)
+                .set(
+                    DataComponents.TOOLTIP_DISPLAY,
+                    TooltipDisplay(true, setOf(DataComponents.ENCHANTMENTS))
+                )
+                .build()
+
+        private val SEEKER_SWORD = ItemStack.of(Material.WOODEN_SWORD).builder()
+            .set(
+                DataComponents.TOOLTIP_DISPLAY,
+                TooltipDisplay(true, setOf(DataComponents.ENCHANTMENTS))
+            )
+            .build()
+        private val SEEKER_BOW = ItemStack.of(Material.BOW).builder()
+            .set(DataComponents.ENCHANTMENTS, EnchantmentList(mapOf(Enchantment.INFINITY to 1)))
+            .set(
+                DataComponents.TOOLTIP_DISPLAY,
+                TooltipDisplay(true, setOf(DataComponents.ENCHANTMENTS))
+            )
+            .build()
     }
 }

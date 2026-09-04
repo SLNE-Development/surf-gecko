@@ -80,25 +80,31 @@ class GeckoGame(
             return
         }
 
-        if (countdownSeconds == null) {
-            countdownSeconds = calculated
-            updateCountdownBossBar()
-            return
+        countdownSeconds = when {
+            countdownSeconds == null -> calculated
+            countdownSeconds!! <= calculated -> countdownSeconds!! - 1
+            else -> calculated
         }
 
-        countdownSeconds = calculated
         updateCountdownBossBar()
     }
 
     private suspend fun tryStart() {
         val countdown = countdownSeconds ?: return
 
-        if (countdown <= 0) {
+        if (countdown <= 0 && state == GeckoGameState.LOBBY) {
             phaseGame()
         }
     }
 
     suspend fun phaseGame() {
+        if(lobbyCountdownJob != null) {
+            lobbyCountdownJob?.cancel()
+            lobbyCountdownJob = null
+        }
+
+        state = GeckoGameState.GAME
+
         val roles = GeckoPlayerRoleSelector.selectRoles(
             lobbyPlayers.map { it.playerUuid }.toSet(),
             settings
@@ -118,8 +124,6 @@ class GeckoGame(
                 }
             }.awaitAll()
         }
-
-        state = GeckoGameState.GAME
     }
 
     private var waitingBossBarIndex = 0
