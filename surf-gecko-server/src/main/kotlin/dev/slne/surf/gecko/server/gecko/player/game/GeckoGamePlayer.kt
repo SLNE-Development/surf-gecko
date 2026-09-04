@@ -17,9 +17,15 @@ data class GeckoGamePlayer(
     val playerUuid: UUID,
     var role: GeckoGameRole,
 ) {
-    val player
+    var respawnSecondsLeft: Int? = null
+
+    val playerOrNull
         get() = MinecraftServer.getConnectionManager().getOnlinePlayerByUuid(playerUuid)
-            ?: error("Player $playerUuid not found")
+
+    val player
+        get() = playerOrNull ?: error("Player $playerUuid not found")
+
+    val awaitingRespawn get() = respawnSecondsLeft != null
 
     fun applyEquipment() = when (role) {
         GeckoGameRole.SEEKER -> {
@@ -64,6 +70,27 @@ data class GeckoGamePlayer(
         GeckoGameRole.SPECTATOR -> {
             player.gameMode = GameMode.SPECTATOR
         }
+    }
+
+    fun moveToSeekerLobby(map: GeckoMap) {
+        player.gameMode = GameMode.ADVENTURE
+        player.isInvulnerable = true
+        player.inventory.clear()
+        player.heal()
+        player.teleport(map.mapLocations.seekerSpawn)
+    }
+
+    fun clearRespawnState() {
+        respawnSecondsLeft = null
+        playerOrNull?.isInvulnerable = false
+    }
+
+    fun respawnAsSeeker(map: GeckoMap) {
+        applyGameMode()
+        applyEquipment()
+        player.isInvulnerable = false
+        player.heal()
+        player.teleport(map.mapLocations.spawn)
     }
 
     fun teleportToSpawn(map: GeckoMap) = when (role) {

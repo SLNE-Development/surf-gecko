@@ -4,6 +4,7 @@ import dev.slne.surf.api.core.messages.adventure.bossBar
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.key
 import dev.slne.surf.api.core.messages.adventure.playSound
+import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
@@ -16,6 +17,7 @@ import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
 import kotlinx.coroutines.*
 import net.minestom.server.MinecraftServer
 import net.minestom.server.instance.Instance
+import java.util.*
 import kotlin.time.Duration.Companion.seconds
 
 class GeckoGame(
@@ -69,6 +71,84 @@ class GeckoGame(
         } + gamePlayers.map {
             MinecraftServer.getConnectionManager().getOnlinePlayerByUuid(it.playerUuid)
         }
+
+    fun findGamePlayer(playerUuid: UUID) = gamePlayers.firstOrNull { it.playerUuid == playerUuid }
+
+    fun isTeamDamage(attacker: GeckoGamePlayer, victim: GeckoGamePlayer) =
+        attacker.role == victim.role
+
+    fun handleDeath(gamePlayer: GeckoGamePlayer) {
+        if (!state.isGame() || gamePlayer.awaitingRespawn) {
+            return
+        }
+
+        when (gamePlayer.role) {
+            GeckoGameRole.SEEKER -> startSeekerRespawn(gamePlayer)
+            GeckoGameRole.HIDER -> handleHiderDeath(gamePlayer)
+            GeckoGameRole.SPECTATOR -> Unit
+        }
+    }
+
+    private fun handleHiderDeath(gamePlayer: GeckoGamePlayer) {
+        if (settings.respawnHidersAsSeekers) {
+            gamePlayer.role = GeckoGameRole.SEEKER
+            startSeekerRespawn(gamePlayer)
+            return
+        }
+
+        gamePlayer.role = GeckoGameRole.SPECTATOR
+        gamePlayer.applyGameMode()
+        gamePlayer.applyEquipment()
+        gamePlayer.teleportToSpawn(settings.map)
+
+        gamePlayer.player.sendText {
+            appendInfoPrefix()
+            info("Du wurdest gefunden und bist nun ")
+            append(GeckoGameRole.SPECTATOR.displayText)
+            info(".")
+        }
+    }
+
+    private fun startSeekerRespawn(gamePlayer: GeckoGamePlayer) {
+        gamePlayer.respawnSecondsLeft = settings.seekerRespawnTimeSeconds
+        gamePlayer.moveToSeekerLobby(settings.map)
+
+        gamePlayer.player.sendText {
+            appendInfoPrefix()
+            info("Du wurdest ausgeschaltet und respawnst in ")
+            variableValue(settings.seekerRespawnTimeSeconds)
+            info(" Sekunden als ")
+            append(GeckoGameRole.SEEKER.displayText)
+            info(".")
+        }
+    }
+
+    private fun tickRespawns() {
+        gamePlayers.filter { it.awaitingRespawn }.forEach { gamePlayer ->
+            val player = gamePlayer.playerOrNull ?: return@forEach
+            val secondsLeft = (gamePlayer.respawnSecondsLeft ?: return@forEach) - 1
+
+            if (secondsLeft > 0) {
+                gamePlayer.respawnSecondsLeft = secondsLeft
+
+                player.sendActionBar(buildText {
+                    info("Respawn in ")
+                    variableValue(secondsLeft)
+                    info(" Sekunden")
+                })
+
+                return@forEach
+            }
+
+            gamePlayer.respawnSecondsLeft = null
+            gamePlayer.respawnAsSeeker(settings.map)
+
+            player.sendText {
+                appendSuccessPrefix()
+                success("Du bist wieder im Spiel.")
+            }
+        }
+    }
 
     private fun updateCountdown() {
         if (state != GeckoGameState.LOBBY) {
@@ -163,6 +243,8 @@ class GeckoGame(
         val currentTimer = gameTimerSeconds ?: return
 
         gameTimerSeconds = currentTimer - 1
+
+        tickRespawns()
 
         if (state == GeckoGameState.HIDING && currentTimer <= (settings.roundTimeSeconds - 45)) {
             state = GeckoGameState.SEARCHING

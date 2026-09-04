@@ -79,6 +79,8 @@ object GeckoGameManager {
     }
 
     suspend fun endGame(game: GeckoGame, reason: GeckoGameEndReason) = withContext(Dispatchers.IO) {
+        game.gamePlayers.forEach { it.clearRespawnState() }
+
         if (reason.canMovePlayers()) {
             val players = game.players
 

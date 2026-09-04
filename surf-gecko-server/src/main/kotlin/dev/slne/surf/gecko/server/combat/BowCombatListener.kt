@@ -18,6 +18,7 @@ import net.minestom.server.entity.damage.DamageType
 import net.minestom.server.entity.metadata.projectile.AbstractArrowMeta
 import net.minestom.server.event.Event
 import net.minestom.server.event.EventNode
+import net.minestom.server.event.entity.projectile.ProjectileCollideWithBlockEvent
 import net.minestom.server.event.entity.projectile.ProjectileCollideWithEntityEvent
 import net.minestom.server.event.item.PlayerCancelItemUseEvent
 import net.minestom.server.item.ItemStack
@@ -36,6 +37,7 @@ class BowCombatListener : EventRegistrar {
     override fun register(node: EventNode<Event>) {
         node.addListener(PlayerCancelItemUseEvent::class.java, ::handleBowRelease)
         node.addListener(ProjectileCollideWithEntityEvent::class.java, ::handleArrowHit)
+        node.addListener(ProjectileCollideWithBlockEvent::class.java, ::handleArrowLanding)
     }
 
     private fun handleBowRelease(event: PlayerCancelItemUseEvent) {
@@ -111,6 +113,16 @@ class BowCombatListener : EventRegistrar {
                 type(key("entity.arrow.hit_player"))
                 source(Sound.Source.PLAYER)
             }
+        }
+
+        arrow.remove()
+    }
+
+    private fun handleArrowLanding(event: ProjectileCollideWithBlockEvent) {
+        val arrow = event.entity as? EntityProjectile ?: return
+
+        if (arrow.entityType != EntityType.ARROW) {
+            return
         }
 
         arrow.remove()
