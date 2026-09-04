@@ -18,9 +18,7 @@ class GeckoGame(
     val gamePlayers = mutableSetOf<GeckoGamePlayer>()
 
     val playerCount get() = lobbyPlayers.size + gamePlayers.size
-
     val freeSlots get() = settings.maxPlayers - playerCount
-
     val joinable get() = state.acceptsPlayers() && freeSlots > 0
 
     val players

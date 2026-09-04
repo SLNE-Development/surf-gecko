@@ -42,8 +42,13 @@ object GeckoGameManager {
     }
 
     private suspend fun testFor() {
-        if (!requiresGame()) return
-        if (!starting.compareAndSet(false, true)) return
+        if (!requiresGame()) {
+            return
+        }
+
+        if (!starting.compareAndSet(false, true)) {
+            return
+        }
 
         try {
             geckoLogger.info("Starting new game (${getGames().size + 1}/${MAX_GAMES})...")

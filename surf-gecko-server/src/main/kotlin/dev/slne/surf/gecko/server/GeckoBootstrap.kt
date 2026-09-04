@@ -23,9 +23,10 @@ import kotlin.io.path.createDirectories
 val bootstrapLogger: ComponentLogger = ComponentLogger.logger("GeckoBootstrap")
 
 object GeckoBootstrap {
-
     private val CONFIG_PATH = Path("config.yml")
     private val PLUGINS_PATH = Path("plugins")
+
+    lateinit var injector: Injector
 
     fun boot() {
         val startupStartedAt = System.nanoTime()
@@ -41,6 +42,7 @@ object GeckoBootstrap {
 
         val pluginCatalog = discoverPlugins()
         val injector = createInjector(config, minecraftServer, pluginCatalog)
+        GeckoBootstrap.injector = injector
 
         runBlocking {
             injector.getInstance(GeckoServer::class.java).start(startupStartedAt)

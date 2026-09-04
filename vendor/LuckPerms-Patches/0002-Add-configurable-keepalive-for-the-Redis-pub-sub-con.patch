@@ -1,0 +1,270 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: TheBjoRedCraft <thebjoredcraft@gmail.com>
+Date: Fri, 4 Sep 2026 16:26:11 +0200
+Subject: [PATCH] Add configurable keepalive for the Redis pub/sub connection
+
+The Redis messaging subscriber is idle at the application level while
+blocked in the pub/sub subscribe call, so stateful firewalls and NAT
+gateways close the connection after their idle timeout. Since pub/sub
+has no replay, any updates published while the subscriber is gone are
+silently lost.
+
+Periodically send a PING on the pub/sub connection itself using
+JedisPubSub#ping, controlled by a new redis.keepalive-interval option
+(milliseconds, 0 to disable).
+
+Upstream PR: https://github.com/LuckPerms/LuckPerms/pull/4305
+
+diff --git a/bukkit/src/main/resources/config.yml b/bukkit/src/main/resources/config.yml
+index 30a8bc60b880dad2ec8dd6b06f0338d173ce406d..d2b7cdb50339f5795967c19ffd681c57fa7924f4 100644
+--- a/bukkit/src/main/resources/config.yml
++++ b/bukkit/src/main/resources/config.yml
+@@ -268,6 +268,9 @@ redis:
+   address: localhost
+   username: ''
+   password: ''
++  # How often (in milliseconds) a ping should be sent on the pub/sub connection to keep it alive.
++  # This prevents idle connections from being closed by firewalls or proxies. Set to 0 to disable.
++  keepalive-interval: 60000
+   # Settings for Redis Sentinel.
+   # Sentinel provides high availability for Redis by monitoring master/replica instances.
+   # Port 26379 is used by default for sentinel nodes.
+diff --git a/bungee/src/main/resources/config.yml b/bungee/src/main/resources/config.yml
+index 9b6a395ff15f33a8d390df347a2c9233966c33e0..a4db0c8893644910301e8efb46fa1a3200d84b3a 100644
+--- a/bungee/src/main/resources/config.yml
++++ b/bungee/src/main/resources/config.yml
+@@ -266,6 +266,9 @@ redis:
+   address: localhost
+   username: ''
+   password: ''
++  # How often (in milliseconds) a ping should be sent on the pub/sub connection to keep it alive.
++  # This prevents idle connections from being closed by firewalls or proxies. Set to 0 to disable.
++  keepalive-interval: 60000
+   # Settings for Redis Sentinel.
+   # Sentinel provides high availability for Redis by monitoring master/replica instances.
+   # Port 26379 is used by default for sentinel nodes.
+diff --git a/common/src/main/java/me/lucko/luckperms/common/config/ConfigKeys.java b/common/src/main/java/me/lucko/luckperms/common/config/ConfigKeys.java
+index c7d1d9b77336bffdf3aba02fa75ca193b0dfb119..22c49b5ec58c4f92f22752d003e18f5f4920526d 100644
+--- a/common/src/main/java/me/lucko/luckperms/common/config/ConfigKeys.java
++++ b/common/src/main/java/me/lucko/luckperms/common/config/ConfigKeys.java
+@@ -705,6 +705,11 @@ public final class ConfigKeys {
+      */
+     public static final ConfigKey<Boolean> REDIS_SSL = notReloadable(booleanKey("redis.ssl", false));
+ 
++    /**
++     * How often, in milliseconds, a ping should be sent on the redis pub/sub connection to keep it alive
++     */
++    public static final ConfigKey<Integer> REDIS_KEEPALIVE_INTERVAL = notReloadable(key(c -> c.getInteger("redis.keepalive-interval", 60000)));
++
+     /**
+      * If redis sentinel is enabled
+      */
+diff --git a/common/src/main/java/me/lucko/luckperms/common/messaging/MessagingFactory.java b/common/src/main/java/me/lucko/luckperms/common/messaging/MessagingFactory.java
+index e9ec391a259808e7a24ee643f37fb52153964e59..5655133d967cf10e91aaecf6965939189c31c93e 100644
+--- a/common/src/main/java/me/lucko/luckperms/common/messaging/MessagingFactory.java
++++ b/common/src/main/java/me/lucko/luckperms/common/messaging/MessagingFactory.java
+@@ -196,9 +196,10 @@ public class MessagingFactory<P extends LuckPermsPlugin> {
+ 
+         @Override
+         public @NonNull Messenger obtain(@NonNull IncomingMessageConsumer incomingMessageConsumer) {
+-            RedisMessenger redis = new RedisMessenger(getPlugin(), incomingMessageConsumer);
+-
+             LuckPermsConfiguration config = getPlugin().getConfiguration();
++
++            RedisMessenger redis = new RedisMessenger(getPlugin(), incomingMessageConsumer, config.get(ConfigKeys.REDIS_KEEPALIVE_INTERVAL));
++
+             String address = config.get(ConfigKeys.REDIS_ADDRESS);
+             List<String> addresses = config.get(ConfigKeys.REDIS_ADDRESSES);
+             String username = config.get(ConfigKeys.REDIS_USERNAME);
+diff --git a/common/src/main/java/me/lucko/luckperms/common/messaging/redis/RedisMessenger.java b/common/src/main/java/me/lucko/luckperms/common/messaging/redis/RedisMessenger.java
+index e10d705c22d1fdc3a0e35998dcb1336938a7c438..b186f1082a11d9c1bf335cb2e240f78da0fe1a33 100644
+--- a/common/src/main/java/me/lucko/luckperms/common/messaging/redis/RedisMessenger.java
++++ b/common/src/main/java/me/lucko/luckperms/common/messaging/redis/RedisMessenger.java
+@@ -26,6 +26,7 @@
+ package me.lucko.luckperms.common.messaging.redis;
+ 
+ import me.lucko.luckperms.common.plugin.LuckPermsPlugin;
++import me.lucko.luckperms.common.plugin.scheduler.SchedulerTask;
+ import net.luckperms.api.messenger.IncomingMessageConsumer;
+ import net.luckperms.api.messenger.Messenger;
+ import net.luckperms.api.messenger.message.OutgoingMessage;
+@@ -42,6 +43,7 @@ import redis.clients.jedis.UnifiedJedis;
+ 
+ import java.util.List;
+ import java.util.Set;
++import java.util.concurrent.TimeUnit;
+ import java.util.stream.Collectors;
+ 
+ /**
+@@ -53,14 +55,17 @@ public class RedisMessenger implements Messenger {
+ 
+     private final LuckPermsPlugin plugin;
+     private final IncomingMessageConsumer consumer;
++    private final long keepaliveInterval;
+ 
+     private /* final */ UnifiedJedis jedis;
+     private /* final */ Subscription sub;
++    private SchedulerTask keepaliveTask;
+     private boolean closing = false;
+ 
+-    public RedisMessenger(LuckPermsPlugin plugin, IncomingMessageConsumer consumer) {
++    public RedisMessenger(LuckPermsPlugin plugin, IncomingMessageConsumer consumer, long keepaliveInterval) {
+         this.plugin = plugin;
+         this.consumer = consumer;
++        this.keepaliveInterval = keepaliveInterval;
+     }
+ 
+     public void init(List<String> addresses, String username, String password, boolean ssl) {
+@@ -83,6 +88,10 @@ public class RedisMessenger implements Messenger {
+         this.jedis = jedis;
+         this.sub = new Subscription(this);
+         this.plugin.getBootstrap().getScheduler().executeAsync(this.sub);
++
++        if (this.keepaliveInterval > 0) {
++            this.keepaliveTask = this.plugin.getBootstrap().getScheduler().asyncRepeating(this.sub::sendKeepalive, this.keepaliveInterval, TimeUnit.MILLISECONDS);
++        }
+     }
+ 
+     private static JedisClientConfig jedisConfig(String username, String password, boolean ssl) {
+@@ -115,6 +124,10 @@ public class RedisMessenger implements Messenger {
+     @Override
+     public void close() {
+         this.closing = true;
++        if (this.keepaliveTask != null) {
++            this.keepaliveTask.cancel();
++            this.keepaliveTask = null;
++        }
+         this.sub.unsubscribe();
+         this.jedis.close();
+     }
+@@ -168,6 +181,18 @@ public class RedisMessenger implements Messenger {
+             this.messenger.consumer.consumeIncomingMessageAsString(msg);
+         }
+ 
++        private void sendKeepalive() {
++            if (this.messenger.closing || !isSubscribed()) {
++                return;
++            }
++
++            try {
++                ping();
++            } catch (Exception e) {
++                this.messenger.plugin.getLogger().warn("Error whilst pinging the redis pubsub connection", e);
++            }
++        }
++
+         private boolean isRedisAlive() {
+             UnifiedJedis jedis = this.messenger.jedis;
+ 
+diff --git a/fabric/src/main/resources/luckperms.conf b/fabric/src/main/resources/luckperms.conf
+index 65b27572f21cae770a697abd6ac72654fc473111..978645fc701e5bbbf543aa8e9b401119acb27d09 100644
+--- a/fabric/src/main/resources/luckperms.conf
++++ b/fabric/src/main/resources/luckperms.conf
+@@ -271,6 +271,9 @@ redis {
+   address = "localhost"
+   username = ""
+   password = ""
++  # How often (in milliseconds) a ping should be sent on the pub/sub connection to keep it alive.
++  # This prevents idle connections from being closed by firewalls or proxies. Set to 0 to disable.
++  keepalive-interval = 60000
+   # Settings for Redis Sentinel.
+   # Sentinel provides high availability for Redis by monitoring master/replica instances.
+   # Port 26379 is used by default for sentinel nodes.
+diff --git a/forge/src/main/resources/luckperms.conf b/forge/src/main/resources/luckperms.conf
+index 9a5550225a00e93cdb12ea62a56943b25d5e262a..cdd6aa2d6030a78b28b81149f6ade03f9e60bcbb 100644
+--- a/forge/src/main/resources/luckperms.conf
++++ b/forge/src/main/resources/luckperms.conf
+@@ -269,6 +269,9 @@ redis {
+   address = "localhost"
+   username = ""
+   password = ""
++  # How often (in milliseconds) a ping should be sent on the pub/sub connection to keep it alive.
++  # This prevents idle connections from being closed by firewalls or proxies. Set to 0 to disable.
++  keepalive-interval = 60000
+   # Settings for Redis Sentinel.
+   # Sentinel provides high availability for Redis by monitoring master/replica instances.
+   # Port 26379 is used by default for sentinel nodes.
+diff --git a/hytale/src/main/resources/config.yml b/hytale/src/main/resources/config.yml
+index 8fdd7821804cbaa8acd3696d847b35013ca888c4..e4398d6b4644903cf860ab498eb7772d2ea33974 100644
+--- a/hytale/src/main/resources/config.yml
++++ b/hytale/src/main/resources/config.yml
+@@ -268,6 +268,9 @@ redis:
+   address: localhost
+   username: ''
+   password: ''
++  # How often (in milliseconds) a ping should be sent on the pub/sub connection to keep it alive.
++  # This prevents idle connections from being closed by firewalls or proxies. Set to 0 to disable.
++  keepalive-interval: 60000
+ 
+ # Settings for Nats.
+ # Port 4222 is used by default; set address to "host:port" if differs
+diff --git a/neoforge/src/main/resources/luckperms.conf b/neoforge/src/main/resources/luckperms.conf
+index 9a5550225a00e93cdb12ea62a56943b25d5e262a..cdd6aa2d6030a78b28b81149f6ade03f9e60bcbb 100644
+--- a/neoforge/src/main/resources/luckperms.conf
++++ b/neoforge/src/main/resources/luckperms.conf
+@@ -269,6 +269,9 @@ redis {
+   address = "localhost"
+   username = ""
+   password = ""
++  # How often (in milliseconds) a ping should be sent on the pub/sub connection to keep it alive.
++  # This prevents idle connections from being closed by firewalls or proxies. Set to 0 to disable.
++  keepalive-interval = 60000
+   # Settings for Redis Sentinel.
+   # Sentinel provides high availability for Redis by monitoring master/replica instances.
+   # Port 26379 is used by default for sentinel nodes.
+diff --git a/nukkit/src/main/resources/config.yml b/nukkit/src/main/resources/config.yml
+index 434c781a1a8a37d2ab822054b239fe3c7dcb5ccd..49a03aff1d1dbf73f9e2cfd5b406f0f0a4d476d1 100644
+--- a/nukkit/src/main/resources/config.yml
++++ b/nukkit/src/main/resources/config.yml
+@@ -263,6 +263,9 @@ redis:
+   address: localhost
+   username: ''
+   password: ''
++  # How often (in milliseconds) a ping should be sent on the pub/sub connection to keep it alive.
++  # This prevents idle connections from being closed by firewalls or proxies. Set to 0 to disable.
++  keepalive-interval: 60000
+   # Settings for Redis Sentinel.
+   # Sentinel provides high availability for Redis by monitoring master/replica instances.
+   # Port 26379 is used by default for sentinel nodes.
+diff --git a/sponge/src/main/resources/luckperms.conf b/sponge/src/main/resources/luckperms.conf
+index fd109dc30bb81e68975aa1539b382c59b4b34b0f..461e7a4d59b4e6af2eb3520275479f150ed75462 100644
+--- a/sponge/src/main/resources/luckperms.conf
++++ b/sponge/src/main/resources/luckperms.conf
+@@ -271,6 +271,9 @@ redis {
+   address = "localhost"
+   username = ""
+   password = ""
++  # How often (in milliseconds) a ping should be sent on the pub/sub connection to keep it alive.
++  # This prevents idle connections from being closed by firewalls or proxies. Set to 0 to disable.
++  keepalive-interval = 60000
+   # Settings for Redis Sentinel.
+   # Sentinel provides high availability for Redis by monitoring master/replica instances.
+   # Port 26379 is used by default for sentinel nodes.
+diff --git a/standalone/src/main/resources/config.yml b/standalone/src/main/resources/config.yml
+index 2d8aa32d50fec4f468f39329291e23dcfd499f26..7ed7f63623df3bc3c7f9e83e49d83ec9e56319ec 100644
+--- a/standalone/src/main/resources/config.yml
++++ b/standalone/src/main/resources/config.yml
+@@ -253,6 +253,9 @@ redis:
+   address: localhost
+   username: ''
+   password: ''
++  # How often (in milliseconds) a ping should be sent on the pub/sub connection to keep it alive.
++  # This prevents idle connections from being closed by firewalls or proxies. Set to 0 to disable.
++  keepalive-interval: 60000
+   # Settings for Redis Sentinel.
+   # Sentinel provides high availability for Redis by monitoring master/replica instances.
+   # Port 26379 is used by default for sentinel nodes.
+diff --git a/velocity/src/main/resources/config.yml b/velocity/src/main/resources/config.yml
+index 8fba524ef467d0e07a0449bc0c93bc875a4f8bf0..2f837c9850289468b80427bbe727f2b4cec6f6e9 100644
+--- a/velocity/src/main/resources/config.yml
++++ b/velocity/src/main/resources/config.yml
+@@ -257,6 +257,9 @@ redis:
+   address: localhost
+   username: ''
+   password: ''
++  # How often (in milliseconds) a ping should be sent on the pub/sub connection to keep it alive.
++  # This prevents idle connections from being closed by firewalls or proxies. Set to 0 to disable.
++  keepalive-interval: 60000
+   # Settings for Redis Sentinel.
+   # Sentinel provides high availability for Redis by monitoring master/replica instances.
+   # Port 26379 is used by default for sentinel nodes.

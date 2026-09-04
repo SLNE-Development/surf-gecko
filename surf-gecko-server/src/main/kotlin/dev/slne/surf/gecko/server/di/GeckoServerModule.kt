@@ -13,6 +13,7 @@ import dev.slne.surf.gecko.server.chat.GeckoChatService
 import dev.slne.surf.gecko.server.command.GeckoCommandApiService
 import dev.slne.surf.gecko.server.config.Config
 import dev.slne.surf.gecko.server.gecko.GeckoGameJoinService
+import dev.slne.surf.gecko.server.gecko.player.listener.GeckoPlayerListener
 import dev.slne.surf.gecko.server.player.PlayerConnectionService
 import dev.slne.surf.gecko.server.player.PlayerLimitService
 import dev.slne.surf.gecko.server.plugin.PluginCatalog
@@ -45,6 +46,7 @@ class GeckoServerModule(
         binder().bindEventRegistrar<GeckoCommandApiService>()
         binder().bindEventRegistrar<GeckoChatService>()
         binder().bindEventRegistrar<GeckoGameJoinService>()
+        binder().bindEventRegistrar<GeckoPlayerListener>()
 
         binder().setBinder<EventRegistrar>()
         binder().setBinder<CommandRegistrar>()
