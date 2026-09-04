@@ -1,6 +1,7 @@
 package dev.slne.surf.gecko.server.gecko
 
 import dev.slne.surf.api.core.messages.adventure.bossBar
+import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
@@ -13,9 +14,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.future.await
 import net.minestom.server.MinecraftServer
-import net.minestom.server.entity.Player
 import net.minestom.server.instance.Instance
 import kotlin.time.Duration.Companion.seconds
 
@@ -35,30 +34,24 @@ class GeckoGame(
     val lobbyPlayers = mutableSetOf<GeckoLobbyPlayer>()
     val gamePlayers = mutableSetOf<GeckoGamePlayer>()
 
-    val countdownBossBar1 = bossBar {
+    val countdownBossBar2 = buildText {
+        primary("Warte auf weitere Spieler..")
+    }
+
+    val countdownBossBar3 = buildText {
+        primary("Warte auf weitere Spieler...")
+    }
+
+    private val bossBar = bossBar {
         name {
-            primary("Warte auf weitere Spieler.")
+            append(countdownBossBar3)
         }
     }
 
-    val countdownBossBar2 = bossBar {
-        name {
-            primary("Warte auf weitere Spieler..")
-        }
-    }
-
-    val countdownBossBar3 = bossBar {
-        name {
-            primary("Warte auf weitere Spieler...")
-        }
-    }
-
-    fun countDownBossBar(seconds: Int) = bossBar {
-        name {
-            primary("Spiel startet in ")
-            variableValue(seconds)
-            primary(" Sekunden.")
-        }
+    fun countDownBossBar(seconds: Int) = buildText {
+        primary("Spiel startet in ")
+        variableValue(seconds)
+        primary(" Sekunden.")
     }
 
     val playerCount get() = lobbyPlayers.size + gamePlayers.size
@@ -72,21 +65,6 @@ class GeckoGame(
             MinecraftServer.getConnectionManager().getOnlinePlayerByUuid(it.playerUuid)
         }
 
-
-    private suspend fun joinLobby(player: Player): Boolean {
-        if (!joinable) {
-            return false
-        }
-
-        GeckoGameManager.clearDirtyData(player.uuid)
-
-        lobbyPlayers.add(GeckoLobbyPlayer(player.uuid))
-        player.setInstance(instance).await()
-        player.teleport(settings.map.mapLocations.lobbySpawn).await()
-
-        return true
-    }
-
     private fun updateCountdown() {
         if (state != GeckoGameState.LOBBY) {
             return
@@ -96,15 +74,18 @@ class GeckoGame(
 
         if (calculated == null) {
             countdownSeconds = null
+            updateCountdownBossBar()
             return
         }
 
         if (countdownSeconds == null) {
             countdownSeconds = calculated
+            updateCountdownBossBar()
             return
         }
 
         countdownSeconds = calculated
+        updateCountdownBossBar()
     }
 
     private suspend fun tryStart() {
@@ -137,6 +118,28 @@ class GeckoGame(
         }
 
         state = GeckoGameState.GAME
+    }
+
+    private var waitingBossBarIndex = 0
+
+    private fun updateCountdownBossBar() {
+        val text = if (countdownSeconds != null) {
+            countDownBossBar(countdownSeconds!!)
+        } else {
+            val text = if (waitingBossBarIndex == 0) {
+                countdownBossBar2
+            } else {
+                countdownBossBar3
+            }
+
+            waitingBossBarIndex = (waitingBossBarIndex + 1) % 2
+            text
+        }
+
+        bossBar.name(text)
+        players.filterNotNull().forEach { player ->
+            player.showBossBar(bossBar)
+        }
     }
 
     private fun existingPlayerTime(

@@ -1,5 +1,6 @@
 package dev.slne.surf.gecko.server.gecko
 
+import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.database.repository.GeckoGameRepository
@@ -11,6 +12,7 @@ import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
+import net.minestom.server.entity.Player
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.time.Duration.Companion.seconds
@@ -80,8 +82,8 @@ object GeckoGameManager {
         if (reason.canMovePlayers()) {
             val players = game.players
 
-            players.forEach {
-                // TODO: Move players to new game or kick
+            players.filterNotNull().forEach {
+                requeueOrKick(it)
             }
         }
 
@@ -89,8 +91,26 @@ object GeckoGameManager {
         GeckoGameRepository.updateGameEndReason(game, reason)
     }
 
+
+    fun requeueOrKick(player: Player) {
+        val newGame = reserveLobbySlot(player.uuid)
+
+        if (newGame == null) {
+            player.kick(buildText {
+                appendErrorPrefix()
+                error("Es ist aktuell keine Runde verfügbar. Bitte versuche es später erneut.")
+            })
+            return
+        }
+
+        player.instance = newGame.instance
+        player.respawnPoint = newGame.settings.map.mapLocations.lobbySpawn
+    }
+
     fun reserveLobbySlot(playerUuid: UUID): GeckoGame? = synchronized(lock) {
         val game = games.filter { it.joinable }.minByOrNull { it.freeSlots } ?: return null
+
+        clearDirtyData(playerUuid)
 
         game.lobbyPlayers.add(GeckoLobbyPlayer(playerUuid))
         game
