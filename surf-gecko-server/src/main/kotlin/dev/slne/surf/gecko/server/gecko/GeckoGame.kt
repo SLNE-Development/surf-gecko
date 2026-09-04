@@ -2,6 +2,8 @@ package dev.slne.surf.gecko.server.gecko
 
 import dev.slne.surf.api.core.messages.adventure.bossBar
 import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.key
+import dev.slne.surf.api.core.messages.adventure.playSound
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
@@ -9,6 +11,7 @@ import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoPlayerRoleSelector
 import dev.slne.surf.gecko.server.gecko.player.lobby.GeckoLobbyPlayer
 import dev.slne.surf.gecko.server.gecko.settings.GeckoGameSettings
+import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -30,6 +33,10 @@ class GeckoGame(
         updateCountdown()
         tryStart()
     }
+
+    var gameTimerSeconds: Int? = null
+    private var gameTimerJob: Job? = null
+    private val defaultGameTimerSeconds = 300
 
     val lobbyPlayers = mutableSetOf<GeckoLobbyPlayer>()
     val gamePlayers = mutableSetOf<GeckoGamePlayer>()
@@ -98,12 +105,12 @@ class GeckoGame(
     }
 
     suspend fun phaseGame() {
-        if(lobbyCountdownJob != null) {
+        if (lobbyCountdownJob != null) {
             lobbyCountdownJob?.cancel()
             lobbyCountdownJob = null
         }
 
-        state = GeckoGameState.GAME
+        state = GeckoGameState.HIDING
 
         val roles = GeckoPlayerRoleSelector.selectRoles(
             lobbyPlayers.map { it.playerUuid }.toSet(),
@@ -121,8 +128,15 @@ class GeckoGame(
                     player.applyGameMode()
                     player.applyEquipment()
                     player.teleportToSpawn(settings.map)
+                    player.player.hideBossBar(bossBar)
+                    player.player.hideBossBar(placeholderBossBar)
                 }
             }.awaitAll()
+        }
+
+        gameTimerSeconds = defaultGameTimerSeconds
+        gameTimerJob = geckoAsyncScope.runAtFixedRate(1.seconds) {
+            tickGame()
         }
     }
 
@@ -146,6 +160,31 @@ class GeckoGame(
         players.filterNotNull().forEach { player ->
             player.showBossBar(placeholderBossBar)
             player.showBossBar(bossBar)
+        }
+    }
+
+    private suspend fun tickGame() {
+        val currentTimer = gameTimerSeconds ?: return
+
+        gameTimerSeconds = currentTimer - 1
+
+        if (state == GeckoGameState.HIDING && currentTimer <= (defaultGameTimerSeconds - 45)) {
+            state = GeckoGameState.SEARCHING
+
+            gamePlayers.filter { it.role == GeckoGameRole.SEEKER }.forEach {
+                it.player.teleport(settings.map.mapLocations.spawn)
+            }
+
+            gamePlayers.forEach {
+                it.player.playSound(true) {
+                    type(key("item.goat_horn.sound.1"))
+                    pitch(1.3f)
+                }
+            }
+        }
+
+        if(currentTimer <= 0) {
+            GeckoGameManager.endGame(this, GeckoGameEndReason.HIDER_WIN)
         }
     }
 
