@@ -3,6 +3,7 @@ package dev.slne.surf.gecko.server.gecko
 import dev.slne.surf.gecko.server.database.GeckoDatabaseManager
 import dev.slne.surf.gecko.server.gecko.command.geckoCommand
 import dev.slne.surf.gecko.server.gecko.map.convert.GeckoMapConverter
+import dev.slne.surf.gecko.server.gecko.tablist.GeckoGameTablistManager
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -14,6 +15,7 @@ object GeckoInstance {
         GeckoMapConverter.convertAll()
         GeckoDatabaseManager.create()
         GeckoGameManager.init()
+        GeckoGameTablistManager.init()
 
         geckoCommand()
 
@@ -23,6 +25,7 @@ object GeckoInstance {
     suspend fun shutdown() {
         geckoLogger.info("Stopping GeckoInstance...")
         GeckoGameManager.shutdown()
+        GeckoGameTablistManager.shutdown()
         GeckoDatabaseManager.shutdown()
 
         geckoLogger.info("Stopped GeckoInstance.")

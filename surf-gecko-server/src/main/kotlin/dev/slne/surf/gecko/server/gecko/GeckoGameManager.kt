@@ -11,7 +11,7 @@ import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.time.Duration.Companion.seconds
 
@@ -38,6 +38,13 @@ object GeckoGameManager {
 
         for (game in getGames()) {
             endGame(game, GeckoGameEndReason.SHUTDOWN)
+        }
+    }
+
+    fun clearDirtyData(playerUuid: UUID) = synchronized(lock) {
+        for (game in games) {
+            game.lobbyPlayers.removeAll { it.playerUuid == playerUuid }
+            game.gamePlayers.removeAll { it.playerUuid == playerUuid }
         }
     }
 
@@ -74,7 +81,7 @@ object GeckoGameManager {
             val players = game.players
 
             players.forEach {
-                // TODO: Move to another lobby
+                // TODO: Move players to new game or kick
             }
         }
 
