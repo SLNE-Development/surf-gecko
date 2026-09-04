@@ -8,9 +8,30 @@ import kotlin.math.atan2
 import kotlin.math.sqrt
 
 class CombatArrow(shooter: Entity) : EntityProjectile(shooter, EntityType.ARROW) {
+    var hasLeftShooter = false
+        private set
+
     override fun tick(time: Long) {
         alignWithVelocity(velocity)
         super.tick(time)
+        updateShooterClearance()
+    }
+
+    private fun updateShooterClearance() {
+        if (hasLeftShooter || isRemoved) {
+            return
+        }
+
+        val shootingEntity = shooter
+
+        if (shootingEntity == null) {
+            hasLeftShooter = true
+            return
+        }
+
+        hasLeftShooter = !boundingBox
+            .grow(SHOOTER_CLEARANCE, SHOOTER_CLEARANCE, SHOOTER_CLEARANCE)
+            .intersectEntity(position, shootingEntity)
     }
 
     private fun alignWithVelocity(velocity: Vec) {
@@ -24,5 +45,9 @@ class CombatArrow(shooter: Entity) : EntityProjectile(shooter, EntityType.ARROW)
             Math.toDegrees(atan2(velocity.x(), velocity.z())).toFloat(),
             Math.toDegrees(atan2(velocity.y(), horizontal)).toFloat()
         )
+    }
+
+    private companion object {
+        const val SHOOTER_CLEARANCE = 1.0
     }
 }

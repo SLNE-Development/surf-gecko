@@ -15,7 +15,7 @@ import dev.slne.surf.gecko.server.combat.MeleeCombatListener
 import dev.slne.surf.gecko.server.command.GeckoCommandApiService
 import dev.slne.surf.gecko.server.config.Config
 import dev.slne.surf.gecko.server.gecko.GeckoGameJoinService
-import dev.slne.surf.gecko.server.gecko.death.GeckoDeathListener
+import dev.slne.surf.gecko.server.gecko.death.GeckoDamageListener
 import dev.slne.surf.gecko.server.gecko.player.listener.GeckoPlayerListener
 import dev.slne.surf.gecko.server.player.PlayerConnectionService
 import dev.slne.surf.gecko.server.player.PlayerLimitService
@@ -52,7 +52,7 @@ class GeckoServerModule(
         binder().bindEventRegistrar<GeckoPlayerListener>()
         binder().bindEventRegistrar<MeleeCombatListener>()
         binder().bindEventRegistrar<BowCombatListener>()
-        binder().bindEventRegistrar<GeckoDeathListener>()
+        binder().bindEventRegistrar<GeckoDamageListener>()
 
         binder().setBinder<EventRegistrar>()
         binder().setBinder<CommandRegistrar>()

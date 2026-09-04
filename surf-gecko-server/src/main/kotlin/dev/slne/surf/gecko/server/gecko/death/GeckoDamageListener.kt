@@ -12,7 +12,7 @@ import net.minestom.server.event.EventNode
 import net.minestom.server.event.entity.EntityDamageEvent
 
 @Singleton
-class GeckoDeathListener : EventRegistrar {
+class GeckoDamageListener : EventRegistrar {
     override fun register(node: EventNode<Event>) {
         node.addListener(EntityDamageEvent::class.java) { handleDamage(it) }
     }
@@ -23,6 +23,11 @@ class GeckoDeathListener : EventRegistrar {
         val gamePlayer = game.findGamePlayer(player.uuid) ?: return
 
         if (gamePlayer.awaitingRespawn) {
+            event.isCancelled = true
+            return
+        }
+
+        if (!game.state.isGame()) {
             event.isCancelled = true
             return
         }
@@ -56,6 +61,7 @@ class GeckoDeathListener : EventRegistrar {
             if (attackingGamePlayer != null) {
                 spacer(" wurde von ")
                 text(attackingGamePlayer.player.username, attackingGamePlayer.role.color)
+                spacer(" getötet")
             } else {
                 spacer(" ist gestorben")
             }

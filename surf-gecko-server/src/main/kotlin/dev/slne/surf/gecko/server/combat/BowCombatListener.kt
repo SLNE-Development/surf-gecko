@@ -65,11 +65,10 @@ class BowCombatListener : EventRegistrar {
 
         val origin = player.position.add(0.0, player.eyeHeight - SPAWN_OFFSET, 0.0)
 
-        arrow.setInstance(instance, origin).thenRun {
-            arrow.velocity = player.position.direction().withSpread()
-                .mul((power * ARROW_BLOCKS_PER_TICK * ServerFlag.SERVER_TICKS_PER_SECOND).toDouble())
-            arrow.scheduleRemove(Duration.ofSeconds(ARROW_LIFETIME_SECONDS))
-        }
+        arrow.velocity = player.position.direction().withSpread()
+            .mul((power * ARROW_BLOCKS_PER_TICK * ServerFlag.SERVER_TICKS_PER_SECOND).toDouble())
+        arrow.setInstance(instance, origin)
+        arrow.scheduleRemove(Duration.ofSeconds(ARROW_LIFETIME_SECONDS))
 
         player.playBowSound(power)
     }
@@ -77,6 +76,11 @@ class BowCombatListener : EventRegistrar {
     private fun handleArrowHit(event: ProjectileCollideWithEntityEvent) {
         val arrow = event.entity as? CombatArrow ?: return
         val target = event.target as? LivingEntity ?: return
+
+        if (target === arrow.shooter && !arrow.hasLeftShooter) {
+            event.isCancelled = true
+            return
+        }
 
         if (target.isDead || target.isInvulnerable) {
             event.isCancelled = true
