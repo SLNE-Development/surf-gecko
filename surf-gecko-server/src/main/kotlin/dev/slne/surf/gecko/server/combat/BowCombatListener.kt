@@ -8,8 +8,6 @@ import jakarta.inject.Singleton
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.ServerFlag
 import net.minestom.server.coordinate.Vec
-import net.minestom.server.entity.EntityProjectile
-import net.minestom.server.entity.EntityType
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.LivingEntity
 import net.minestom.server.entity.Player
@@ -56,7 +54,7 @@ class BowCombatListener : EventRegistrar {
         }
 
         val powerLevel = bow.enchantmentLevel(Enchantment.POWER)
-        val arrow = EntityProjectile(player, EntityType.ARROW)
+        val arrow = CombatArrow(player)
 
         (arrow.entityMeta as AbstractArrowMeta).isCritical = power >= MAX_POWER
         arrow.setTag(
@@ -77,12 +75,7 @@ class BowCombatListener : EventRegistrar {
     }
 
     private fun handleArrowHit(event: ProjectileCollideWithEntityEvent) {
-        val arrow = event.entity as? EntityProjectile ?: return
-
-        if (arrow.entityType != EntityType.ARROW) {
-            return
-        }
-
+        val arrow = event.entity as? CombatArrow ?: return
         val target = event.target as? LivingEntity ?: return
 
         if (target.isDead || target.isInvulnerable) {
@@ -105,7 +98,7 @@ class BowCombatListener : EventRegistrar {
 
         if (applied) {
             target.takeKnockbackFrom(
-                arrow.velocity.normalize().neg(),
+                arrow.velocity.normalize(),
                 BASE_ARROW_KNOCKBACK + arrow.getTag(arrowPunchTag) * KNOCKBACK_PER_LEVEL
             )
 
@@ -119,11 +112,7 @@ class BowCombatListener : EventRegistrar {
     }
 
     private fun handleArrowLanding(event: ProjectileCollideWithBlockEvent) {
-        val arrow = event.entity as? EntityProjectile ?: return
-
-        if (arrow.entityType != EntityType.ARROW) {
-            return
-        }
+        val arrow = event.entity as? CombatArrow ?: return
 
         arrow.remove()
     }
