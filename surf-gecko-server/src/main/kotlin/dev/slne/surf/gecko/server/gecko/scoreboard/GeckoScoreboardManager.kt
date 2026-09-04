@@ -22,17 +22,73 @@ object GeckoScoreboardManager {
             note("Hide 'n Seek")
         })
 
-        sidebar.createLine(Sidebar.ScoreboardLine("1", Component.empty(), 1))
-        sidebar.createLine(Sidebar.ScoreboardLine("2", Component.empty(), 2))
-        sidebar.createLine(Sidebar.ScoreboardLine("3", Component.empty(), 3))
-        sidebar.createLine(Sidebar.ScoreboardLine("4", Component.empty(), 4))
-        sidebar.createLine(Sidebar.ScoreboardLine("5", Component.empty(), 5))
-        sidebar.createLine(Sidebar.ScoreboardLine("6", Component.empty(), 6))
-        sidebar.createLine(Sidebar.ScoreboardLine("7", Component.empty(), 7))
-        sidebar.createLine(Sidebar.ScoreboardLine("8", Component.empty(), 8))
+        sidebar.createLine(
+            Sidebar.ScoreboardLine(
+                "1",
+                Component.empty(),
+                9,
+                Sidebar.NumberFormat.blank()
+            )
+        )
+        sidebar.createLine(
+            Sidebar.ScoreboardLine(
+                "2",
+                Component.empty(),
+                8,
+                Sidebar.NumberFormat.blank()
+            )
+        )
+        sidebar.createLine(
+            Sidebar.ScoreboardLine(
+                "3",
+                Component.empty(),
+                7,
+                Sidebar.NumberFormat.blank()
+            )
+        )
+        sidebar.createLine(
+            Sidebar.ScoreboardLine(
+                "4",
+                Component.empty(),
+                6,
+                Sidebar.NumberFormat.blank()
+            )
+        )
+        sidebar.createLine(
+            Sidebar.ScoreboardLine(
+                "5",
+                Component.empty(),
+                5,
+                Sidebar.NumberFormat.blank()
+            )
+        )
+        sidebar.createLine(
+            Sidebar.ScoreboardLine(
+                "6",
+                Component.empty(),
+                4,
+                Sidebar.NumberFormat.blank()
+            )
+        )
+        sidebar.createLine(
+            Sidebar.ScoreboardLine(
+                "7",
+                Component.empty(),
+                3,
+                Sidebar.NumberFormat.blank()
+            )
+        )
+        sidebar.createLine(
+            Sidebar.ScoreboardLine(
+                "8",
+                Component.empty(),
+                2,
+                Sidebar.NumberFormat.blank()
+            )
+        )
         sidebar.createLine(Sidebar.ScoreboardLine("9", buildText {
             primary("castcrafter.de".toSmallCaps())
-        }, 9))
+        }, 1, Sidebar.NumberFormat.blank()))
 
         sidebars[game.internalId] = sidebar
     }
@@ -95,7 +151,7 @@ object GeckoScoreboardManager {
                         CommonComponents.formatTime(
                             game.endingTimerSeconds?.seconds ?: Duration.ZERO,
                             showSeconds = true,
-                            shortForms = false
+                            shortForms = true
                         ).color(Colors.WHITE)
                     )
                 })
@@ -133,13 +189,13 @@ object GeckoScoreboardManager {
         CommonComponents.formatTime(
             game.gameTimerSeconds?.seconds ?: Duration.ZERO,
             showSeconds = true,
-            shortForms = false
+            shortForms = true
         )
     } else {
         CommonComponents.formatTime(
             game.countdownSeconds?.seconds ?: Duration.ZERO,
             showSeconds = true,
-            shortForms = false
+            shortForms = true
         )
     }
 }
