@@ -3,8 +3,9 @@ package dev.slne.surf.gecko.server.gecko.death
 import com.google.inject.Singleton
 import dev.slne.minestom.lobby.api.event.EventRegistrar
 import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.key
+import dev.slne.surf.api.core.messages.adventure.playSound
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
-import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import net.minestom.server.entity.Player
 import net.minestom.server.event.Event
 import net.minestom.server.event.EventNode
@@ -44,11 +45,15 @@ class GeckoDeathListener : EventRegistrar {
             spacer(" getötet")
         })
 
+        attackingGamePlayer?.player?.playSound(true) {
+            type(key("minecraft:entity.player.attack.crit"))
+        }
+
         game.sendText {
             appendInfoPrefix()
             text(gamePlayer.player.username, gamePlayer.role.color)
 
-            if(attackingGamePlayer != null) {
+            if (attackingGamePlayer != null) {
                 spacer(" wurde von ")
                 text(attackingGamePlayer.player.username, attackingGamePlayer.role.color)
             } else {
