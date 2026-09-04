@@ -120,8 +120,10 @@ class GeckoGame(
             appendInfoPrefix()
             info("Du wirst in ".toSmallCaps())
             variableValue(endingTimerSeconds ?: 30)
-            info(" Sekunden in eine neue Runde geschickt.".toSmallCaps())
+            info(" Sekunden in".toSmallCaps())
             appendNewline()
+            appendInfoPrefix()
+            info("eine neue Runde geschickt.".toSmallCaps())
         }
 
         endingJob = geckoAsyncScope.runAtFixedRate(1.seconds, 1.seconds) {
