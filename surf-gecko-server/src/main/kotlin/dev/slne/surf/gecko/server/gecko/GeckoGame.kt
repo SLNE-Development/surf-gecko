@@ -93,6 +93,7 @@ class GeckoGame(
         endingTimerSeconds = 30
 
         sendText {
+            appendNewline()
             appendInfoPrefix()
             when (reason) {
                 GeckoGameEndReason.SEEKER_WIN -> {
@@ -121,25 +122,26 @@ class GeckoGame(
             variableValue(endingTimerSeconds ?: 30)
             info(" Sekunden in eine neue Runde geschickt.".toSmallCaps())
             appendNewline()
-            appendInfoPrefix()
-            info("Map ")
-            variableValue(settings.map.mapDisplayName)
-            info(" von ")
-            appendNewline()
-            appendInfoPrefix()
-            info(settings.map.mapAuthors.map { it.name }.joinToString { "," })
         }
 
         endingJob = geckoAsyncScope.runAtFixedRate(1.seconds, 1.seconds) {
             val currentEndingSeconds = endingTimerSeconds ?: return@runAtFixedRate
             endingTimerSeconds = currentEndingSeconds - 1
 
-            bossBar.name(countDownBossBar(currentEndingSeconds))
+            bossBar.name(backToLobbyBossBar(currentEndingSeconds))
 
-            forEachPlayer {
-                it.showBossBar(placeholderBossBar)
-                it.showBossBar(bossBar)
+            if (currentEndingSeconds <= 0) {
+                forEachPlayer {
+                    it.hideBossBar(placeholderBossBar)
+                    it.hideBossBar(bossBar)
+                }
+            } else {
+                forEachPlayer {
+                    it.showBossBar(placeholderBossBar)
+                    it.showBossBar(bossBar)
+                }
             }
+
 
             if (currentEndingSeconds <= 0) {
                 GeckoGameManager.endGame(this@GeckoGame, reason)

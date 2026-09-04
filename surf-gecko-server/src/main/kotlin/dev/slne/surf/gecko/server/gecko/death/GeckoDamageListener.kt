@@ -47,7 +47,7 @@ class GeckoDamageListener : EventRegistrar {
         attackingGamePlayer?.player?.sendActionBar(buildText {
             spacer("Du hast ")
             variableValue(gamePlayer.player.username)
-            spacer(" getötet")
+            spacer(" gefunden")
         })
 
         attackingGamePlayer?.player?.playSound(true) {
@@ -61,7 +61,7 @@ class GeckoDamageListener : EventRegistrar {
             if (attackingGamePlayer != null) {
                 spacer(" wurde von ")
                 text(attackingGamePlayer.player.username, attackingGamePlayer.role.color)
-                spacer(" getötet")
+                spacer(" gefunden")
             } else {
                 spacer(" ist gestorben")
             }
