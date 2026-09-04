@@ -13,10 +13,7 @@ import dev.slne.surf.gecko.server.gecko.player.lobby.GeckoLobbyPlayer
 import dev.slne.surf.gecko.server.gecko.settings.GeckoGameSettings
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
 import net.minestom.server.MinecraftServer
 import net.minestom.server.instance.Instance
 import kotlin.time.Duration.Companion.seconds
@@ -100,7 +97,10 @@ class GeckoGame(
         val countdown = countdownSeconds ?: return
 
         if (countdown <= 0 && state == GeckoGameState.LOBBY) {
-            phaseGame()
+            state = GeckoGameState.HIDING
+            geckoAsyncScope.launch {
+                phaseGame()
+            }
         }
     }
 
@@ -109,8 +109,6 @@ class GeckoGame(
             lobbyCountdownJob?.cancel()
             lobbyCountdownJob = null
         }
-
-        state = GeckoGameState.HIDING
 
         val roles = GeckoPlayerRoleSelector.selectRoles(
             lobbyPlayers.map { it.playerUuid }.toSet(),
@@ -121,7 +119,6 @@ class GeckoGame(
             val role = roles[it.playerUuid] ?: GeckoGameRole.HIDER
             gamePlayers.add(GeckoGamePlayer(it.playerUuid, role))
         }
-
         coroutineScope {
             gamePlayers.map { player ->
                 async {
@@ -183,7 +180,7 @@ class GeckoGame(
             }
         }
 
-        if(currentTimer <= 0) {
+        if (currentTimer <= 0) {
             GeckoGameManager.endGame(this, GeckoGameEndReason.HIDER_WIN)
         }
     }
