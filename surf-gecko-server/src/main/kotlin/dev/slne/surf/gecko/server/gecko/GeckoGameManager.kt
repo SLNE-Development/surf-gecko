@@ -93,7 +93,6 @@ object GeckoGameManager {
         GeckoGameRepository.updateGameEndReason(game, reason)
     }
 
-
     fun requeueOrKick(player: Player) {
         val newGame = reserveLobbySlot(player.uuid)
 

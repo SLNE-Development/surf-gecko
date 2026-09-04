@@ -1,5 +1,6 @@
 package dev.slne.surf.gecko.server.gecko
 
+import dev.slne.surf.api.core.font.toSmallCaps
 import dev.slne.surf.api.core.messages.adventure.*
 import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
 import dev.slne.surf.api.core.util.runAtFixedRate
@@ -12,6 +13,7 @@ import dev.slne.surf.gecko.server.gecko.settings.GeckoGameSettings
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
 import kotlinx.coroutines.*
+import net.kyori.adventure.text.format.TextDecoration
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
 import net.minestom.server.instance.Instance
@@ -59,6 +61,12 @@ class GeckoGame(
         primary(" Sekunden.")
     }
 
+    fun backToLobbyBossBar(seconds: Int) = buildText {
+        primary("Zurück zur Lobby in ")
+        variableValue(seconds)
+        primary(" Sekunden...")
+    }
+
     val playerCount get() = lobbyPlayers.size + gamePlayers.size
     val freeSlots get() = settings.maxPlayers - playerCount
     val joinable get() = state.acceptsPlayers() && freeSlots > 0
@@ -74,6 +82,72 @@ class GeckoGame(
 
     fun isTeamDamage(attacker: GeckoGamePlayer, victim: GeckoGamePlayer) =
         attacker.role == victim.role
+
+    private var endingJob: Job? = null
+    private var endingTimerSeconds: Int? = null
+
+    fun beginEnding(reason: GeckoGameEndReason) {
+        state = GeckoGameState.ENDING
+        gameTimerJob?.cancel()
+        gameTimerJob = null
+        endingTimerSeconds = 30
+
+        sendText {
+            appendInfoPrefix()
+            when (reason) {
+                GeckoGameEndReason.SEEKER_WIN -> {
+                    text(
+                        "Die Sucher haben gewonnen",
+                        GeckoGameRole.SEEKER.color,
+                        TextDecoration.BOLD
+                    )
+                }
+
+                GeckoGameEndReason.HIDER_WIN -> {
+                    text(
+                        "Die Verstecker haben gewonnen",
+                        GeckoGameRole.HIDER.color,
+                        TextDecoration.BOLD
+                    )
+                }
+
+                else -> {
+                    error("Das Spiel wurde beendet", TextDecoration.BOLD)
+                }
+            }
+            appendNewline()
+            appendInfoPrefix()
+            info("Du wirst in ".toSmallCaps())
+            variableValue(endingTimerSeconds ?: 30)
+            info(" Sekunden in eine neue Runde geschickt.".toSmallCaps())
+            appendNewline()
+            appendInfoPrefix()
+            info("Map ")
+            variableValue(settings.map.mapDisplayName)
+            info(" von ")
+            appendNewline()
+            appendInfoPrefix()
+            info(settings.map.mapAuthors.map { it.name }.joinToString { "," })
+        }
+
+        endingJob = geckoAsyncScope.runAtFixedRate(1.seconds, 1.seconds) {
+            val currentEndingSeconds = endingTimerSeconds ?: return@runAtFixedRate
+            endingTimerSeconds = currentEndingSeconds - 1
+
+            bossBar.name(countDownBossBar(currentEndingSeconds))
+
+            forEachPlayer {
+                it.showBossBar(placeholderBossBar)
+                it.showBossBar(bossBar)
+            }
+
+            if (currentEndingSeconds <= 0) {
+                GeckoGameManager.endGame(this@GeckoGame, reason)
+                endingJob?.cancel()
+                endingJob = null
+            }
+        }
+    }
 
     fun handleDeath(gamePlayer: GeckoGamePlayer) {
         if (!state.isGame() || gamePlayer.awaitingRespawn) {
@@ -246,6 +320,7 @@ class GeckoGame(
         gameTimerSeconds = currentTimer - 1
 
         tickRespawns()
+        checkForGameEnd()
 
         if (state == GeckoGameState.HIDING && currentTimer <= (settings.roundTimeSeconds - 45)) {
             state = GeckoGameState.SEARCHING
@@ -268,7 +343,17 @@ class GeckoGame(
         }
 
         if (currentTimer <= 0) {
-            GeckoGameManager.endGame(this, GeckoGameEndReason.HIDER_WIN)
+            beginEnding(GeckoGameEndReason.HIDER_WIN)
+        }
+    }
+
+    private suspend fun checkForGameEnd() {
+        if (state != GeckoGameState.SEARCHING) {
+            return
+        }
+
+        if (gamePlayers.count { it.role == GeckoGameRole.HIDER } <= 0) {
+            beginEnding(GeckoGameEndReason.SEEKER_WIN)
         }
     }
 
