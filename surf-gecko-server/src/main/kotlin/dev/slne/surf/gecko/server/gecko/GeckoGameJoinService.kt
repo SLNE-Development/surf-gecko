@@ -4,6 +4,7 @@ import com.google.inject.Singleton
 import dev.slne.minestom.lobby.api.event.EventRegistrar
 import dev.slne.minestom.lobby.api.extension.addListener
 import dev.slne.minestom.lobby.api.player.event.PlayerLoginEvent
+import dev.slne.surf.gecko.server.gecko.scoreboard.GeckoScoreboardManager
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.format.NamedTextColor
@@ -11,6 +12,7 @@ import net.minestom.server.event.Event
 import net.minestom.server.event.EventNode
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent
 import net.minestom.server.event.player.PlayerDisconnectEvent
+import net.minestom.server.event.player.PlayerSpawnEvent
 
 @Singleton
 class GeckoGameJoinService : EventRegistrar {
@@ -18,6 +20,7 @@ class GeckoGameJoinService : EventRegistrar {
     override fun register(node: EventNode<Event>) {
         node.addListener(::handleLogin)
         node.addListener(::handleConfiguration)
+        node.addListener(::handleSpawn)
         node.addListener(::handleDisconnect)
     }
 
@@ -36,7 +39,19 @@ class GeckoGameJoinService : EventRegistrar {
         event.player.respawnPoint = game.settings.map.mapLocations.lobbySpawn
     }
 
+    private fun handleSpawn(event: PlayerSpawnEvent) {
+        val game = GeckoGameManager.findGame(event.player.uuid)
+
+        if (game == null) {
+            GeckoScoreboardManager.hideSidebar(event.player)
+            return
+        }
+
+        GeckoScoreboardManager.showSidebar(game, event.player)
+    }
+
     private fun handleDisconnect(event: PlayerDisconnectEvent) {
+        GeckoScoreboardManager.hideSidebar(event.player)
         GeckoGameManager.releasePlayer(event.player.uuid)
     }
 

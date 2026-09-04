@@ -9,6 +9,7 @@ import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoPlayerRoleSelector
 import dev.slne.surf.gecko.server.gecko.player.lobby.GeckoLobbyPlayer
+import dev.slne.surf.gecko.server.gecko.scoreboard.GeckoScoreboardManager
 import dev.slne.surf.gecko.server.gecko.settings.GeckoGameSettings
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
@@ -31,6 +32,7 @@ class GeckoGame(
     private var lobbyCountdownJob: Job? = geckoAsyncScope.runAtFixedRate(1.seconds) {
         updateCountdown()
         tryStart()
+        GeckoScoreboardManager.updateSidebar(this@GeckoGame)
     }
 
     var gameTimerSeconds: Int? = null
@@ -84,7 +86,7 @@ class GeckoGame(
         attacker.role == victim.role
 
     private var endingJob: Job? = null
-    private var endingTimerSeconds: Int? = null
+    var endingTimerSeconds: Int? = null
 
     fun beginEnding(reason: GeckoGameEndReason) {
         state = GeckoGameState.ENDING
@@ -130,6 +132,7 @@ class GeckoGame(
             val currentEndingSeconds = endingTimerSeconds ?: return@runAtFixedRate
             endingTimerSeconds = currentEndingSeconds - 1
 
+            GeckoScoreboardManager.updateSidebar(this@GeckoGame)
             bossBar.name(backToLobbyBossBar(currentEndingSeconds))
 
             if (currentEndingSeconds <= 0) {
@@ -323,6 +326,7 @@ class GeckoGame(
 
         gameTimerSeconds = currentTimer - 1
 
+        GeckoScoreboardManager.updateSidebar(this@GeckoGame)
         tickRespawns()
         checkForGameEnd()
 

@@ -4,12 +4,11 @@ enum class GeckoGameState {
     OFFLINE,
     PREPARING,
     LOBBY,
-    STARTING,
     HIDING,
     SEARCHING,
     ENDING,
     ENDED;
 
-    fun acceptsPlayers() = this in listOf(LOBBY, STARTING)
+    fun acceptsPlayers() = this in listOf(LOBBY)
     fun isGame() = this in listOf(SEARCHING, HIDING)
 }
