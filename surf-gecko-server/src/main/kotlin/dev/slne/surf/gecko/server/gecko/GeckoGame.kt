@@ -33,7 +33,6 @@ class GeckoGame(
 
     var gameTimerSeconds: Int? = null
     private var gameTimerJob: Job? = null
-    private val defaultGameTimerSeconds = 300
 
     val lobbyPlayers = mutableSetOf<GeckoLobbyPlayer>()
     val gamePlayers = mutableSetOf<GeckoGamePlayer>()
@@ -131,7 +130,7 @@ class GeckoGame(
             }.awaitAll()
         }
 
-        gameTimerSeconds = defaultGameTimerSeconds
+        gameTimerSeconds = settings.roundTimeSeconds
         gameTimerJob = geckoAsyncScope.runAtFixedRate(1.seconds) {
             tickGame()
         }
@@ -165,7 +164,7 @@ class GeckoGame(
 
         gameTimerSeconds = currentTimer - 1
 
-        if (state == GeckoGameState.HIDING && currentTimer <= (defaultGameTimerSeconds - 45)) {
+        if (state == GeckoGameState.HIDING && currentTimer <= (settings.roundTimeSeconds - 45)) {
             state = GeckoGameState.SEARCHING
 
             gamePlayers.filter { it.role == GeckoGameRole.SEEKER }.forEach {

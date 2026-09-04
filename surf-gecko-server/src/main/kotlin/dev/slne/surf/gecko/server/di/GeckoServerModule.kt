@@ -10,9 +10,12 @@ import dev.slne.minestom.lobby.api.event.EventRegistrar
 import dev.slne.minestom.lobby.api.player.PlayerLimit
 import dev.slne.surf.gecko.command.platform.MinestomCommandOwnership
 import dev.slne.surf.gecko.server.chat.GeckoChatService
+import dev.slne.surf.gecko.server.combat.BowCombatListener
+import dev.slne.surf.gecko.server.combat.MeleeCombatListener
 import dev.slne.surf.gecko.server.command.GeckoCommandApiService
 import dev.slne.surf.gecko.server.config.Config
 import dev.slne.surf.gecko.server.gecko.GeckoGameJoinService
+import dev.slne.surf.gecko.server.gecko.death.GeckoDeathListener
 import dev.slne.surf.gecko.server.gecko.player.listener.GeckoPlayerListener
 import dev.slne.surf.gecko.server.player.PlayerConnectionService
 import dev.slne.surf.gecko.server.player.PlayerLimitService
@@ -47,6 +50,9 @@ class GeckoServerModule(
         binder().bindEventRegistrar<GeckoChatService>()
         binder().bindEventRegistrar<GeckoGameJoinService>()
         binder().bindEventRegistrar<GeckoPlayerListener>()
+        binder().bindEventRegistrar<MeleeCombatListener>()
+        binder().bindEventRegistrar<BowCombatListener>()
+        binder().bindEventRegistrar<GeckoDeathListener>()
 
         binder().setBinder<EventRegistrar>()
         binder().setBinder<CommandRegistrar>()

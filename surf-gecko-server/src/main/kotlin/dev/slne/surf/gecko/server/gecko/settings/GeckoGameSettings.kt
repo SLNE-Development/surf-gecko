@@ -11,6 +11,9 @@ data class GeckoGameSettings(
     val map: GeckoMap,
     val minPlayers: Int = DEFAULT_MIN_PLAYERS,
     val maxPlayers: Int = DEFAULT_MAX_PLAYERS,
+    val roundTimeSeconds: Int = 300,
+    val seekerRespawnTimeSeconds: Int = 30,
+    val respawnHidersAsSeekers: Boolean = true,
 
     val forcedSeekers: Set<UUID> = mutableSetOf(),
     val forcedHiders: Set<UUID> = mutableSetOf()

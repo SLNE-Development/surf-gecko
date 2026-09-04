@@ -12,6 +12,7 @@ import net.minestom.server.event.player.PlayerBlockInteractEvent
 import net.minestom.server.event.player.PlayerBlockPlaceEvent
 import net.minestom.server.event.player.PlayerUseItemEvent
 import net.minestom.server.event.trait.CancellableEvent
+import net.minestom.server.item.Material
 
 @Singleton
 class GeckoPlayerListener : EventRegistrar {
@@ -20,7 +21,13 @@ class GeckoPlayerListener : EventRegistrar {
         node.addListener(PlayerBlockBreakEvent::class.java) { cancel(it, it.player) }
         node.addListener(PlayerBlockInteractEvent::class.java) { cancel(it, it.player) }
         node.addListener(ItemDropEvent::class.java) { cancel(it, it.player) }
-        node.addListener(PlayerUseItemEvent::class.java) { cancel(it, it.player) }
+        node.addListener(PlayerUseItemEvent::class.java) { event ->
+            if (event.itemStack.material() in USABLE_MATERIALS) {
+                return@addListener
+            }
+
+            cancel(event, event.player)
+        }
     }
 
     private fun cancel(event: CancellableEvent, player: Player) {
@@ -32,4 +39,8 @@ class GeckoPlayerListener : EventRegistrar {
     }
 
     private fun hasBypass(player: Player) = player.gameMode == GameMode.CREATIVE
+
+    private companion object {
+        val USABLE_MATERIALS = setOf(Material.BOW)
+    }
 }
