@@ -2,7 +2,10 @@ package dev.slne.surf.gecko.server.gecko
 
 import dev.slne.surf.api.core.font.toSmallCaps
 import dev.slne.surf.api.core.messages.Colors
-import dev.slne.surf.api.core.messages.adventure.*
+import dev.slne.surf.api.core.messages.adventure.bossBar
+import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.api.core.messages.adventure.showTitle
 import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
@@ -50,11 +53,11 @@ class GeckoGame(
     val gamePlayers = mutableSetOf<GeckoGamePlayer>()
 
     val countdownBossBar2 = buildText {
-        primary("Warte auf weitere Spieler.. ")
+        info("Warte auf weitere Spieler.. ")
     }
 
     val countdownBossBar3 = buildText {
-        primary("Warte auf weitere Spieler...")
+        info("Warte auf weitere Spieler...")
     }
 
     private val bossBar = bossBar {
@@ -66,15 +69,15 @@ class GeckoGame(
     private val placeholderBossBar = bossBar {}
 
     fun countDownBossBar(seconds: Int) = buildText {
-        primary("Spiel startet in ")
-        variableValue(seconds)
-        primary(" Sekunden.")
+        note("Spiel startet in ")
+        white(seconds)
+        note(" Sekunden.")
     }
 
     fun backToLobbyBossBar(seconds: Int) = buildText {
-        primary("Zurück zur Lobby in ")
-        variableValue(seconds)
-        primary(" Sekunden...")
+        error("Zurück zur Lobby in ")
+        white(seconds)
+        error(" Sekunden...")
     }
 
     val playerCount get() = lobbyPlayers.size + gamePlayers.size
