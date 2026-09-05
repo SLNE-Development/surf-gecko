@@ -3,7 +3,7 @@ package dev.slne.surf.gecko.server.gecko.heartbeat
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.gecko.GeckoGame
-import dev.slne.surf.gecko.server.gecko.effect.GeckoScreenEffect
+import dev.slne.surf.gecko.server.gecko.heartbeat.effect.GeckoScreenEffect
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
@@ -33,9 +33,10 @@ class GeckoHeartbeat(private val game: GeckoGame) {
             return
         }
 
-        job = geckoAsyncScope.runAtFixedRate(TICK_MILLIS.milliseconds, taskName = "gecko-heartbeat") {
-            tick()
-        }
+        job =
+            geckoAsyncScope.runAtFixedRate(TICK_MILLIS.milliseconds, taskName = "gecko-heartbeat") {
+                tick()
+            }
     }
 
     fun stop() {

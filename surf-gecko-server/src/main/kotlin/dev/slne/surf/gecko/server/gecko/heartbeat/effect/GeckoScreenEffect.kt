@@ -1,4 +1,4 @@
-package dev.slne.surf.gecko.server.gecko.effect
+package dev.slne.surf.gecko.server.gecko.heartbeat.effect
 
 import net.minestom.server.coordinate.Point
 import net.minestom.server.entity.Player
