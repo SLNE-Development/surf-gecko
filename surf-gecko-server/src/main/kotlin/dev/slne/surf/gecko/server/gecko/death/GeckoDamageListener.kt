@@ -7,6 +7,7 @@ import dev.slne.surf.api.core.messages.adventure.showTitle
 import dev.slne.surf.gecko.server.gecko.GeckoGame
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
+import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.format.TextDecoration
@@ -24,6 +25,12 @@ class GeckoDamageListener : EventRegistrar {
     private fun handleDamage(event: EntityDamageEvent) {
         val player = event.entity as? Player ?: return
         val game = GeckoGameManager.findGame(player.uuid) ?: return
+
+        if (game.lobbyPlayers.any { it.playerUuid == player.uuid }) {
+            event.isCancelled = true
+            return
+        }
+
         val gamePlayer = game.findGamePlayer(player.uuid) ?: return
 
         if (gamePlayer.awaitingRespawn) {
@@ -51,7 +58,12 @@ class GeckoDamageListener : EventRegistrar {
         attackingGamePlayer?.player?.sendActionBar(buildText {
             spacer("Du hast ")
             variableValue(gamePlayer.player.username)
-            spacer(" gefunden")
+            if (attackingGamePlayer.role == GeckoGameRole.SEEKER) {
+                spacer(" gefunden")
+            } else {
+                spacer(" getötet")
+            }
+
         })
 
         playKillSounds(game, gamePlayer, attackingGamePlayer)
@@ -63,7 +75,11 @@ class GeckoDamageListener : EventRegistrar {
             if (attackingGamePlayer != null) {
                 spacer(" wurde von ")
                 text(attackingGamePlayer.player.username, attackingGamePlayer.role.color)
-                spacer(" gefunden")
+                if (attackingGamePlayer.role == GeckoGameRole.SEEKER) {
+                    spacer(" gefunden")
+                } else {
+                    spacer(" getötet")
+                }
             } else {
                 spacer(" ist gestorben")
             }
