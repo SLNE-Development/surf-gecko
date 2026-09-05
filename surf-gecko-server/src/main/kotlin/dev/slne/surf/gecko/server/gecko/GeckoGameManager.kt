@@ -137,4 +137,8 @@ object GeckoGameManager {
     fun requiresGame() = synchronized(lock) {
         games.size < MAX_GAMES && games.none { it.joinable }
     }
+
+    fun playingPlayers(): Set<UUID> = synchronized(lock) {
+        games.flatMap { it.gamePlayers.map { player -> player.playerUuid } }.toSet()
+    }
 }

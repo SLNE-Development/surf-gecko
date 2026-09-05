@@ -110,8 +110,12 @@ object GeckoScoreboardManager {
                 })
 
                 sidebar.updateLineContent("6", buildText {
-                    variableValue("Zeit: ")
-                    append(getGameTime(game).color(Colors.WHITE))
+                    if (game.countdownSeconds == null) {
+                        variableValue("Warte...")
+                    } else {
+                        variableValue("Zeit: ")
+                        append(getGameTime(game).color(Colors.WHITE))
+                    }
                 })
             }
 

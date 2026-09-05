@@ -44,7 +44,7 @@ object GeckoGameTablistManager {
     }
 
     private fun currentState(player: Player): String {
-        val game = GeckoGameManager.findGame(player.uuid) ?: return "???"
+        val game = GeckoGameManager.findGame(player.uuid) ?: return "Lobby"
         return game.settings.map.mapDisplayName
     }
 }

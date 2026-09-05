@@ -93,7 +93,7 @@ class GeckoGame(
         state = GeckoGameState.ENDING
         gameTimerJob?.cancel()
         gameTimerJob = null
-        endingTimerSeconds = 30
+        endingTimerSeconds = 10
 
         sendText {
             appendNewline()
@@ -126,7 +126,7 @@ class GeckoGame(
             info(" Sekunden in".toSmallCaps())
             appendNewline()
             appendInfoPrefix()
-            info("eine neue Runde geschickt.".toSmallCaps())
+            info("die Lobby geschickt.".toSmallCaps())
         }
 
         endingJob = geckoAsyncScope.runAtFixedRate(1.seconds, 1.seconds) {
@@ -290,12 +290,6 @@ class GeckoGame(
         } else {
             val lobbyPlayer = lobbyPlayers.firstOrNull { it.playerUuid == player.uuid } ?: return
             lobbyPlayers.remove(lobbyPlayer)
-
-            sendText {
-                appendInfoPrefix()
-                variableValue(player.username)
-                info(" ist gegangen.")
-            }
         }
     }
 

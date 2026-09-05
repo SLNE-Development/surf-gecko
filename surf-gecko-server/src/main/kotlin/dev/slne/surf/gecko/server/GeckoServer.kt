@@ -63,6 +63,7 @@ class GeckoServer @Inject constructor(
                 "Surf gecko is ready in {}.",
                 startupDuration,
             )
+            println("Debug println")
         } catch (startupFailure: Throwable) {
             LOGGER.error(
                 "Failed to start Surf gecko server.",

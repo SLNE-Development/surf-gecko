@@ -1,6 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.lobby.listener
 
 import dev.slne.minestom.lobby.api.event.EventRegistrar
+import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import jakarta.inject.Singleton
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
@@ -31,6 +32,10 @@ class GeckoLobbyListener : EventRegistrar {
     }
 
     private fun cancel(event: CancellableEvent, player: Player) {
+        if (player.instance != GeckoLobby.instance) {
+            return
+        }
+
         if (hasBypass(player)) {
             return
         }

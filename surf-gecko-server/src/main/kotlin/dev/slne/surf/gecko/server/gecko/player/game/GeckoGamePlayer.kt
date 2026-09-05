@@ -1,6 +1,9 @@
 package dev.slne.surf.gecko.server.gecko.player.game
 
 import dev.slne.surf.gecko.server.gecko.map.GeckoMap
+import dev.slne.surf.gecko.server.gecko.player.listener.GeckoPlayerListener
+import dev.slne.surf.gecko.server.gecko.shop.ShopItemListener
+import dev.slne.surf.gecko.server.util.withTag
 import net.kyori.adventure.text.format.TextColor
 import net.minestom.server.MinecraftServer
 import net.minestom.server.component.DataComponents
@@ -45,12 +48,18 @@ data class GeckoGamePlayer(
                 player.inventory.setEquipment(EquipmentSlot.BOOTS, player.heldSlot, SEEKER_BOOTS)
                 player.inventory.setItemStack(0, SEEKER_SWORD)
                 player.inventory.setItemStack(1, SEEKER_BOW)
-                player.inventory.setItemStack(17, ItemStack.of(Material.ARROW))
+                player.inventory.setItemStack(
+                    17,
+                    ItemStack.of(Material.ARROW).withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
+                )
+
+                ShopItemListener.giveShop(this)
             }
         }
 
         GeckoGameRole.HIDER -> {
             player.inventory.clear()
+            ShopItemListener.giveShop(this)
         }
 
         GeckoGameRole.SPECTATOR -> {
@@ -98,7 +107,7 @@ data class GeckoGamePlayer(
     }
 
     companion object {
-        private val SEEKER_COLOR = TextColor.color(194, 58, 58)
+        private val SEEKER_COLOR = TextColor.color(227, 36, 36)
         private val SEEKER_HELMET =
             ItemStack.of(Material.LEATHER_HELMET).builder()
                 .set(DataComponents.DYED_COLOR, SEEKER_COLOR)
@@ -106,6 +115,7 @@ data class GeckoGamePlayer(
                     DataComponents.TOOLTIP_DISPLAY,
                     TooltipDisplay(true, setOf(DataComponents.ENCHANTMENTS))
                 )
+                .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
                 .build()
 
         private val SEEKER_CHESTPLATE =
@@ -115,6 +125,7 @@ data class GeckoGamePlayer(
                     DataComponents.TOOLTIP_DISPLAY,
                     TooltipDisplay(true, setOf(DataComponents.ENCHANTMENTS))
                 )
+                .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
                 .build()
 
         private val SEEKER_LEGGINGS =
@@ -124,6 +135,7 @@ data class GeckoGamePlayer(
                     DataComponents.TOOLTIP_DISPLAY,
                     TooltipDisplay(true, setOf(DataComponents.ENCHANTMENTS))
                 )
+                .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
                 .build()
 
         private val SEEKER_BOOTS =
@@ -133,6 +145,7 @@ data class GeckoGamePlayer(
                     DataComponents.TOOLTIP_DISPLAY,
                     TooltipDisplay(true, setOf(DataComponents.ENCHANTMENTS))
                 )
+                .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
                 .build()
 
         private val SEEKER_SWORD = ItemStack.of(Material.WOODEN_SWORD).builder()
@@ -140,6 +153,7 @@ data class GeckoGamePlayer(
                 DataComponents.TOOLTIP_DISPLAY,
                 TooltipDisplay(true, setOf(DataComponents.ENCHANTMENTS))
             )
+            .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
             .build()
         private val SEEKER_BOW = ItemStack.of(Material.BOW).builder()
             .set(DataComponents.ENCHANTMENTS, EnchantmentList(mapOf(Enchantment.INFINITY to 1)))
@@ -147,6 +161,7 @@ data class GeckoGamePlayer(
                 DataComponents.TOOLTIP_DISPLAY,
                 TooltipDisplay(true, setOf(DataComponents.ENCHANTMENTS))
             )
+            .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
             .build()
     }
 }

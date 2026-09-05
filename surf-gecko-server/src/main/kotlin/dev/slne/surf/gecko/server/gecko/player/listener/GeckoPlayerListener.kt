@@ -9,10 +9,12 @@ import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
 import net.minestom.server.event.Event
 import net.minestom.server.event.EventNode
+import net.minestom.server.event.inventory.InventoryPreClickEvent
 import net.minestom.server.event.item.ItemDropEvent
 import net.minestom.server.event.player.*
 import net.minestom.server.event.trait.CancellableEvent
 import net.minestom.server.item.Material
+import net.minestom.server.tag.Tag
 
 @Singleton
 class GeckoPlayerListener : EventRegistrar {
@@ -33,6 +35,17 @@ class GeckoPlayerListener : EventRegistrar {
                 GeckoGameManager.handleGameLeave(it.player)
             }
         }
+        node.addListener(InventoryPreClickEvent::class.java) {
+            if (it.clickedItem.hasTag(GECKO_ITEM_TAG)) {
+                it.isCancelled = true
+            }
+        }
+
+        node.addListener(PlayerSwapItemEvent::class.java) {
+            if (it.offHandItem.hasTag(GECKO_ITEM_TAG)) {
+                it.isCancelled = true
+            }
+        }
     }
 
     private fun cancel(event: CancellableEvent, player: Player) {
@@ -45,7 +58,8 @@ class GeckoPlayerListener : EventRegistrar {
 
     private fun hasBypass(player: Player) = player.gameMode == GameMode.CREATIVE
 
-    private companion object {
-        val USABLE_MATERIALS = setOf(Material.BOW)
+    companion object {
+        val USABLE_MATERIALS = setOf(Material.BOW, Material.CHEST)
+        val GECKO_ITEM_TAG: Tag<Boolean> = Tag.Boolean("gecko_item")
     }
 }
