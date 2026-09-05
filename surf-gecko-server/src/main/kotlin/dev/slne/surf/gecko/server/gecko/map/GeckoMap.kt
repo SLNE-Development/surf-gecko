@@ -22,5 +22,6 @@ data class GeckoMap(
         val lobbySpawn: Pos,
         val seekerSpawn: Pos,
         val spawn: Pos,
+        val orbSpawns: List<Pos>
     )
 }
