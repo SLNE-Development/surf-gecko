@@ -109,6 +109,8 @@ object GeckoGameManager {
 
         GeckoScoreboardManager.removeSidebar(game)
 
+        synchronized(lock) { games.remove(game) }
+
         if (reason.canMovePlayers()) {
             val players = game.players
 
@@ -117,7 +119,9 @@ object GeckoGameManager {
             }
         }
 
-        synchronized(lock) { games.remove(game) }
+        game.lobbyPlayers.clear()
+        game.gamePlayers.clear()
+
         GeckoGameRepository.updateGameEndReason(game, reason)
     }
 

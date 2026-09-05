@@ -117,7 +117,11 @@ object GeckoScoreboardManager {
                     )
                 })
                 sidebar.updateLineContent("6", buildText {
-                    white("${game.lobbyPlayers.size.toString().padStart(2, '0')} 👥")
+                    white(
+                        "${
+                            game.lobbyPlayers.size.toString().padStart(2, '0')
+                        }/${game.settings.maxPlayers.toString().padStart(2, '0')} 👥"
+                    )
                 })
 
                 sidebar.updateLineContent("7", Component.empty())

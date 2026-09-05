@@ -82,11 +82,9 @@ class GeckoGame(
     val joinable get() = state.acceptsPlayers() && freeSlots > 0
 
     val players
-        get() = lobbyPlayers.map {
-            MinecraftServer.getConnectionManager().getOnlinePlayerByUuid(it.playerUuid)
-        } + gamePlayers.map {
-            MinecraftServer.getConnectionManager().getOnlinePlayerByUuid(it.playerUuid)
-        }
+        get() = (lobbyPlayers.map { it.playerUuid } + gamePlayers.map { it.playerUuid })
+            .distinct()
+            .map { MinecraftServer.getConnectionManager().getOnlinePlayerByUuid(it) }
 
     fun findGamePlayer(playerUuid: UUID) = gamePlayers.firstOrNull { it.playerUuid == playerUuid }
 
@@ -301,7 +299,7 @@ class GeckoGame(
                 GeckoGameRole.SPECTATOR -> return
             }
 
-            gamePlayers.remove(gamePlayer)
+            gamePlayers.removeAll { it.playerUuid == gamePlayer.playerUuid }
             gamePlayer.clearRespawnState()
 
             GeckoGamePunisher.punish(player)
@@ -378,6 +376,8 @@ class GeckoGame(
             val role = roles[it.playerUuid] ?: GeckoGameRole.HIDER
             gamePlayers.add(GeckoGamePlayer(it.playerUuid, role))
         }
+        lobbyPlayers.clear()
+
         coroutineScope {
             gamePlayers.map { player ->
                 async {
