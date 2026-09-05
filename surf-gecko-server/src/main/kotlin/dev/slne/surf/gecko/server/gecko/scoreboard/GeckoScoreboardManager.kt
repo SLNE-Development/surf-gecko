@@ -147,7 +147,7 @@ object GeckoScoreboardManager {
                             "Sucher: ",
                             Colors.WHITE,
                             GeckoGameRole.SEEKER.color,
-                            affixAmount = 4
+                            affixAmount = 3
                         )
                     )
                     white(
@@ -163,7 +163,7 @@ object GeckoScoreboardManager {
                             "Verstecker: ",
                             Colors.WHITE,
                             GeckoGameRole.HIDER.color,
-                            affixAmount = 4
+                            affixAmount = 3
                         )
                     )
                     white(
