@@ -125,15 +125,17 @@ object GeckoScoreboardManager {
                     buildText {
                         append(
                             BitmapProvider.translateToComponent(
-                                "Wartezeit",
+                                "Wartezeit:",
                                 Colors.WHITE,
                                 Colors.INFO
                             )
                         )
+                        appendSpace()
                         if (game.countdownSeconds == null) {
                             white("Warten...")
                         } else {
                             append(getGameTime(game).color(Colors.WHITE))
+                            white(" ⏳")
                         }
                     }
                 )
@@ -178,6 +180,7 @@ object GeckoScoreboardManager {
                 sidebar.updateLineContent("8", buildText {
                     append(BitmapProvider.translateToComponent("Zeit: ", Colors.WHITE, Colors.INFO))
                     append(getGameTime(game).color(Colors.WHITE))
+                    white(" ⌚")
                 })
             }
 
@@ -192,6 +195,7 @@ object GeckoScoreboardManager {
                             game.endingTimerSeconds ?: Duration.ZERO.inWholeSeconds.toInt()
                         )
                     )
+                    white(" ⌚")
                 })
             }
 
