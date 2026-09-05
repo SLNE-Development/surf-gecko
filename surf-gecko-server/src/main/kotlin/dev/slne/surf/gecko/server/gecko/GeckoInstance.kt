@@ -1,5 +1,6 @@
 package dev.slne.surf.gecko.server.gecko
 
+import dev.slne.minestom.lobby.api.command.commandapi.CommandAPI
 import dev.slne.surf.gecko.server.database.GeckoDatabaseManager
 import dev.slne.surf.gecko.server.gecko.command.geckoCommand
 import dev.slne.surf.gecko.server.gecko.command.lobbyCommand
@@ -21,6 +22,8 @@ object GeckoInstance {
 
         geckoCommand()
         skipCommand()
+
+        CommandAPI.unregister("lobby")
         lobbyCommand()
 
         geckoLogger.info("Enabled GeckoInstance.")

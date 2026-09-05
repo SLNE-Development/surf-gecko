@@ -14,7 +14,7 @@ import net.minestom.server.event.player.PlayerUseItemEvent
 import net.minestom.server.event.trait.CancellableEvent
 
 @Singleton
-object GeckoLobbyListener : EventRegistrar {
+class GeckoLobbyListener : EventRegistrar {
     override fun register(node: EventNode<Event>) {
         node.addListener(PlayerBlockPlaceEvent::class.java) { cancel(it, it.player) }
         node.addListener(PlayerBlockBreakEvent::class.java) { cancel(it, it.player) }
