@@ -27,7 +27,6 @@ object GeckoLobby {
     suspend fun join(player: Player) {
         GeckoGameManager.handleGameLeave(player)
         GeckoGameManager.clearDirtyData(player.uuid)
-
         GeckoScoreboardManager.hideSidebar(player)
 
         player.respawnPoint = spawn

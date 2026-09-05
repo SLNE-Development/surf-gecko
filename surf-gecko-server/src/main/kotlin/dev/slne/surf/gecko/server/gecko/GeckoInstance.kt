@@ -2,6 +2,7 @@ package dev.slne.surf.gecko.server.gecko
 
 import dev.slne.surf.gecko.server.database.GeckoDatabaseManager
 import dev.slne.surf.gecko.server.gecko.command.geckoCommand
+import dev.slne.surf.gecko.server.gecko.command.lobbyCommand
 import dev.slne.surf.gecko.server.gecko.command.skipCommand
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.tablist.GeckoGameTablistManager
@@ -20,6 +21,7 @@ object GeckoInstance {
 
         geckoCommand()
         skipCommand()
+        lobbyCommand()
 
         geckoLogger.info("Enabled GeckoInstance.")
     }

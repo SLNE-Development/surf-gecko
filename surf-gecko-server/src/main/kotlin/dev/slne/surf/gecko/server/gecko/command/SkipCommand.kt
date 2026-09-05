@@ -26,6 +26,11 @@ fun skipCommand() = commandTree("skip") {
 
         game.countdownSeconds = 10
 
+        game.sendText {
+            appendSuccessPrefix()
+            success("Der Countdown wurde verkürzt.")
+        }
+
         player.sendText {
             appendSuccessPrefix()
             success("Der Countdown wurde verkürzt.")

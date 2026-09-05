@@ -9,4 +9,5 @@ object PermissionList {
     const val COMMAND_GAMEMODE = "$BASE_GAME.gamemode.command"
     const val COMMAND_GECKO = "$BASE_GAME.gecko.command"
     const val COMMAND_SKIP = "$BASE_GAME.skip.command"
+    const val COMMAND_LOBBY = "$BASE_GAME.lobby.command"
 }

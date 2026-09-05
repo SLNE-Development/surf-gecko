@@ -73,6 +73,23 @@ object GeckoGameManager {
         }
     }
 
+    suspend fun selectGame(player: Player): GeckoGame? {
+        val game = findGame(player.uuid)
+        if (game != null) {
+            return game
+        }
+
+        val joinableGame = synchronized(lock) {
+            games.filter { it.joinable }.sortedByDescending { it.playerCount }
+        }.firstOrNull() ?: return null
+
+        clearDirtyData(player.uuid)
+        joinableGame.lobbyPlayers.add(GeckoLobbyPlayer(player.uuid))
+        player.setInstance(joinableGame.instance, joinableGame.settings.map.mapLocations.lobbySpawn)
+
+        return joinableGame
+    }
+
     suspend fun startNewGame(settings: GeckoGameSettings = GeckoGameSettings.default()): GeckoGame {
         val gameId = withContext(Dispatchers.IO) { GeckoGameRepository.saveGame(settings) }
         val instance = GeckoMapManager.prepareMap(settings.map)
@@ -101,15 +118,6 @@ object GeckoGameManager {
 
         synchronized(lock) { games.remove(game) }
         GeckoGameRepository.updateGameEndReason(game, reason)
-    }
-
-    fun reserveLobbySlot(playerUuid: UUID): GeckoGame? = synchronized(lock) {
-        val game = games.filter { it.joinable }.minByOrNull { it.freeSlots } ?: return null
-
-        clearDirtyData(playerUuid)
-
-        game.lobbyPlayers.add(GeckoLobbyPlayer(playerUuid))
-        game
     }
 
     fun findGame(playerUuid: UUID): GeckoGame? = synchronized(lock) {
