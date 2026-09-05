@@ -44,20 +44,20 @@ class MarkerToolListener : Listener {
         val draft = PaperGeckoMapManager.draft(player.uniqueId)
         if (draft == null) {
             player.sendText {
-                appendErrorPrefix()
-                error("Du hast keine aktive Map. Starte mit ")
-                variableValue("/geckomap create <name>")
-                error(".")
+                appendInfoPrefix()
+                info("Du hast keine aktive Map. Starte mit ")
+                white("/geckomap create <name>")
+                info(".")
             }
             return
         }
 
         if (player.world.name != draft.worldName) {
             player.sendText {
-                appendErrorPrefix()
-                error("Deine Map gehört zur Welt ")
-                variableValue(draft.worldName)
-                error(".")
+                appendInfoPrefix()
+                info("Deine Map gehört zur Welt ")
+                white(draft.worldName)
+                info(".")
             }
             return
         }
@@ -136,13 +136,13 @@ class MarkerToolListener : Listener {
 
         player.playSound(player.location, Sound.BLOCK_NOTE_BLOCK_PLING, 0.6f, 1.6f)
         player.sendActionBar(buildText {
-            success(type.displayName)
-            spacer(" gesetzt ")
-            variableValue(readable(pos))
+            primary(type.displayName)
+            info(" gesetzt ")
+            white(readable(pos))
             if (type.multiple) {
-                spacer(" (")
-                variableValue(count)
-                spacer(")")
+                info(" (")
+                white(count)
+                info(")")
             }
         })
     }
@@ -161,18 +161,18 @@ class MarkerToolListener : Listener {
         if (removed == null) {
             player.playSound(player.location, Sound.BLOCK_NOTE_BLOCK_BASS, 0.6f, 0.8f)
             player.sendActionBar(buildText {
-                error("Kein ")
-                variableValue(type.displayName)
-                error(" in Reichweite")
+                info("Kein ")
+                white(type.displayName)
+                info(" in Reichweite")
             })
             return
         }
 
         player.playSound(player.location, Sound.BLOCK_NOTE_BLOCK_PLING, 0.6f, 0.9f)
         player.sendActionBar(buildText {
-            warning(type.displayName)
-            spacer(" entfernt ")
-            variableValue(readable(removed))
+            primary(type.displayName)
+            info(" entfernt ")
+            white(readable(removed))
         })
     }
 

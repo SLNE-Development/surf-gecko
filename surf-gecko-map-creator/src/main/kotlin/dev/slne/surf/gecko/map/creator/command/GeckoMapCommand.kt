@@ -52,9 +52,9 @@ fun geckoMapCommand() = commandTree("geckomap") {
                 draft.mapDisplayName = arguments.displayName()
 
                 player.sendText {
-                    appendSuccessPrefix()
-                    success("Anzeigename gesetzt: ")
-                    variableValue(draft.mapDisplayName)
+                    appendInfoPrefix()
+                    info("Anzeigename gesetzt: ")
+                    white(draft.mapDisplayName)
                 }
             }
         }
@@ -70,9 +70,9 @@ fun geckoMapCommand() = commandTree("geckomap") {
 
                     if (draft.authors.any { it.uuid == target.uniqueId }) {
                         player.sendText {
-                            appendErrorPrefix()
-                            variableValue(target.name)
-                            error(" ist bereits Autor.")
+                            appendInfoPrefix()
+                            white(target.name)
+                            info(" ist bereits Autor.")
                         }
                         return@playerExecutor
                     }
@@ -82,9 +82,9 @@ fun geckoMapCommand() = commandTree("geckomap") {
                     )
 
                     player.sendText {
-                        appendSuccessPrefix()
-                        success("Autor hinzugefügt: ")
-                        variableValue(target.name)
+                        appendInfoPrefix()
+                        info("Autor hinzugefügt: ")
+                        white(target.name)
                     }
                 }
             }
@@ -99,14 +99,14 @@ fun geckoMapCommand() = commandTree("geckomap") {
 
                     player.sendText {
                         if (removed) {
-                            appendSuccessPrefix()
-                            success("Autor entfernt: ")
-                            variableValue(name)
+                            appendInfoPrefix()
+                            info("Autor entfernt: ")
+                            white(name)
                         } else {
-                            appendErrorPrefix()
-                            error("Kein Autor mit dem Namen ")
-                            variableValue(name)
-                            error(" gefunden.")
+                            appendInfoPrefix()
+                            info("Kein Autor mit dem Namen ")
+                            white(name)
+                            info(" gefunden.")
                         }
                     }
                 }
@@ -122,9 +122,9 @@ fun geckoMapCommand() = commandTree("geckomap") {
 
                 if (type == null) {
                     player.sendText {
-                        appendErrorPrefix()
-                        error("Unbekannter POI. Möglich: ")
-                        variableValue(GeckoPoiType.entries.joinToString { it.id })
+                        appendInfoPrefix()
+                        info("Unbekannter POI. Möglich: ")
+                        white(GeckoPoiType.entries.joinToString { it.id })
                     }
                     return@playerExecutor
                 }
@@ -133,11 +133,11 @@ fun geckoMapCommand() = commandTree("geckomap") {
                 MarkerRenderer.refresh(player)
 
                 player.sendText {
-                    appendSuccessPrefix()
+                    appendInfoPrefix()
                     variableValue(removed)
-                    success(" Marker von ")
-                    variableValue(type.displayName)
-                    success(" entfernt.")
+                    info(" Marker von ")
+                    white(type.displayName)
+                    info(" entfernt.")
                 }
             }
         }
@@ -149,8 +149,8 @@ fun geckoMapCommand() = commandTree("geckomap") {
             MarkerItems.giveTools(player)
 
             player.sendText {
-                appendSuccessPrefix()
-                success("Marker-Items in die Hotbar gelegt.")
+                appendInfoPrefix()
+                info("Marker-Items in die Hotbar gelegt.")
             }
         }
     }
@@ -162,7 +162,7 @@ fun geckoMapCommand() = commandTree("geckomap") {
             player.sendText {
                 appendInfoPrefix()
                 info("Marker-Anzeige ")
-                if (enabled) success("aktiviert") else warning("deaktiviert")
+                white(if (enabled) "aktiviert" else "deaktiviert")
                 info(".")
             }
         }
@@ -179,9 +179,9 @@ fun geckoMapCommand() = commandTree("geckomap") {
 
             if (missing.isNotEmpty()) {
                 player.sendText {
-                    appendErrorPrefix()
-                    error("Es fehlen noch POIs: ")
-                    variableValue(missing.joinToString { it.displayName })
+                    appendInfoPrefix()
+                    info("Es fehlen noch POIs: ")
+                    white(missing.joinToString { it.displayName })
                 }
                 return@playerExecutorSuspend
             }
@@ -193,23 +193,23 @@ fun geckoMapCommand() = commandTree("geckomap") {
                     .log("Failed to upload map %s to pastes.dev", draft.mapName)
 
                 player.sendText {
-                    appendErrorPrefix()
-                    error("Upload fehlgeschlagen: ")
-                    variableValue(throwable.message ?: throwable::class.simpleName ?: "unbekannt")
+                    appendInfoPrefix()
+                    info("Upload fehlgeschlagen: ")
+                    white(throwable.message ?: throwable::class.simpleName ?: "unbekannt")
                 }
                 return@playerExecutorSuspend
             }
 
             player.sendText {
-                appendSuccessPrefix()
-                success("Map exportiert - ")
+                appendInfoPrefix()
+                info("Map exportiert - ")
                 append {
                     variableValue(url, TextDecoration.UNDERLINED)
                     clickOpensUrl(url)
                 }
-                spacer(" ")
+                info(" ")
                 append {
-                    info("[Kopieren]")
+                    primary("[Kopieren]")
                     clickCopiesToClipboard(url)
                 }
             }
@@ -222,11 +222,11 @@ fun geckoMapCommand() = commandTree("geckomap") {
 
             player.sendText {
                 if (removed) {
-                    appendSuccessPrefix()
-                    success("Map verworfen.")
+                    appendInfoPrefix()
+                    info("Map verworfen.")
                 } else {
-                    appendErrorPrefix()
-                    error("Du hast keine aktive Map.")
+                    appendInfoPrefix()
+                    info("Du hast keine aktive Map.")
                 }
             }
         }
@@ -240,7 +240,7 @@ fun Player.sendDraftOverview() {
         sendText {
             appendInfoPrefix()
             info("Keine aktive Map. Starte mit ")
-            variableValue("/geckomap create <name>")
+            white("/geckomap create <name>")
             info(".")
         }
         return
@@ -249,44 +249,44 @@ fun Player.sendDraftOverview() {
     sendText {
         appendInfoPrefix()
         primary(draft.mapDisplayName, TextDecoration.BOLD)
-        spacer(" (")
-        variableValue(draft.mapName)
-        spacer(")")
+        info(" (")
+        white(draft.mapName)
+        info(")")
 
         appendNewInfoPrefixedLine {
-            variableKey("UUID: ")
-            variableValue(draft.mapUuid.toString())
+            primary("UUID: ")
+            white(draft.mapUuid.toString())
         }
         appendNewInfoPrefixedLine {
-            variableKey("Welt: ")
-            variableValue(draft.worldName)
+            primary("Welt: ")
+            white(draft.worldName)
         }
         appendNewInfoPrefixedLine {
-            variableKey("Autoren: ")
-            variableValue(draft.authors.joinToString { it.name })
+            primary("Autoren: ")
+            white(draft.authors.joinToString { it.name })
         }
 
         for (type in GeckoPoiType.entries) {
             val locations = draft.locations(type)
 
             appendNewInfoPrefixedLine {
-                text(type.displayName, type.color)
-                spacer(": ")
+                primary(type.displayName)
+                info(": ")
 
                 when {
-                    locations.isEmpty() -> error("nicht gesetzt")
+                    locations.isEmpty() -> info("nicht gesetzt")
                     type.multiple -> {
-                        variableValue(locations.size)
-                        spacer(" Marker")
+                        white(locations.size)
+                        info(" Marker")
                     }
 
-                    else -> variableValue(readable(locations.first()))
+                    else -> white(readable(locations.first()))
                 }
             }
         }
 
         appendNewInfoPrefixedLine {
-            variableKey("POIs insgesamt: ")
+            primary("POIs insgesamt: ")
             variableValue(draft.totalPois())
         }
     }
@@ -295,9 +295,9 @@ fun Player.sendDraftOverview() {
 private fun createDraft(player: Player, name: String, displayName: String?) {
     if (!NAME_PATTERN.matches(name)) {
         player.sendText {
-            appendErrorPrefix()
-            error("Ungültiger Map-Name. Erlaubt: ")
-            variableValue("a-z, 0-9, - und _ (3-32 Zeichen)")
+            appendInfoPrefix()
+            info("Ungültiger Map-Name. Erlaubt: ")
+            white("a-z, 0-9, - und _ (3-32 Zeichen)")
         }
         return
     }
@@ -305,10 +305,10 @@ private fun createDraft(player: Player, name: String, displayName: String?) {
     val existing = PaperGeckoMapManager.draft(player.uniqueId)
     if (existing != null) {
         player.sendText {
-            appendWarningPrefix()
-            warning("Die vorherige Map ")
-            variableValue(existing.mapName)
-            warning(" wurde verworfen.")
+            appendInfoPrefix()
+            info("Die vorherige Map ")
+            white(existing.mapName)
+            info(" wurde verworfen.")
         }
     }
 
@@ -316,10 +316,10 @@ private fun createDraft(player: Player, name: String, displayName: String?) {
     PaperGeckoMapManager.create(player, name, displayName ?: name)
 
     player.sendText {
-        appendSuccessPrefix()
-        success("Map ")
+        appendInfoPrefix()
+        info("Map ")
         variableValue(name)
-        success(" gestartet - Marker-Items liegen in der Hotbar.")
+        info(" gestartet - Marker-Items liegen in der Hotbar.")
     }
 }
 
@@ -328,10 +328,10 @@ private fun Player.requireDraft(): GeckoMapDraft? {
 
     if (draft == null) {
         sendText {
-            appendErrorPrefix()
-            error("Du hast keine aktive Map. Starte mit ")
-            variableValue("/geckomap create <name>")
-            error(".")
+            appendInfoPrefix()
+            info("Du hast keine aktive Map. Starte mit ")
+            white("/geckomap create <name>")
+            info(".")
         }
     }
 

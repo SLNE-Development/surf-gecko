@@ -23,7 +23,8 @@ object GeckoMaps {
                 GeckoMap.MapLocations(
                     Pos(1313.5, 113.0, -1431.5, 90f, 0f),
                     Pos(1279.5, 87.0, -1376.5, 56f, 19f),
-                    Pos(1209.5, 87.0, -1392.5, -73f, 0f)
+                    Pos(1209.5, 87.0, -1392.5, -73f, 0f),
+                    listOf()
                 ),
                 OffsetDateTime.now()
             )

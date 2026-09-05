@@ -54,17 +54,17 @@ object MarkerItems {
         }
 
         buildLore {
-            line { info("Rechtsklick auf Block "); variableValue("-> Marker auf die Blockmitte") }
-            line { info("Schleichen + Rechtsklick "); variableValue("-> exakte Spielerposition") }
-            line { info("Linksklick "); variableValue("-> Marker entfernen") }
+            line { primary("Rechtsklick auf Block "); white("-> Marker auf die Blockmitte") }
+            line { primary("Schleichen + Rechtsklick "); white("-> exakte Spielerposition") }
+            line { primary("Linksklick "); white("-> Marker entfernen") }
             emptyLine()
             if (type.multiple) {
-                line { spacer("Mehrfach-POI - beliebig viele Marker") }
+                line { info("Mehrfach-POI - beliebig viele Marker") }
             } else {
-                line { spacer("Einzel-POI - ein neuer Marker ersetzt den alten") }
+                line { info("Einzel-POI - ein neuer Marker ersetzt den alten") }
             }
             if (type.withRotation) {
-                line { spacer("Blickrichtung wird als Yaw/Pitch gespeichert") }
+                line { info("Blickrichtung wird als Yaw/Pitch gespeichert") }
             }
         }
 
@@ -80,8 +80,8 @@ object MarkerItems {
         }
 
         buildLore {
-            line { info("Rechtsklick "); variableValue("-> Übersicht") }
-            line { info("Schleichen + Rechtsklick "); variableValue("-> Export") }
+            line { primary("Rechtsklick "); white("-> Übersicht") }
+            line { primary("Schleichen + Rechtsklick "); white("-> Export") }
         }
 
         meta {
