@@ -182,12 +182,11 @@ object GeckoScoreboardManager {
 
             GeckoGameState.ENDING, GeckoGameState.ENDED -> {
                 sidebar.updateLineContent("4", Component.empty())
-                sidebar.updateLineContent("5", Component.empty())
                 sidebar.updateLineContent(
-                    "6",
+                    "5",
                     BitmapProvider.translateToComponent("Spielende", Colors.WHITE, Colors.INFO)
                 )
-                sidebar.updateLineContent("7", buildText {
+                sidebar.updateLineContent("6", buildText {
                     white(
                         formatSeconds(
                             game.endingTimerSeconds ?: Duration.ZERO.inWholeSeconds.toInt()
@@ -195,6 +194,8 @@ object GeckoScoreboardManager {
                     )
                     white(" ⌚")
                 })
+
+                sidebar.updateLineContent("7", Component.empty())
                 sidebar.updateLineContent("8", Component.empty())
             }
 
