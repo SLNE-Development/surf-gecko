@@ -34,7 +34,7 @@ val shopView by lazy {
 
                 builder.withItem(
                     item?.let {
-                        ItemStack.builder(it.displayMaterial)
+                        ItemStack.builder(it.displayItem)
                             .set(DataComponents.ITEM_NAME, buildText { note(it.displayName) })
                             .set(
                                 DataComponents.LORE,
