@@ -6,6 +6,7 @@ import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
 import net.minestom.server.event.Event
 import net.minestom.server.event.EventNode
+import net.minestom.server.event.entity.EntityDamageEvent
 import net.minestom.server.event.item.ItemDropEvent
 import net.minestom.server.event.player.PlayerBlockBreakEvent
 import net.minestom.server.event.player.PlayerBlockInteractEvent
@@ -21,6 +22,12 @@ class GeckoLobbyListener : EventRegistrar {
         node.addListener(PlayerBlockInteractEvent::class.java) { cancel(it, it.player) }
         node.addListener(ItemDropEvent::class.java) { cancel(it, it.player) }
         node.addListener(PlayerUseItemEvent::class.java) { cancel(it, it.player) }
+        node.addListener(EntityDamageEvent::class.java) {
+            cancel(
+                it,
+                it.entity as? Player ?: return@addListener
+            )
+        }
     }
 
     private fun cancel(event: CancellableEvent, player: Player) {
