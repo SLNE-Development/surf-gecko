@@ -51,6 +51,11 @@ object GeckoGameManager {
         }
     }
 
+    suspend fun handleGameLeave(player: Player) {
+        val game = findGame(player.uuid) ?: return
+        game.handleLeave(player)
+    }
+
     private suspend fun testFor() {
         if (!requiresGame()) {
             return

@@ -9,6 +9,7 @@ import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoPlayerRoleSelector
 import dev.slne.surf.gecko.server.gecko.player.lobby.GeckoLobbyPlayer
+import dev.slne.surf.gecko.server.gecko.punishment.GeckoGamePunisher
 import dev.slne.surf.gecko.server.gecko.scoreboard.GeckoScoreboardManager
 import dev.slne.surf.gecko.server.gecko.settings.GeckoGameSettings
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
@@ -252,6 +253,91 @@ class GeckoGame(
         }
 
         updateCountdownBossBar()
+    }
+
+    suspend fun handleLeave(player: Player) {
+        if (state.isGame()) {
+            val gamePlayer = findGamePlayer(player.uuid) ?: return
+
+            sendText {
+                appendInfoPrefix()
+                text(player.username, gamePlayer.role.color, TextDecoration.BOLD)
+                info(" hat das Spiel verlassen.")
+            }
+
+            when (gamePlayer.role) {
+                GeckoGameRole.SEEKER -> {
+                    val seekerCount = gamePlayers.count { it.role == GeckoGameRole.SEEKER }
+
+                    if (seekerCount <= 1) {
+                        choseNewRandomSeeker()
+                    }
+                }
+
+                GeckoGameRole.HIDER -> {
+                    if (gamePlayers.count { it.role == GeckoGameRole.HIDER } <= 0) {
+                        beginEnding(GeckoGameEndReason.SEEKER_WIN)
+                    }
+                }
+
+                GeckoGameRole.SPECTATOR -> return
+            }
+
+            gamePlayers.remove(gamePlayer)
+            gamePlayer.clearRespawnState()
+
+            GeckoGamePunisher.punish(player)
+        } else {
+            val lobbyPlayer = lobbyPlayers.firstOrNull { it.playerUuid == player.uuid } ?: return
+            lobbyPlayers.remove(lobbyPlayer)
+
+            sendText {
+                appendInfoPrefix()
+                variableValue(player.username)
+                info(" ist gegangen.")
+            }
+        }
+    }
+
+    private fun choseNewRandomSeeker() {
+        val hiders = gamePlayers.filter { it.role == GeckoGameRole.HIDER }
+
+        if (hiders.isEmpty()) {
+            beginEnding(GeckoGameEndReason.SEEKER_WIN)
+            return
+        }
+
+        val newSeeker = hiders.random()
+        newSeeker.role = GeckoGameRole.SEEKER
+        newSeeker.applyGameMode()
+        newSeeker.applyEquipment()
+        newSeeker.teleportToSpawn(settings.map)
+
+        forEachGamePlayer {
+            if (it.playerUuid == newSeeker.playerUuid) {
+                it.player.sendText {
+                    appendNewline()
+                    appendInfoPrefix()
+                    error("Der Sucher hat das Spiel verlassen.", TextDecoration.BOLD)
+                    appendNewline()
+                    appendInfoPrefix()
+                    info("Du wurdest zufällig als neuer ")
+                    append(GeckoGameRole.SEEKER.displayText)
+                    info(" ausgewählt.")
+                }
+            } else {
+                it.player.sendText {
+                    appendNewline()
+                    appendInfoPrefix()
+                    error("Der Sucher hat das Spiel verlassen.", TextDecoration.BOLD)
+                    appendNewline()
+                    appendInfoPrefix()
+                    variableValue(newSeeker.player.username)
+                    info(" ist nun ")
+                    append(GeckoGameRole.SEEKER.displayText)
+                }
+            }
+        }
     }
 
     private suspend fun tryStart() {
