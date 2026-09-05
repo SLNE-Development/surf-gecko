@@ -6,6 +6,7 @@ import dev.slne.surf.gecko.server.gecko.shop.items.HiderSpeedShopItem
 import dev.slne.surf.gecko.server.gecko.shop.items.SeekerSpeedShopItem
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
+import net.minestom.server.tag.Tag
 
 interface ShopItem {
     val id: String
@@ -21,5 +22,8 @@ interface ShopItem {
     companion object {
         private val items = listOf(SeekerSpeedShopItem, HiderInvisShopItem, HiderSpeedShopItem)
         fun byRole(role: GeckoGameRole) = items.filter { it.role == role }
+        fun byId(id: String) = items.find { it.id == id }
+
+        val ID_TAG: Tag<String> = Tag.String("shop_item_id")
     }
 }

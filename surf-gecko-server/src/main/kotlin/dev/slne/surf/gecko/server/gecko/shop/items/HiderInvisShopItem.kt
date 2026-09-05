@@ -4,6 +4,7 @@ import dev.slne.surf.api.core.messages.adventure.key
 import dev.slne.surf.api.core.messages.adventure.playSound
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
+import dev.slne.surf.gecko.server.util.withTag
 import net.minestom.server.component.DataComponents
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
@@ -32,6 +33,7 @@ object HiderInvisShopItem : ShopItem {
                 PotionType.INVISIBILITY
             )
         )
+        .withTag(ShopItem.ID_TAG, id)
         .build()
 
     override fun onUse(player: Player) {

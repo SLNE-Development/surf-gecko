@@ -41,6 +41,11 @@ class ShopItemListener : EventRegistrar {
     }
 
     private fun handleInteract(player: Player, item: ItemStack) {
+        if(item.hasTag(ShopItem.ID_TAG)) {
+            val item = ShopItem.byId(item.getTag(ShopItem.ID_TAG)) ?: return
+            item.onUse(player)
+        }
+
         if (!item.hasTag(itemTag)) {
             return
         }
