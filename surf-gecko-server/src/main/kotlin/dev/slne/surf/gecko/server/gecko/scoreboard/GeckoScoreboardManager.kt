@@ -140,7 +140,7 @@ object GeckoScoreboardManager {
                             white("Warten...")
                         } else {
                             append(getGameTime(game).color(Colors.WHITE))
-                            white(" ⏳")
+                            white(" ⌚")
                         }
                     }
                 )
