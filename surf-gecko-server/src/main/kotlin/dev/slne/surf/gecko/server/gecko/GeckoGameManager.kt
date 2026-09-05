@@ -1,9 +1,9 @@
 package dev.slne.surf.gecko.server.gecko
 
-import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.database.repository.GeckoGameRepository
+import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.map.GeckoMapManager
 import dev.slne.surf.gecko.server.gecko.player.lobby.GeckoLobbyPlayer
 import dev.slne.surf.gecko.server.gecko.scoreboard.GeckoScoreboardManager
@@ -95,27 +95,12 @@ object GeckoGameManager {
             val players = game.players
 
             players.filterNotNull().forEach {
-                requeueOrKick(it)
+                GeckoLobby.join(it)
             }
         }
 
         synchronized(lock) { games.remove(game) }
         GeckoGameRepository.updateGameEndReason(game, reason)
-    }
-
-    fun requeueOrKick(player: Player) {
-        val newGame = reserveLobbySlot(player.uuid)
-
-        if (newGame == null) {
-            player.kick(buildText {
-                appendErrorPrefix()
-                error("Es ist aktuell keine Runde verfügbar. Bitte versuche es später erneut.")
-            })
-            return
-        }
-
-        player.instance = newGame.instance
-        player.respawnPoint = newGame.settings.map.mapLocations.lobbySpawn
     }
 
     fun reserveLobbySlot(playerUuid: UUID): GeckoGame? = synchronized(lock) {

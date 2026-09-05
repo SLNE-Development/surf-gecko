@@ -15,7 +15,6 @@ object GeckoInstance {
         geckoLogger.info("Enabling GeckoInstance...")
         GeckoDatabaseManager.create()
         GeckoLobby.createLobby()
-        GeckoLobby.init()
         GeckoGameManager.init()
         GeckoGameTablistManager.init()
 
