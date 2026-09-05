@@ -15,6 +15,7 @@ import net.minestom.server.item.component.EnchantmentList
 import net.minestom.server.item.component.TooltipDisplay
 import net.minestom.server.item.enchant.Enchantment
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 data class GeckoGamePlayer(
     val playerUuid: UUID,
@@ -100,7 +101,7 @@ data class GeckoGamePlayer(
         player.teleport(map.mapLocations.spawn)
     }
 
-    fun teleportToSpawn(map: GeckoMap) = when (role) {
+    fun teleportToSpawn(map: GeckoMap): CompletableFuture<Void> = when (role) {
         GeckoGameRole.SEEKER -> player.teleport(map.mapLocations.seekerSpawn)
         GeckoGameRole.HIDER -> player.teleport(map.mapLocations.spawn)
         GeckoGameRole.SPECTATOR -> player.teleport(map.mapLocations.spawn)
