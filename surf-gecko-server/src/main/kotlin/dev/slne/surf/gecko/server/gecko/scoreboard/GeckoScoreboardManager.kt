@@ -87,7 +87,7 @@ object GeckoScoreboardManager {
             )
         )
         sidebar.createLine(Sidebar.ScoreboardLine("9", buildText {
-            primary("castcrafter.de".toSmallCaps())
+            note("castcrafter.de".toSmallCaps())
         }, 1, Sidebar.NumberFormat.blank()))
 
         sidebars[game.internalId] = sidebar
@@ -151,45 +151,38 @@ object GeckoScoreboardManager {
                 sidebar.updateLineContent("5", buildText {
                     append(
                         BitmapProvider.translateToComponent(
-                            "Sucher: ",
+                            game.gamePlayers.count { it.role == GeckoGameRole.SEEKER }.toString()
+                                .padStart(2, '0'),
                             Colors.WHITE,
                             GeckoGameRole.SEEKER.color,
                             affixAmount = 3
                         )
                     )
-                    white(
-                        game.gamePlayers.count { it.role == GeckoGameRole.SEEKER }.toString()
-                            .padStart(2, '0')
-                    )
-                    white(" 👥")
-                })
-
-                sidebar.updateLineContent("6", buildText {
+                    spacer(" / ")
                     append(
                         BitmapProvider.translateToComponent(
-                            "Verstecker: ",
+                            game.gamePlayers.count { it.role == GeckoGameRole.HIDER }.toString()
+                                .padStart(2, '0'),
                             Colors.WHITE,
                             GeckoGameRole.HIDER.color,
                             affixAmount = 3
                         )
                     )
-                    white(
-                        game.gamePlayers.count { it.role == GeckoGameRole.HIDER }.toString()
-                            .padStart(2, '0')
-                    )
                     white(" 👥")
                 })
+                sidebar.updateLineContent("6", Component.empty())
 
-                sidebar.updateLineContent("7", Component.empty())
-
-                sidebar.updateLineContent("8", buildText {
+                sidebar.updateLineContent("7", buildText {
                     append(BitmapProvider.translateToComponent("Zeit: ", Colors.WHITE, Colors.INFO))
                     append(getGameTime(game).color(Colors.WHITE))
                     white(" ⌚")
                 })
+                sidebar.updateLineContent("8", Component.empty())
             }
 
             GeckoGameState.ENDING, GeckoGameState.ENDED -> {
+                sidebar.updateLineContent("4", Component.empty())
+                sidebar.updateLineContent("5", Component.empty())
                 sidebar.updateLineContent(
                     "6",
                     BitmapProvider.translateToComponent("Spielende", Colors.WHITE, Colors.INFO)
@@ -202,6 +195,7 @@ object GeckoScoreboardManager {
                     )
                     white(" ⌚")
                 })
+                sidebar.updateLineContent("8", Component.empty())
             }
 
             else -> {
