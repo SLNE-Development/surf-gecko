@@ -10,6 +10,7 @@ import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 import net.minestom.server.item.component.PotionContents
+import net.minestom.server.item.component.TooltipDisplay
 import net.minestom.server.potion.Potion
 import net.minestom.server.potion.PotionEffect
 import net.minestom.server.potion.PotionType
@@ -26,6 +27,10 @@ object HiderSpeedShopItem : ShopItem {
                 PotionType.SWIFTNESS
             )
         )
+        .set(
+            DataComponents.TOOLTIP_DISPLAY,
+            TooltipDisplay(true, setOf(DataComponents.POTION_CONTENTS))
+        )
         .build()
     override val inventoryItem: ItemStack = ItemStack.builder(Material.POTION)
         .set(
@@ -33,11 +38,15 @@ object HiderSpeedShopItem : ShopItem {
                 PotionType.SWIFTNESS
             )
         )
-        .withTag(ShopItem.ID_TAG, HiderInvisShopItem.id)
+        .set(
+            DataComponents.TOOLTIP_DISPLAY,
+            TooltipDisplay(true, setOf(DataComponents.POTION_CONTENTS))
+        )
+        .withTag(ShopItem.ID_TAG, id)
         .build()
 
     override fun onUse(player: Player) {
-        player.addEffect(Potion(PotionEffect.INVISIBILITY, 1, 10 * 20))
+        player.addEffect(Potion(PotionEffect.SPEED, 1, 5 * 20))
         player.playSound(true) {
             type(key("minecraft:entity.generic.drink"))
         }

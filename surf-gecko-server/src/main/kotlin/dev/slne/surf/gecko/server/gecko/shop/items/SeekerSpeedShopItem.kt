@@ -10,13 +10,14 @@ import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 import net.minestom.server.item.component.PotionContents
+import net.minestom.server.item.component.TooltipDisplay
 import net.minestom.server.potion.Potion
 import net.minestom.server.potion.PotionEffect
 import net.minestom.server.potion.PotionType
 
 object SeekerSpeedShopItem : ShopItem {
     override val id = "seeker_speed"
-    override val role = GeckoGameRole.HIDER
+    override val role = GeckoGameRole.SEEKER
     override val price = 5
     override val displayName = "Geschwindigkeitstrank"
     override val description = "Werde für 5 Sekunden schneller"
@@ -26,6 +27,10 @@ object SeekerSpeedShopItem : ShopItem {
                 PotionType.SWIFTNESS
             )
         )
+        .set(
+            DataComponents.TOOLTIP_DISPLAY,
+            TooltipDisplay(true, setOf(DataComponents.POTION_CONTENTS))
+        )
         .build()
     override val inventoryItem: ItemStack = ItemStack.builder(Material.POTION)
         .set(
@@ -33,11 +38,15 @@ object SeekerSpeedShopItem : ShopItem {
                 PotionType.SWIFTNESS
             )
         )
-        .withTag(ShopItem.ID_TAG, HiderInvisShopItem.id)
+        .set(
+            DataComponents.TOOLTIP_DISPLAY,
+            TooltipDisplay(true, setOf(DataComponents.POTION_CONTENTS))
+        )
+        .withTag(ShopItem.ID_TAG, id)
         .build()
 
     override fun onUse(player: Player) {
-        player.addEffect(Potion(PotionEffect.INVISIBILITY, 1, 10 * 20))
+        player.addEffect(Potion(PotionEffect.SPEED, 1, 5 * 20))
         player.playSound(true) {
             type(key("minecraft:entity.generic.drink"))
         }

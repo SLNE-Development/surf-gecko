@@ -20,10 +20,13 @@ interface ShopItem {
     fun onUse(player: Player)
 
     companion object {
-        private val items = listOf(SeekerSpeedShopItem, HiderInvisShopItem, HiderSpeedShopItem)
+        val ID_TAG: Tag<String> = Tag.String("shop_item_id")
+
+        private val items by lazy {
+            listOf(SeekerSpeedShopItem, HiderInvisShopItem, HiderSpeedShopItem)
+        }
+
         fun byRole(role: GeckoGameRole) = items.filter { it.role == role }
         fun byId(id: String) = items.find { it.id == id }
-
-        val ID_TAG: Tag<String> = Tag.String("shop_item_id")
     }
 }
