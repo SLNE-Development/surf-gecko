@@ -113,7 +113,7 @@ data class GeckoGamePlayer(
                 .set(DataComponents.DYED_COLOR, SEEKER_COLOR)
                 .set(
                     DataComponents.TOOLTIP_DISPLAY,
-                    TooltipDisplay(true, setOf(DataComponents.ENCHANTMENTS))
+                    TooltipDisplay(false, setOf(DataComponents.ENCHANTMENTS))
                 )
                 .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
                 .build()
@@ -123,7 +123,7 @@ data class GeckoGamePlayer(
                 .set(DataComponents.DYED_COLOR, SEEKER_COLOR)
                 .set(
                     DataComponents.TOOLTIP_DISPLAY,
-                    TooltipDisplay(true, setOf(DataComponents.ENCHANTMENTS))
+                    TooltipDisplay(false, setOf(DataComponents.ENCHANTMENTS))
                 )
                 .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
                 .build()
@@ -133,7 +133,7 @@ data class GeckoGamePlayer(
                 .set(DataComponents.DYED_COLOR, SEEKER_COLOR)
                 .set(
                     DataComponents.TOOLTIP_DISPLAY,
-                    TooltipDisplay(true, setOf(DataComponents.ENCHANTMENTS))
+                    TooltipDisplay(false, setOf(DataComponents.ENCHANTMENTS))
                 )
                 .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
                 .build()
@@ -143,7 +143,7 @@ data class GeckoGamePlayer(
                 .set(DataComponents.DYED_COLOR, SEEKER_COLOR)
                 .set(
                     DataComponents.TOOLTIP_DISPLAY,
-                    TooltipDisplay(true, setOf(DataComponents.ENCHANTMENTS))
+                    TooltipDisplay(false, setOf(DataComponents.ENCHANTMENTS))
                 )
                 .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
                 .build()
@@ -151,7 +151,7 @@ data class GeckoGamePlayer(
         private val SEEKER_SWORD = ItemStack.of(Material.WOODEN_SWORD).builder()
             .set(
                 DataComponents.TOOLTIP_DISPLAY,
-                TooltipDisplay(true, setOf(DataComponents.ENCHANTMENTS))
+                TooltipDisplay(false, setOf(DataComponents.ENCHANTMENTS))
             )
             .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
             .build()
@@ -159,7 +159,7 @@ data class GeckoGamePlayer(
             .set(DataComponents.ENCHANTMENTS, EnchantmentList(mapOf(Enchantment.INFINITY to 1)))
             .set(
                 DataComponents.TOOLTIP_DISPLAY,
-                TooltipDisplay(true, setOf(DataComponents.ENCHANTMENTS))
+                TooltipDisplay(false, setOf(DataComponents.ENCHANTMENTS))
             )
             .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
             .build()
