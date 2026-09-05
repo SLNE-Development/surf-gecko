@@ -14,15 +14,15 @@ class GeckoOrbSpawner(val game: GeckoGame) {
             val spawns = game.settings.map.mapLocations.orbSpawns
             val playerCount = game.players.size
 
-            val minAmount = playerCount
             val maxAmount = (playerCount * 2).coerceAtMost((spawns.size * 0.15).toInt())
+            if (maxAmount <= 0) {
+                return@runAtFixedRate
+            }
 
-            if (maxAmount <= 0) return@runAtFixedRate
-
-            val amount = if (maxAmount <= minAmount) {
+            val amount = if (maxAmount <= playerCount) {
                 maxAmount
             } else {
-                (minAmount..maxAmount).random()
+                (playerCount..maxAmount).random()
             }
 
             spawns.shuffled()
