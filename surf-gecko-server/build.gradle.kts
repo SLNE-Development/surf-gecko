@@ -27,6 +27,7 @@ dependencies {
     compileOnly(libs.surf.api.minestom)
     compileOnly(libs.minestom)
     compileOnly(libs.minestom.lobby.api)
+    compileOnly(libs.surf.bitmap.provider.common)
     compileOnly(libs.guice)
     compileOnly(libs.coroutines.core)
     compileOnly(libs.bundles.log4j)
@@ -92,6 +93,7 @@ dependencies {
     runtimeDownload(libs.surf.punish.minestom)
     runtimeDownload(libs.surf.queue.minestom)
     runtimeDownload(libs.surf.playtime.minestom)
+    runtimeDownload(libs.surf.bitmap.provider.minestom)
 }
 
 kotlin {

@@ -2,8 +2,8 @@ package dev.slne.surf.gecko.server.gecko.scoreboard
 
 import dev.slne.surf.api.core.font.toSmallCaps
 import dev.slne.surf.api.core.messages.Colors
-import dev.slne.surf.api.core.messages.CommonComponents
 import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.bitmap.common.provider.BitmapProvider
 import dev.slne.surf.gecko.server.gecko.GeckoGame
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
@@ -12,14 +12,13 @@ import net.minestom.server.entity.Player
 import net.minestom.server.scoreboard.Sidebar
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 object GeckoScoreboardManager {
     private val sidebars = ConcurrentHashMap<ULong, Sidebar>()
 
     fun createSidebar(game: GeckoGame) {
         val sidebar = Sidebar(buildText {
-            note("Hide 'n Seek")
+            note("      Hide 'n Seek      ")
         })
 
         sidebar.createLine(
@@ -96,33 +95,61 @@ object GeckoScoreboardManager {
     fun updateSidebar(game: GeckoGame) {
         val sidebar = sidebars[game.internalId] ?: return
 
-        sidebar.updateLineContent("2", buildText {
-            variableValue("Map")
-            spacer(": ")
+        sidebar.updateLineContent(
+            "2",
+            BitmapProvider.translateToComponent("Map", Colors.WHITE, Colors.INFO)
+        )
+        sidebar.updateLineContent("3", buildText {
             white(game.settings.map.mapDisplayName)
         })
 
         when (game.state) {
             GeckoGameState.LOBBY -> {
-                sidebar.updateLineContent("4", buildText {
-                    variableValue("Spieler")
-                    white(": ${game.lobbyPlayers.size.toString().padStart(2, '0')} 👥")
+                sidebar.updateLineContent("4", Component.empty())
+                sidebar.updateLineContent("5", buildText {
+                    append(
+                        BitmapProvider.translateToComponent(
+                            "Spieler",
+                            Colors.WHITE,
+                            Colors.INFO
+                        )
+                    )
+                })
+                sidebar.updateLineContent("6", buildText {
+                    white("${game.lobbyPlayers.size.toString().padStart(2, '0')} 👥")
                 })
 
-                sidebar.updateLineContent("6", buildText {
-                    if (game.countdownSeconds == null) {
-                        variableValue("Warte...")
-                    } else {
-                        variableValue("Zeit: ")
-                        append(getGameTime(game).color(Colors.WHITE))
+                sidebar.updateLineContent("7", Component.empty())
+                sidebar.updateLineContent(
+                    "8",
+                    buildText {
+                        append(
+                            BitmapProvider.translateToComponent(
+                                "Wartezeit",
+                                Colors.WHITE,
+                                Colors.INFO
+                            )
+                        )
+                        if (game.countdownSeconds == null) {
+                            white("Warten...")
+                        } else {
+                            append(getGameTime(game).color(Colors.WHITE))
+                        }
                     }
-                })
+                )
             }
 
             GeckoGameState.HIDING, GeckoGameState.SEARCHING -> {
-                sidebar.updateLineContent("4", buildText {
-                    text("Sucher", GeckoGameRole.SEEKER.color)
-                    spacer(": ")
+                sidebar.updateLineContent("4", Component.empty())
+                sidebar.updateLineContent("5", buildText {
+                    append(
+                        BitmapProvider.translateToComponent(
+                            "Sucher: ",
+                            Colors.WHITE,
+                            GeckoGameRole.SEEKER.color,
+                            affixAmount = 4
+                        )
+                    )
                     white(
                         game.gamePlayers.count { it.role == GeckoGameRole.SEEKER }.toString()
                             .padStart(2, '0')
@@ -130,9 +157,15 @@ object GeckoScoreboardManager {
                     white(" 👥")
                 })
 
-                sidebar.updateLineContent("5", buildText {
-                    text("Verstecker", GeckoGameRole.HIDER.color)
-                    spacer(": ")
+                sidebar.updateLineContent("6", buildText {
+                    append(
+                        BitmapProvider.translateToComponent(
+                            "Verstecker: ",
+                            Colors.WHITE,
+                            GeckoGameRole.HIDER.color,
+                            affixAmount = 4
+                        )
+                    )
                     white(
                         game.gamePlayers.count { it.role == GeckoGameRole.HIDER }.toString()
                             .padStart(2, '0')
@@ -140,23 +173,24 @@ object GeckoScoreboardManager {
                     white(" 👥")
                 })
 
-                sidebar.updateLineContent("6", Component.empty())
+                sidebar.updateLineContent("7", Component.empty())
 
-                sidebar.updateLineContent("7", buildText {
-                    variableValue("Zeit: ")
+                sidebar.updateLineContent("8", buildText {
+                    append(BitmapProvider.translateToComponent("Zeit: ", Colors.WHITE, Colors.INFO))
                     append(getGameTime(game).color(Colors.WHITE))
                 })
             }
 
             GeckoGameState.ENDING, GeckoGameState.ENDED -> {
+                sidebar.updateLineContent(
+                    "6",
+                    BitmapProvider.translateToComponent("Spielende", Colors.WHITE, Colors.INFO)
+                )
                 sidebar.updateLineContent("7", buildText {
-                    variableValue("Zeit: ")
-                    append(
-                        CommonComponents.formatTime(
-                            game.endingTimerSeconds?.seconds ?: Duration.ZERO,
-                            showSeconds = true,
-                            shortForms = true
-                        ).color(Colors.WHITE)
+                    white(
+                        formatSeconds(
+                            game.endingTimerSeconds ?: Duration.ZERO.inWholeSeconds.toInt()
+                        )
                     )
                 })
             }
@@ -190,16 +224,14 @@ object GeckoScoreboardManager {
     }
 
     fun getGameTime(game: GeckoGame) = if (game.state.isGame()) {
-        CommonComponents.formatTime(
-            game.gameTimerSeconds?.seconds ?: Duration.ZERO,
-            showSeconds = true,
-            shortForms = true
-        )
+        Component.text(formatSeconds(game.gameTimerSeconds ?: Duration.ZERO.inWholeSeconds.toInt()))
     } else {
-        CommonComponents.formatTime(
-            game.countdownSeconds?.seconds ?: Duration.ZERO,
-            showSeconds = true,
-            shortForms = true
-        )
+        Component.text(formatSeconds(game.countdownSeconds ?: Duration.ZERO.inWholeSeconds.toInt()))
+    }
+
+    private fun formatSeconds(seconds: Int): String {
+        val minutes = seconds / 60
+        val remainingSeconds = seconds % 60
+        return "%02d:%02d".format(minutes, remainingSeconds)
     }
 }

@@ -65,6 +65,8 @@ surf-settings-minestom = { module = "dev.slne.surf.settings:surf-settings-minest
 surf-punish-minestom = { module = "dev.slne.surf.punish:surf-punish-minestom", version = "+" }
 surf-queue-minestom = { module = "dev.slne.surf.queue:surf-queue-minestom", version = "+" }
 surf-playtime-minestom = { module = "dev.slne.surf.playtime:surf-playtime-minestom", version = "+" }
+surf-bitmap-provider-common = { module = "dev.slne.surf.bitmap:surf-bitmap-provider-common", version = "+" }
+surf-bitmap-provider-minestom = { module = "dev.slne.surf.bitmap:surf-bitmap-provider-minestom", version = "+" }
 surf-ban-bypass-minestom = { module = "dev.slne.surf.bb:surf-ban-bypass-minestom", version = "+" }
 surf-anticheat-minestom = { module = "dev.slne.minestom:surf-minestom-anticheat", version = "+" }
 

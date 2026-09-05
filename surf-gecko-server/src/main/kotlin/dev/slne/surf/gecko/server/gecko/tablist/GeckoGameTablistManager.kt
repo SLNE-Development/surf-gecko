@@ -29,7 +29,7 @@ object GeckoGameTablistManager {
         MinecraftServer.getConnectionManager().onlinePlayers.forEach {
             it.sendPlayerListHeaderAndFooter(buildText {
                 appendNewline()
-                note("CASTCRAFTER.DE")
+                note("           CASTCRAFTER.DE           ")
                 appendNewline()
                 info("Hide 'n Seek")
                 spacer(" » ")
