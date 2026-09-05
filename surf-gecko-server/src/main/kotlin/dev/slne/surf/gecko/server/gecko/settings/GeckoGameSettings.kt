@@ -12,6 +12,8 @@ data class GeckoGameSettings(
     val minPlayers: Int = DEFAULT_MIN_PLAYERS,
     val maxPlayers: Int = DEFAULT_MAX_PLAYERS,
     val roundTimeSeconds: Int = 300,
+    val hidingTimeSeconds: Int = 45,
+    val heartbeatRadius: Double = 15.0,
     val seekerRespawnTimeSeconds: Int = 30,
     val respawnHidersAsSeekers: Boolean = true,
 

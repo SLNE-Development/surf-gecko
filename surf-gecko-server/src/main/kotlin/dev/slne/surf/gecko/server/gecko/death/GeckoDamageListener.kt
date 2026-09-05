@@ -3,9 +3,13 @@ package dev.slne.surf.gecko.server.gecko.death
 import com.google.inject.Singleton
 import dev.slne.minestom.lobby.api.event.EventRegistrar
 import dev.slne.surf.api.core.messages.adventure.buildText
-import dev.slne.surf.api.core.messages.adventure.key
-import dev.slne.surf.api.core.messages.adventure.playSound
+import dev.slne.surf.api.core.messages.adventure.showTitle
+import dev.slne.surf.gecko.server.gecko.GeckoGame
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
+import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
+import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
+import net.kyori.adventure.sound.Sound
+import net.kyori.adventure.text.format.TextDecoration
 import net.minestom.server.entity.Player
 import net.minestom.server.event.Event
 import net.minestom.server.event.EventNode
@@ -50,9 +54,7 @@ class GeckoDamageListener : EventRegistrar {
             spacer(" gefunden")
         })
 
-        attackingGamePlayer?.player?.playSound(true) {
-            type(key("minecraft:entity.player.attack.crit"))
-        }
+        playKillSounds(game, gamePlayer, attackingGamePlayer)
 
         game.sendText {
             appendInfoPrefix()
@@ -69,5 +71,47 @@ class GeckoDamageListener : EventRegistrar {
 
         event.isCancelled = true
         game.handleDeath(gamePlayer)
+    }
+
+    private fun playKillSounds(
+        game: GeckoGame,
+        victim: GeckoGamePlayer,
+        killer: GeckoGamePlayer?
+    ) {
+        killer?.playerOrNull?.let {
+            it.playSound(GeckoSounds.KILL_CRIT, Sound.Emitter.self())
+            it.playSound(GeckoSounds.KILL_CONFIRM, Sound.Emitter.self())
+        }
+
+        victim.playerOrNull?.let {
+            it.playSound(GeckoSounds.DEATH_SELF, Sound.Emitter.self())
+            it.showTitle {
+                title {
+                    text("Gefunden", victim.role.color, TextDecoration.BOLD)
+                }
+                subtitle {
+                    if (killer != null) {
+                        info("Du wurdest von ")
+                        variableValue(killer.player.username)
+                        info(" erwischt")
+                    } else {
+                        info("Du bist gestorben")
+                    }
+                }
+                times {
+                    fadeIn(2)
+                    stay(30)
+                    fadeOut(10)
+                }
+            }
+        }
+
+        game.forEachPlayer {
+            if (it.uuid == victim.playerUuid || it.uuid == killer?.playerUuid) {
+                return@forEachPlayer
+            }
+
+            it.playSound(GeckoSounds.DEATH_BROADCAST, Sound.Emitter.self())
+        }
     }
 }

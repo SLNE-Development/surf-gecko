@@ -1,10 +1,12 @@
 package dev.slne.surf.gecko.server.gecko
 
 import dev.slne.surf.api.core.font.toSmallCaps
+import dev.slne.surf.api.core.messages.Colors
 import dev.slne.surf.api.core.messages.adventure.*
 import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.gecko.server.gecko.heartbeat.GeckoHeartbeat
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoPlayerRoleSelector
@@ -12,9 +14,13 @@ import dev.slne.surf.gecko.server.gecko.player.lobby.GeckoLobbyPlayer
 import dev.slne.surf.gecko.server.gecko.punishment.GeckoGamePunisher
 import dev.slne.surf.gecko.server.gecko.scoreboard.GeckoScoreboardManager
 import dev.slne.surf.gecko.server.gecko.settings.GeckoGameSettings
+import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
 import kotlinx.coroutines.*
+import net.kyori.adventure.sound.Sound
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
@@ -38,6 +44,7 @@ class GeckoGame(
 
     var gameTimerSeconds: Int? = null
     private var gameTimerJob: Job? = null
+    private val heartbeat = GeckoHeartbeat(this)
 
     val lobbyPlayers = mutableSetOf<GeckoLobbyPlayer>()
     val gamePlayers = mutableSetOf<GeckoGamePlayer>()
@@ -83,6 +90,8 @@ class GeckoGame(
 
     fun findGamePlayer(playerUuid: UUID) = gamePlayers.firstOrNull { it.playerUuid == playerUuid }
 
+    fun stopHeartbeat() = heartbeat.stop()
+
     fun isTeamDamage(attacker: GeckoGamePlayer, victim: GeckoGamePlayer) =
         attacker.role == victim.role
 
@@ -93,6 +102,7 @@ class GeckoGame(
         state = GeckoGameState.ENDING
         gameTimerJob?.cancel()
         gameTimerJob = null
+        heartbeat.stop()
         endingTimerSeconds = 10
 
         sendText {
@@ -252,6 +262,14 @@ class GeckoGame(
             else -> calculated
         }
 
+        val secondsLeft = countdownSeconds
+
+        if (secondsLeft != null && secondsLeft in 1..GeckoSounds.COUNTDOWN_SECONDS) {
+            players.filterNotNull().forEach {
+                it.playSound(GeckoSounds.countdownTick(secondsLeft), Sound.Emitter.self())
+            }
+        }
+
         updateCountdownBossBar()
     }
 
@@ -376,6 +394,7 @@ class GeckoGame(
         gameTimerJob = geckoAsyncScope.runAtFixedRate(1.seconds) {
             tickGame()
         }
+        heartbeat.start()
     }
 
     private var waitingBossBarIndex = 0
@@ -410,7 +429,18 @@ class GeckoGame(
         tickRespawns()
         checkForGameEnd()
 
-        if (state == GeckoGameState.HIDING && currentTimer <= (settings.roundTimeSeconds - 45)) {
+        val searchStartAt = settings.roundTimeSeconds - settings.hidingTimeSeconds
+        val secondsUntilSearch = currentTimer - searchStartAt
+
+        if (state == GeckoGameState.HIDING && secondsUntilSearch in 1..GeckoSounds.COUNTDOWN_SECONDS) {
+            broadcastCountdown(
+                secondsUntilSearch,
+                GeckoGameRole.SEEKER.color,
+                SEARCH_COUNTDOWN_SUBTITLE
+            )
+        }
+
+        if (state == GeckoGameState.HIDING && currentTimer <= searchStartAt) {
             state = GeckoGameState.SEARCHING
 
             gamePlayers.filter { it.role == GeckoGameRole.SEEKER }.forEach {
@@ -422,17 +452,51 @@ class GeckoGame(
                 spacer("Die Suche beginnt.")
             }
 
-            gamePlayers.forEach {
-                it.player.playSound(true) {
-                    type(key("item.goat_horn.sound.1"))
-                    pitch(1.3f)
+            forEachPlayer {
+                it.showTitle {
+                    title {
+                        text("Die Suche beginnt", GeckoGameRole.SEEKER.color, TextDecoration.BOLD)
+                    }
+                    subtitle = SEARCH_START_SUBTITLE
+                    times {
+                        fadeIn(2)
+                        stay(30)
+                        fadeOut(10)
+                    }
                 }
+
+                it.playSound(GeckoSounds.SEARCH_START, Sound.Emitter.self())
+                it.playSound(GeckoSounds.COUNTDOWN_FINISHED, Sound.Emitter.self())
             }
+        }
+
+        if (state.isGame() && currentTimer in 1..GeckoSounds.COUNTDOWN_SECONDS) {
+            broadcastCountdown(currentTimer, Colors.ERROR, END_COUNTDOWN_SUBTITLE)
         }
 
         if (currentTimer <= 0) {
             beginEnding(GeckoGameEndReason.HIDER_WIN)
         }
+    }
+
+    private fun broadcastCountdown(
+        secondsLeft: Int,
+        color: TextColor,
+        subtitleText: Component
+    ) = forEachPlayer { player ->
+        player.showTitle {
+            title {
+                text(secondsLeft.toString(), color, TextDecoration.BOLD)
+            }
+            subtitle = subtitleText
+            times {
+                fadeIn(0)
+                stay(18)
+                fadeOut(4)
+            }
+        }
+
+        player.playSound(GeckoSounds.countdownTick(secondsLeft), Sound.Emitter.self())
     }
 
     private suspend fun checkForGameEnd() {
@@ -480,4 +544,18 @@ class GeckoGame(
     }
 
     fun sendText(builder: SurfComponentBuilder.() -> Unit) = forEachPlayer { it.sendText(builder) }
+
+    private companion object {
+        val SEARCH_COUNTDOWN_SUBTITLE = buildText {
+            info("bis die Sucher losgelassen werden".toSmallCaps())
+        }
+
+        val SEARCH_START_SUBTITLE = buildText {
+            info("Versteckt euch gut".toSmallCaps())
+        }
+
+        val END_COUNTDOWN_SUBTITLE = buildText {
+            info("bis das Spiel endet".toSmallCaps())
+        }
+    }
 }
