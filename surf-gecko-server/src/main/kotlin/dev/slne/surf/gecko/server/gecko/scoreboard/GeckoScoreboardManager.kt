@@ -8,6 +8,7 @@ import dev.slne.surf.gecko.server.gecko.GeckoGame
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextDecoration
 import net.minestom.server.entity.Player
 import net.minestom.server.scoreboard.Sidebar
 import java.util.concurrent.ConcurrentHashMap
@@ -18,7 +19,7 @@ object GeckoScoreboardManager {
 
     fun createSidebar(game: GeckoGame) {
         val sidebar = Sidebar(buildText {
-            note("      Hide 'n Seek      ")
+            note("      Hide 'n Seek      ", TextDecoration.BOLD)
         })
 
         sidebar.createLine(
