@@ -10,6 +10,7 @@ import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.gecko.heartbeat.GeckoHeartbeat
+import dev.slne.surf.gecko.server.gecko.orbs.GeckoOrbSpawner
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoPlayerRoleSelector
@@ -48,6 +49,7 @@ class GeckoGame(
     var gameTimerSeconds: Int? = null
     private var gameTimerJob: Job? = null
     private val heartbeat = GeckoHeartbeat(this)
+    private val orbSpawner = GeckoOrbSpawner(this)
 
     val lobbyPlayers = mutableSetOf<GeckoLobbyPlayer>()
     val gamePlayers = mutableSetOf<GeckoGamePlayer>()
@@ -92,6 +94,7 @@ class GeckoGame(
     fun findGamePlayer(playerUuid: UUID) = gamePlayers.firstOrNull { it.playerUuid == playerUuid }
 
     fun stopHeartbeat() = heartbeat.stop()
+    fun stopOrbSpawner() = orbSpawner.stop()
 
     fun isTeamDamage(attacker: GeckoGamePlayer, victim: GeckoGamePlayer) =
         attacker.role == victim.role
@@ -104,6 +107,7 @@ class GeckoGame(
         gameTimerJob?.cancel()
         gameTimerJob = null
         heartbeat.stop()
+        orbSpawner.stop()
         endingTimerSeconds = 10
 
         sendText {
@@ -398,6 +402,7 @@ class GeckoGame(
             tickGame()
         }
         heartbeat.start()
+        orbSpawner.start()
     }
 
     private var waitingBossBarIndex = 0
