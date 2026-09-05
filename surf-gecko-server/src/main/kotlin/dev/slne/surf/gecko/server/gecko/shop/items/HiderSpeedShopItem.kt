@@ -29,7 +29,7 @@ object HiderSpeedShopItem : ShopItem {
         )
         .set(
             DataComponents.TOOLTIP_DISPLAY,
-            TooltipDisplay(true, setOf(DataComponents.POTION_CONTENTS))
+            TooltipDisplay(false, setOf(DataComponents.POTION_CONTENTS))
         )
         .build()
     override val inventoryItem: ItemStack = ItemStack.builder(Material.POTION)
@@ -40,7 +40,7 @@ object HiderSpeedShopItem : ShopItem {
         )
         .set(
             DataComponents.TOOLTIP_DISPLAY,
-            TooltipDisplay(true, setOf(DataComponents.POTION_CONTENTS))
+            TooltipDisplay(false, setOf(DataComponents.POTION_CONTENTS))
         )
         .withTag(ShopItem.ID_TAG, id)
         .build()
