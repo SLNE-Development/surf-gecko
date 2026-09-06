@@ -310,7 +310,7 @@ class GeckoGame(
             gamePlayer.clearRespawnState()
 
             if (gamePlayer.role != GeckoGameRole.SPECTATOR) {
-                GeckoGamePunisher.punish(player)
+                GeckoGamePunisher.punish(player, "Verlassen des Spiels während der Runde")
             }
 
             if (checkForGameEnd()) {

@@ -33,10 +33,12 @@ object GeckoGamePunisher {
         null
     )
 
-    suspend fun punish(player: Player, reason: String = "Fehlverhalten"): GeckoGamePunishment =
+    private const val REASON_DEFAULT = "Fehlverhalten"
+
+    suspend fun punish(player: Player, reason: String = REASON_DEFAULT): GeckoGamePunishment =
         punish(player.uuid, reason).also { GeckoPunishmentService.apply(player, it) }
 
-    suspend fun punish(playerUuid: UUID, reason: String = "Fehlverhalten"): GeckoGamePunishment =
+    suspend fun punish(playerUuid: UUID, reason: String = REASON_DEFAULT): GeckoGamePunishment =
         withContext(Dispatchers.IO) {
             val level = GeckoPunishmentRepository.countPunishments(playerUuid)
             val now = OffsetDateTime.now()
