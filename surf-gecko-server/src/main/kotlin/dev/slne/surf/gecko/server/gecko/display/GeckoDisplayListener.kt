@@ -5,14 +5,19 @@ import dev.slne.minestom.lobby.api.player.event.PlayerLoginEvent
 import jakarta.inject.Singleton
 import net.minestom.server.event.Event
 import net.minestom.server.event.EventNode
+import net.minestom.server.event.player.PlayerSpawnEvent
 
 @Singleton
 class GeckoDisplayListener : EventRegistrar {
     override fun register(node: EventNode<Event>) {
-        node.addListener(PlayerLoginEvent::class.java, ::handleLogin)
+        node.addListener(PlayerSpawnEvent::class.java, ::handleSpawn)
     }
 
-    private fun handleLogin(event: PlayerLoginEvent) {
+    private fun handleSpawn(event: PlayerSpawnEvent) {
+        if(!event.isFirstSpawn) {
+            return
+        }
+
         GeckoDisplayManager.showBossBar(event.player)
     }
 }
