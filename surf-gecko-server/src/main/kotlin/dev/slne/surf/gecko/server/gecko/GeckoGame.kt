@@ -72,7 +72,7 @@ class GeckoGame(
     private val placeholderBossBar = bossBar {}
 
     fun countDownBossBar(seconds: Int) = buildText {
-        geckoPrimary("Spiel startet in ")
+        geckoPrimary("das Spiel startet in ")
         geckoSecondary(seconds.toString())
         geckoPrimary(" Sekunden.")
     }
