@@ -1,6 +1,7 @@
 package dev.slne.surf.gecko.server.gecko
 
 import dev.slne.minestom.lobby.api.command.commandapi.CommandAPI
+import dev.slne.surf.gecko.server.antiesp.PlayerCulling
 import dev.slne.surf.gecko.server.database.GeckoDatabaseManager
 import dev.slne.surf.gecko.server.gecko.command.geckoCommand
 import dev.slne.surf.gecko.server.gecko.command.lobbyCommand
@@ -19,6 +20,7 @@ object GeckoInstance {
         GeckoLobby.createLobby()
         GeckoGameManager.init()
         GeckoGameTablistManager.init()
+        PlayerCulling.init()
 
         geckoCommand()
         skipCommand()
@@ -33,6 +35,7 @@ object GeckoInstance {
         geckoLogger.info("Stopping GeckoInstance...")
         GeckoGameManager.shutdown()
         GeckoGameTablistManager.shutdown()
+        PlayerCulling.shutdown()
         GeckoDatabaseManager.shutdown()
 
         geckoLogger.info("Stopped GeckoInstance.")
