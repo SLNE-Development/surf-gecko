@@ -9,6 +9,7 @@ import dev.slne.surf.api.core.messages.adventure.showTitle
 import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.gecko.server.gecko.antiafk.GeckoAntiAfkWatcher
 import dev.slne.surf.gecko.server.gecko.heartbeat.GeckoHeartbeat
 import dev.slne.surf.gecko.server.gecko.orbs.GeckoOrbSpawner
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
@@ -54,6 +55,7 @@ class GeckoGame(
     private val heartbeat = GeckoHeartbeat(this)
     private val orbSpawner = GeckoOrbSpawner(this)
     private val waterDamager = GeckoWaterDamager(this)
+    private val antiAfkWatcher = GeckoAntiAfkWatcher(this)
 
     val lobbyPlayers = mutableSetOf<GeckoLobbyPlayer>()
     val gamePlayers = mutableSetOf<GeckoGamePlayer>()
@@ -103,6 +105,7 @@ class GeckoGame(
     fun stopHeartbeat() = heartbeat.stop()
     fun stopOrbSpawner() = orbSpawner.stop()
     fun stopWaterDamager() = waterDamager.stop()
+    fun stopAntiAfkWater() = antiAfkWatcher.stop()
 
     fun isTeamDamage(attacker: GeckoGamePlayer, victim: GeckoGamePlayer) =
         attacker.role == victim.role
@@ -117,6 +120,7 @@ class GeckoGame(
         heartbeat.stop()
         orbSpawner.stop()
         waterDamager.stop()
+        antiAfkWatcher.stop()
         endingTimerSeconds = 10
 
         sendText {
@@ -426,6 +430,7 @@ class GeckoGame(
         }
         heartbeat.start()
         orbSpawner.start()
+        antiAfkWatcher.start()
 
         if (settings.waterDamage) {
             waterDamager.start()

@@ -28,6 +28,7 @@ dependencies {
     compileOnly(libs.minestom)
     compileOnly(libs.minestom.lobby.api)
     compileOnly(libs.surf.bitmap.provider.common)
+    compileOnly(libs.surf.playtime.api.common)
     compileOnly(libs.guice)
     compileOnly(libs.coroutines.core)
     compileOnly(libs.bundles.log4j)

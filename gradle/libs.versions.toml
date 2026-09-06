@@ -64,6 +64,7 @@ surf-core-minestom = { module = "dev.slne.surf.core:surf-core-minestom", version
 surf-settings-minestom = { module = "dev.slne.surf.settings:surf-settings-minestom", version = "+" }
 surf-punish-minestom = { module = "dev.slne.surf.punish:surf-punish-minestom", version = "+" }
 surf-queue-minestom = { module = "dev.slne.surf.queue:surf-queue-minestom", version = "+" }
+surf-playtime-api-common = { module = "dev.slne.surf.playtime:surf-playtime-api-common", version = "+" }
 surf-playtime-minestom = { module = "dev.slne.surf.playtime:surf-playtime-minestom", version = "+" }
 surf-bitmap-provider-common = { module = "dev.slne.surf.bitmap:surf-bitmap-provider-common", version = "+" }
 surf-bitmap-provider-minestom = { module = "dev.slne.surf.bitmap:surf-bitmap-provider-minestom", version = "+" }
