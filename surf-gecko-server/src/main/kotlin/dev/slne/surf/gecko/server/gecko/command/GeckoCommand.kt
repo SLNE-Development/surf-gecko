@@ -3,7 +3,6 @@ package dev.slne.surf.gecko.server.gecko.command
 import dev.slne.minestom.lobby.api.command.commandapi.dsl.anyExecutor
 import dev.slne.minestom.lobby.api.command.commandapi.dsl.commandTree
 import dev.slne.minestom.lobby.api.command.commandapi.dsl.literalArgument
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.playerExecutor
 import dev.slne.minestom.lobby.api.command.commandapi.dsl.playerExecutorSuspend
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
@@ -58,7 +57,7 @@ fun geckoCommand() = commandTree("gecko") {
     }
 
     literalArgument("lobby") {
-        playerExecutorSuspend { player, arguments ->
+        playerExecutorSuspend { player, _ ->
             GeckoLobby.join(player)
 
             player.sendText {

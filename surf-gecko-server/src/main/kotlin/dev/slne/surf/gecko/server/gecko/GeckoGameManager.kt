@@ -113,6 +113,7 @@ object GeckoGameManager {
         game.stopHeartbeat()
         game.stopOrbSpawner()
         game.stopWaterDamager()
+        game.stopAntiAfkWatcher()
         game.gamePlayers.forEach { it.clearRespawnState() }
 
         GeckoScoreboardManager.removeSidebar(game)

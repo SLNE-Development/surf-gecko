@@ -75,10 +75,6 @@ class GeckoGame(
         color = BossBar.Color.PINK
     }
 
-    private val placeholderBossBar = bossBar {
-        color = BossBar.Color.PINK
-    }
-
     fun countDownBossBar(seconds: Int) = buildText {
         geckoPrimary("Das Spiel startet in ".toSmallCaps())
         geckoSecondary(seconds.toString())
@@ -105,7 +101,7 @@ class GeckoGame(
     fun stopHeartbeat() = heartbeat.stop()
     fun stopOrbSpawner() = orbSpawner.stop()
     fun stopWaterDamager() = waterDamager.stop()
-    fun stopAntiAfkWater() = antiAfkWatcher.stop()
+    fun stopAntiAfkWatcher() = antiAfkWatcher.stop()
 
     fun isTeamDamage(attacker: GeckoGamePlayer, victim: GeckoGamePlayer) =
         attacker.role == victim.role
@@ -166,12 +162,10 @@ class GeckoGame(
 
             if (currentEndingSeconds <= 0) {
                 forEachPlayer {
-                    it.hideBossBar(placeholderBossBar)
                     it.hideBossBar(bossBar)
                 }
             } else {
                 forEachPlayer {
-                    it.showBossBar(placeholderBossBar)
                     it.showBossBar(bossBar)
                 }
             }
@@ -412,7 +406,6 @@ class GeckoGame(
                     player.applyEquipment()
                     player.teleportToSpawn(settings.map)
                     player.player.hideBossBar(bossBar)
-                    player.player.hideBossBar(placeholderBossBar)
                     player.sendRoleMessage()
                 }
             }.awaitAll()
@@ -449,7 +442,6 @@ class GeckoGame(
 
         bossBar.name(text)
         players.filterNotNull().forEach { player ->
-            player.showBossBar(placeholderBossBar)
             player.showBossBar(bossBar)
         }
     }
