@@ -1,7 +1,6 @@
 package dev.slne.surf.gecko.server.gecko.util
 
 import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
-import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
 
@@ -10,7 +9,14 @@ val GECKO_SECONDARY = TextColor.fromHexString("#B9D9DC")!!
 val GECKO_HIGHLIGHT = TextColor.fromHexString("#FCC500")!!
 val GECKO_USELESS = TextColor.fromHexString("#DBEBE2")!!
 
-fun SurfComponentBuilder.appendPrefix() = append(Component.empty())
+fun SurfComponentBuilder.appendPrefix() = append {
+    spacer("»")
+    appendSpace()
+    note("CC")
+    appendSpace()
+    darkSpacer("|")
+    appendSpace()
+}
 
 fun SurfComponentBuilder.geckoPrimary(text: String, vararg decoration: TextDecoration) =
     text(text, GECKO_PRIMARY, *decoration)

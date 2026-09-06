@@ -23,6 +23,7 @@ import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
 import dev.slne.surf.gecko.server.gecko.util.*
 import kotlinx.coroutines.*
+import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
@@ -67,9 +68,12 @@ class GeckoGame(
         name {
             append(countdownBossBar3)
         }
+        color = BossBar.Color.PINK
     }
 
-    private val placeholderBossBar = bossBar {}
+    private val placeholderBossBar = bossBar {
+        color = BossBar.Color.PINK
+    }
 
     fun countDownBossBar(seconds: Int) = buildText {
         geckoPrimary("das Spiel startet in ")
@@ -137,12 +141,12 @@ class GeckoGame(
             }
             appendNewline()
             appendPrefix()
-            geckoPrimary("Du wirst in ".toSmallCaps())
+            geckoSecondary("Du wirst in ".toSmallCaps())
             geckoHighlight((endingTimerSeconds ?: 30).toString())
-            geckoPrimary(" Sekunden in")
+            geckoSecondary(" Sekunden in")
             appendNewline()
             appendPrefix()
-            geckoPrimary("die Lobby geschickt.")
+            geckoSecondary("die Lobby geschickt.")
         }
 
         endingJob = geckoAsyncScope.runAtFixedRate(1.seconds, 1.seconds) {
@@ -273,6 +277,11 @@ class GeckoGame(
         if (secondsLeft != null && secondsLeft in 1..GeckoSounds.COUNTDOWN_SECONDS) {
             players.filterNotNull().forEach {
                 it.playSound(GeckoSounds.countdownTick(secondsLeft), Sound.Emitter.self())
+                it.showTitle {
+                    title {
+                        error(secondsLeft.toString(), TextDecoration.BOLD)
+                    }
+                }
             }
         }
 
@@ -402,6 +411,7 @@ class GeckoGame(
                     player.teleportToSpawn(settings.map)
                     player.player.hideBossBar(bossBar)
                     player.player.hideBossBar(placeholderBossBar)
+                    player.sendRoleMessage()
                 }
             }.awaitAll()
         }

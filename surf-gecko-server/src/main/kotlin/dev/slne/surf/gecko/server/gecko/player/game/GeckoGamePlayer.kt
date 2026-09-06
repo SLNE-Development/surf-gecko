@@ -1,8 +1,13 @@
 package dev.slne.surf.gecko.server.gecko.player.game
 
+import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.api.core.messages.adventure.showTitle
 import dev.slne.surf.gecko.server.gecko.map.GeckoMap
 import dev.slne.surf.gecko.server.gecko.player.listener.GeckoPlayerListener
 import dev.slne.surf.gecko.server.gecko.shop.ShopItemListener
+import dev.slne.surf.gecko.server.gecko.util.appendPrefix
+import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
+import dev.slne.surf.gecko.server.gecko.util.geckoSecondary
 import dev.slne.surf.gecko.server.util.withTag
 import net.kyori.adventure.text.format.TextColor
 import net.minestom.server.MinecraftServer
@@ -65,6 +70,24 @@ data class GeckoGamePlayer(
 
         GeckoGameRole.SPECTATOR -> {
             player.inventory.clear()
+        }
+    }
+
+    fun sendRoleMessage() {
+        player.sendText {
+            appendPrefix()
+            geckoPrimary("Du bist ein ")
+            append(role.displayText)
+            geckoPrimary(".")
+        }
+        player.showTitle {
+            title {
+                append(role.displayText)
+            }
+
+            subtitle {
+                geckoSecondary(role.description)
+            }
         }
     }
 

@@ -66,8 +66,9 @@ object GeckoGameManager {
         }
 
         try {
-            geckoLogger.info("Starting new game (${getGames().size + 1}/${MAX_GAMES})...")
+            geckoLogger.info("Starting new game (${getGames().size + 1}/${MAX_GAMES})")
             startNewGame()
+            geckoLogger.info("Started new game (${getGames().size}/${MAX_GAMES})")
         } finally {
             starting.set(false)
         }
