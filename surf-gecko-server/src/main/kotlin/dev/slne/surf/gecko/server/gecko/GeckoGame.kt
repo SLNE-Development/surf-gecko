@@ -22,6 +22,7 @@ import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
 import dev.slne.surf.gecko.server.gecko.util.*
+import dev.slne.surf.gecko.server.gecko.water.GeckoWaterDamager
 import kotlinx.coroutines.*
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.sound.Sound
@@ -52,6 +53,7 @@ class GeckoGame(
     private var gameTimerJob: Job? = null
     private val heartbeat = GeckoHeartbeat(this)
     private val orbSpawner = GeckoOrbSpawner(this)
+    private val waterDamager = GeckoWaterDamager(this)
 
     val lobbyPlayers = mutableSetOf<GeckoLobbyPlayer>()
     val gamePlayers = mutableSetOf<GeckoGamePlayer>()
@@ -100,6 +102,7 @@ class GeckoGame(
 
     fun stopHeartbeat() = heartbeat.stop()
     fun stopOrbSpawner() = orbSpawner.stop()
+    fun stopWaterDamager() = waterDamager.stop()
 
     fun isTeamDamage(attacker: GeckoGamePlayer, victim: GeckoGamePlayer) =
         attacker.role == victim.role
@@ -113,6 +116,7 @@ class GeckoGame(
         gameTimerJob = null
         heartbeat.stop()
         orbSpawner.stop()
+        waterDamager.stop()
         endingTimerSeconds = 10
 
         sendText {
@@ -422,6 +426,10 @@ class GeckoGame(
         }
         heartbeat.start()
         orbSpawner.start()
+
+        if (settings.waterDamage) {
+            waterDamager.start()
+        }
     }
 
     private var waitingBossBarIndex = 0

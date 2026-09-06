@@ -107,6 +107,7 @@ object GeckoGameManager {
     suspend fun endGame(game: GeckoGame, reason: GeckoGameEndReason) = withContext(Dispatchers.IO) {
         game.stopHeartbeat()
         game.stopOrbSpawner()
+        game.stopWaterDamager()
         game.gamePlayers.forEach { it.clearRespawnState() }
 
         GeckoScoreboardManager.removeSidebar(game)

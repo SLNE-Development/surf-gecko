@@ -16,6 +16,7 @@ data class GeckoGameSettings(
     val heartbeatRadius: Double = 15.0,
     val seekerRespawnTimeSeconds: Int = 30,
     val respawnHidersAsSeekers: Boolean = true,
+    val waterDamage: Boolean = true,
 
     val forcedSeekers: Set<UUID> = mutableSetOf(),
     val forcedHiders: Set<UUID> = mutableSetOf()
