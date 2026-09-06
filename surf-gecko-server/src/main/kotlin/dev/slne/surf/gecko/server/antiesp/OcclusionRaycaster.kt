@@ -15,6 +15,7 @@ private const val FEET_OFFSET = 0.1
 private const val CORNER_INSET = 0.05
 private const val MAX_STEPS = 512
 
+@Suppress("UnstableApiUsage")
 internal class OcclusionRaycaster(private val instance: Instance) : AutoCloseable {
     private val minY = instance.cachedDimensionType.minY()
     private val maxY = minY + instance.cachedDimensionType.height()
@@ -32,7 +33,7 @@ internal class OcclusionRaycaster(private val instance: Instance) : AutoCloseabl
         val dz = to.z() - from.z()
         val distanceSquared = dx * dx + dy * dy + dz * dz
 
-        if (distanceSquared < MIN_DISTANCE_SQUARED || distanceSquared > MAX_DISTANCE_SQUARED) {
+        if (distanceSquared !in MIN_DISTANCE_SQUARED..MAX_DISTANCE_SQUARED) {
             return true
         }
 
