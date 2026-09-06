@@ -24,11 +24,15 @@ fun geckoCommand() = commandTree("gecko") {
 
     literalArgument("join") {
         playerExecutorSuspend { player, _ ->
-            GeckoGameManager.selectGame(player)
+            val game = GeckoGameManager.selectGame(player)
 
             player.sendText {
                 appendPrefix()
-                geckoPrimary("Du wurdest einem Spiel zugewiesen.")
+                if (game == null) {
+                    geckoPrimary("Du konntest keinem Spiel zugewiesen werden.")
+                } else {
+                    geckoPrimary("Du wurdest einem Spiel zugewiesen.")
+                }
             }
         }
     }

@@ -61,11 +61,11 @@ class GeckoGame(
     val gamePlayers = mutableSetOf<GeckoGamePlayer>()
 
     val countdownBossBar2 = buildText {
-        geckoPrimary("Warte auf weitere Spieler.. ")
+        geckoPrimary("Warte auf weitere Spieler.. ".toSmallCaps())
     }
 
     val countdownBossBar3 = buildText {
-        geckoPrimary("Warte auf weitere Spieler...")
+        geckoPrimary("Warte auf weitere Spieler...".toSmallCaps())
     }
 
     private val bossBar = bossBar {
@@ -80,15 +80,15 @@ class GeckoGame(
     }
 
     fun countDownBossBar(seconds: Int) = buildText {
-        geckoPrimary("das Spiel startet in ")
+        geckoPrimary("Das Spiel startet in ".toSmallCaps())
         geckoSecondary(seconds.toString())
-        geckoPrimary(" Sekunden.")
+        geckoPrimary(" Sekunden.".toSmallCaps())
     }
 
     fun backToLobbyBossBar(seconds: Int) = buildText {
-        geckoPrimary("Zurück zur Lobby in ")
+        geckoPrimary("Zurück zur Lobby in ".toSmallCaps())
         geckoSecondary(seconds.toString())
-        geckoPrimary(" Sekunden...")
+        geckoPrimary(" Sekunden...".toSmallCaps())
     }
 
     val playerCount get() = lobbyPlayers.size + gamePlayers.size
@@ -306,28 +306,22 @@ class GeckoGame(
                 geckoPrimary(" hat das Spiel verlassen.")
             }
 
-            when (gamePlayer.role) {
-                GeckoGameRole.SEEKER -> {
-                    val seekerCount = gamePlayers.count { it.role == GeckoGameRole.SEEKER }
-
-                    if (seekerCount <= 1) {
-                        choseNewRandomSeeker()
-                    }
-                }
-
-                GeckoGameRole.HIDER -> {
-                    if (gamePlayers.count { it.role == GeckoGameRole.HIDER } <= 0) {
-                        beginEnding(GeckoGameEndReason.SEEKER_WIN)
-                    }
-                }
-
-                GeckoGameRole.SPECTATOR -> return
-            }
-
             gamePlayers.removeAll { it.playerUuid == gamePlayer.playerUuid }
             gamePlayer.clearRespawnState()
 
-            GeckoGamePunisher.punish(player)
+            if (gamePlayer.role != GeckoGameRole.SPECTATOR) {
+                GeckoGamePunisher.punish(player)
+            }
+
+            if (checkForGameEnd()) {
+                return
+            }
+
+            if (gamePlayer.role == GeckoGameRole.SEEKER &&
+                gamePlayers.none { it.role == GeckoGameRole.SEEKER }
+            ) {
+                choseNewRandomSeeker()
+            }
         } else {
             val lobbyPlayer = lobbyPlayers.firstOrNull { it.playerUuid == player.uuid } ?: return
             lobbyPlayers.remove(lobbyPlayer)
@@ -467,7 +461,10 @@ class GeckoGame(
 
         GeckoScoreboardManager.updateSidebar(this@GeckoGame)
         tickRespawns()
-        checkForGameEnd()
+
+        if (checkForGameEnd()) {
+            return
+        }
 
         val searchStartAt = settings.roundTimeSeconds - settings.hidingTimeSeconds
         val secondsUntilSearch = currentTimer - searchStartAt
@@ -539,14 +536,26 @@ class GeckoGame(
         player.playSound(GeckoSounds.countdownTick(secondsLeft), Sound.Emitter.self())
     }
 
-    private suspend fun checkForGameEnd() {
-        if (state != GeckoGameState.SEARCHING) {
-            return
+    private fun checkForGameEnd(): Boolean {
+        if (!state.isGame()) {
+            return false
         }
 
-        if (gamePlayers.count { it.role == GeckoGameRole.HIDER } <= 0) {
-            beginEnding(GeckoGameEndReason.SEEKER_WIN)
+        if (gamePlayers.size <= 1) {
+            beginEnding(GeckoGameEndReason.NO_PLAYERS)
+            return true
         }
+
+        if (state != GeckoGameState.SEARCHING) {
+            return false
+        }
+
+        if (gamePlayers.none { it.role == GeckoGameRole.HIDER }) {
+            beginEnding(GeckoGameEndReason.SEEKER_WIN)
+            return true
+        }
+
+        return false
     }
 
     private fun existingPlayerTime(

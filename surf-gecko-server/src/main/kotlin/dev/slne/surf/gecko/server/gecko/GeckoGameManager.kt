@@ -6,6 +6,7 @@ import dev.slne.surf.gecko.server.database.repository.GeckoGameRepository
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.map.GeckoMapManager
 import dev.slne.surf.gecko.server.gecko.player.lobby.GeckoLobbyPlayer
+import dev.slne.surf.gecko.server.gecko.punishment.GeckoPunishmentService
 import dev.slne.surf.gecko.server.gecko.scoreboard.GeckoScoreboardManager
 import dev.slne.surf.gecko.server.gecko.settings.GeckoGameSettings
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
@@ -78,6 +79,10 @@ object GeckoGameManager {
         val game = findGame(player.uuid)
         if (game != null) {
             return game
+        }
+
+        if (GeckoPunishmentService.preventJoin(player)) {
+            return null
         }
 
         val joinableGame = synchronized(lock) {

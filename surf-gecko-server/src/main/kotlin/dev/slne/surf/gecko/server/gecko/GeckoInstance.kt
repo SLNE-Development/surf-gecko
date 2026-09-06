@@ -7,6 +7,7 @@ import dev.slne.surf.gecko.server.gecko.command.geckoCommand
 import dev.slne.surf.gecko.server.gecko.command.lobbyCommand
 import dev.slne.surf.gecko.server.gecko.command.skipCommand
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
+import dev.slne.surf.gecko.server.gecko.punishment.GeckoPunishmentService
 import dev.slne.surf.gecko.server.gecko.tablist.GeckoGameTablistManager
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -20,6 +21,7 @@ object GeckoInstance {
         GeckoLobby.createLobby()
         GeckoGameManager.init()
         GeckoGameTablistManager.init()
+        GeckoPunishmentService.init()
         PlayerCulling.init()
 
         geckoCommand()
@@ -35,6 +37,7 @@ object GeckoInstance {
         geckoLogger.info("Stopping GeckoInstance...")
         GeckoGameManager.shutdown()
         GeckoGameTablistManager.shutdown()
+        GeckoPunishmentService.shutdown()
         PlayerCulling.shutdown()
         GeckoDatabaseManager.shutdown()
 

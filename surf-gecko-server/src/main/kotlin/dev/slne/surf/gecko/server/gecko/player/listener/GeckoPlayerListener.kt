@@ -1,10 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.player.listener
 
 import dev.slne.minestom.lobby.api.event.EventRegistrar
-import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
-import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import jakarta.inject.Singleton
-import kotlinx.coroutines.launch
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
 import net.minestom.server.event.Event
@@ -29,11 +26,6 @@ class GeckoPlayerListener : EventRegistrar {
             }
 
             cancel(event, event.player)
-        }
-        node.addListener(PlayerDisconnectEvent::class.java) {
-            geckoAsyncScope.launch {
-                GeckoGameManager.handleGameLeave(it.player)
-            }
         }
         node.addListener(InventoryPreClickEvent::class.java) {
             if (it.clickedItem.hasTag(GECKO_ITEM_TAG)) {
