@@ -1,7 +1,6 @@
 package dev.slne.surf.gecko.server.gecko.display
 
 import dev.slne.minestom.lobby.api.event.EventRegistrar
-import dev.slne.minestom.lobby.api.player.event.PlayerLoginEvent
 import jakarta.inject.Singleton
 import net.minestom.server.event.Event
 import net.minestom.server.event.EventNode
@@ -14,7 +13,7 @@ class GeckoDisplayListener : EventRegistrar {
     }
 
     private fun handleSpawn(event: PlayerSpawnEvent) {
-        if(!event.isFirstSpawn) {
+        if (!event.isFirstSpawn) {
             return
         }
 
