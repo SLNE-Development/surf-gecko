@@ -7,6 +7,7 @@ import dev.slne.surf.bitmap.common.provider.BitmapProvider
 import dev.slne.surf.gecko.server.gecko.GeckoGame
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
+import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import net.minestom.server.entity.Player
@@ -19,7 +20,7 @@ object GeckoScoreboardManager {
 
     fun createSidebar(game: GeckoGame) {
         val sidebar = Sidebar(buildText {
-            note("      Hide 'n Seek      ", TextDecoration.BOLD)
+            geckoPrimary("      Hide 'n Seek      ", TextDecoration.BOLD)
         })
 
         sidebar.createLine(
@@ -87,7 +88,7 @@ object GeckoScoreboardManager {
             )
         )
         sidebar.createLine(Sidebar.ScoreboardLine("9", buildText {
-            note("castcrafter.de".toSmallCaps())
+            geckoPrimary("castcrafter.de".toSmallCaps())
         }, 1, Sidebar.NumberFormat.blank()))
 
         sidebars[game.internalId] = sidebar

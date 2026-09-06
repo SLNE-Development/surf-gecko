@@ -9,6 +9,9 @@ import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
+import dev.slne.surf.gecko.server.gecko.util.appendPrefix
+import dev.slne.surf.gecko.server.gecko.util.geckoHighlight
+import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.format.TextDecoration
 import net.minestom.server.entity.Player
@@ -56,12 +59,12 @@ class GeckoDamageListener : EventRegistrar {
         }
 
         attackingGamePlayer?.player?.sendActionBar(buildText {
-            spacer("Du hast ")
-            variableValue(gamePlayer.player.username)
+            geckoPrimary("Du hast ")
+            text(gamePlayer.player.username, gamePlayer.role.color)
             if (attackingGamePlayer.role == GeckoGameRole.SEEKER) {
-                spacer(" gefunden")
+                geckoPrimary(" gefunden")
             } else {
-                spacer(" getötet")
+                geckoPrimary(" getötet")
             }
 
         })
@@ -69,19 +72,19 @@ class GeckoDamageListener : EventRegistrar {
         playKillSounds(game, gamePlayer, attackingGamePlayer)
 
         game.sendText {
-            appendInfoPrefix()
+            appendPrefix()
             text(gamePlayer.player.username, gamePlayer.role.color)
 
             if (attackingGamePlayer != null) {
-                spacer(" wurde von ")
+                geckoPrimary(" wurde von ")
                 text(attackingGamePlayer.player.username, attackingGamePlayer.role.color)
                 if (attackingGamePlayer.role == GeckoGameRole.SEEKER) {
-                    spacer(" gefunden")
+                    geckoPrimary(" gefunden")
                 } else {
-                    spacer(" getötet")
+                    geckoPrimary(" getötet")
                 }
             } else {
-                spacer(" ist gestorben")
+                geckoPrimary(" ist gestorben")
             }
         }
 
@@ -107,11 +110,11 @@ class GeckoDamageListener : EventRegistrar {
                 }
                 subtitle {
                     if (killer != null) {
-                        info("Du wurdest von ")
-                        variableValue(killer.player.username)
-                        info(" erwischt")
+                        geckoPrimary("Du wurdest von ")
+                        geckoHighlight(killer.player.username)
+                        geckoPrimary(" erwischt")
                     } else {
-                        info("Du bist gestorben")
+                        geckoPrimary("Du bist gestorben")
                     }
                 }
                 times {

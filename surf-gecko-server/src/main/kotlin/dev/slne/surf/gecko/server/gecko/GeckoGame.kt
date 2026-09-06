@@ -21,6 +21,7 @@ import dev.slne.surf.gecko.server.gecko.settings.GeckoGameSettings
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
+import dev.slne.surf.gecko.server.gecko.util.*
 import kotlinx.coroutines.*
 import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.Component
@@ -55,11 +56,11 @@ class GeckoGame(
     val gamePlayers = mutableSetOf<GeckoGamePlayer>()
 
     val countdownBossBar2 = buildText {
-        info("Warte auf weitere Spieler.. ")
+        geckoPrimary("Warte auf weitere Spieler.. ")
     }
 
     val countdownBossBar3 = buildText {
-        info("Warte auf weitere Spieler...")
+        geckoPrimary("Warte auf weitere Spieler...")
     }
 
     private val bossBar = bossBar {
@@ -71,15 +72,15 @@ class GeckoGame(
     private val placeholderBossBar = bossBar {}
 
     fun countDownBossBar(seconds: Int) = buildText {
-        note("Spiel startet in ")
-        white(seconds)
-        note(" Sekunden.")
+        geckoPrimary("Spiel startet in ")
+        geckoSecondary(seconds.toString())
+        geckoPrimary(" Sekunden.")
     }
 
     fun backToLobbyBossBar(seconds: Int) = buildText {
-        error("Zurück zur Lobby in ")
-        white(seconds)
-        error(" Sekunden...")
+        geckoPrimary("Zurück zur Lobby in ")
+        geckoSecondary(seconds.toString())
+        geckoPrimary(" Sekunden...")
     }
 
     val playerCount get() = lobbyPlayers.size + gamePlayers.size
@@ -112,7 +113,7 @@ class GeckoGame(
 
         sendText {
             appendNewline()
-            appendInfoPrefix()
+            appendPrefix()
             when (reason) {
                 GeckoGameEndReason.SEEKER_WIN -> {
                     text(
@@ -135,13 +136,13 @@ class GeckoGame(
                 }
             }
             appendNewline()
-            appendInfoPrefix()
-            info("Du wirst in ".toSmallCaps())
-            variableValue(endingTimerSeconds ?: 30)
-            info(" Sekunden in".toSmallCaps())
+            appendPrefix()
+            geckoPrimary("Du wirst in ".toSmallCaps())
+            geckoHighlight((endingTimerSeconds ?: 30).toString())
+            geckoPrimary(" Sekunden in")
             appendNewline()
-            appendInfoPrefix()
-            info("die Lobby geschickt.".toSmallCaps())
+            appendPrefix()
+            geckoPrimary("die Lobby geschickt.")
         }
 
         endingJob = geckoAsyncScope.runAtFixedRate(1.seconds, 1.seconds) {
@@ -197,10 +198,10 @@ class GeckoGame(
         gamePlayer.teleportToSpawn(settings.map)
 
         gamePlayer.player.sendText {
-            appendInfoPrefix()
-            info("Du wurdest gefunden und bist nun ")
+            appendPrefix()
+            geckoPrimary("Du wurdest gefunden und bist nun ")
             append(GeckoGameRole.SPECTATOR.displayText)
-            info(".")
+            geckoPrimary(".")
         }
     }
 
@@ -209,12 +210,12 @@ class GeckoGame(
         gamePlayer.moveToSeekerLobby(settings.map)
 
         gamePlayer.player.sendText {
-            appendInfoPrefix()
-            info("Du wurdest getötet und respawnst in ")
-            variableValue(settings.seekerRespawnTimeSeconds)
-            info(" Sekunden als ")
+            appendPrefix()
+            geckoPrimary("Du wurdest getötet und respawnst in ")
+            geckoHighlight(settings.seekerRespawnTimeSeconds.toString())
+            geckoPrimary(" Sekunden als ")
             append(GeckoGameRole.SEEKER.displayText)
-            info(".")
+            geckoPrimary(".")
         }
 
         gamePlayer.applyGameMode()
@@ -230,9 +231,9 @@ class GeckoGame(
                 gamePlayer.respawnSecondsLeft = secondsLeft
 
                 player.sendActionBar(buildText {
-                    info("Respawn in ")
-                    variableValue(secondsLeft)
-                    info(" Sekunden")
+                    geckoPrimary("Respawn in ")
+                    geckoHighlight(secondsLeft.toString())
+                    geckoPrimary(" Sekunden")
                 })
 
                 return@forEach
@@ -242,8 +243,8 @@ class GeckoGame(
             gamePlayer.respawnAsSeeker(settings.map)
 
             player.sendText {
-                appendSuccessPrefix()
-                success("Du bist wieder im Spiel.")
+                appendPrefix()
+                geckoPrimary("Du bist wieder im Spiel.")
             }
         }
     }
@@ -283,9 +284,9 @@ class GeckoGame(
             val gamePlayer = findGamePlayer(player.uuid) ?: return
 
             sendText {
-                appendInfoPrefix()
+                appendPrefix()
                 text(player.username, gamePlayer.role.color, TextDecoration.BOLD)
-                info(" hat das Spiel verlassen.")
+                geckoPrimary(" hat das Spiel verlassen.")
             }
 
             when (gamePlayer.role) {
@@ -334,23 +335,31 @@ class GeckoGame(
             if (it.playerUuid == newSeeker.playerUuid) {
                 it.player.sendText {
                     appendNewline()
-                    appendInfoPrefix()
-                    error("Der Sucher hat das Spiel verlassen.", TextDecoration.BOLD)
+                    appendPrefix()
+                    text(
+                        "Der Sucher hat das Spiel verlassen.",
+                        GeckoGameRole.SEEKER.color,
+                        TextDecoration.BOLD
+                    )
                     appendNewline()
-                    appendInfoPrefix()
-                    info("Du wurdest zufällig als neuer ")
+                    appendPrefix()
+                    geckoPrimary("Du wurdest zufällig als neuer ")
                     append(GeckoGameRole.SEEKER.displayText)
-                    info(" ausgewählt.")
+                    geckoPrimary(" ausgewählt.")
                 }
             } else {
                 it.player.sendText {
                     appendNewline()
-                    appendInfoPrefix()
-                    error("Der Sucher hat das Spiel verlassen.", TextDecoration.BOLD)
+                    appendPrefix()
+                    text(
+                        "Der Sucher hat das Spiel verlassen.",
+                        GeckoGameRole.SEEKER.color,
+                        TextDecoration.BOLD
+                    )
                     appendNewline()
-                    appendInfoPrefix()
-                    variableValue(newSeeker.player.username)
-                    info(" ist nun ")
+                    appendPrefix()
+                    geckoHighlight(newSeeker.player.username)
+                    geckoPrimary(" ist nun ")
                     append(GeckoGameRole.SEEKER.displayText)
                 }
             }
@@ -456,8 +465,8 @@ class GeckoGame(
             }
 
             sendText {
-                appendInfoPrefix()
-                spacer("Die Suche beginnt.")
+                appendPrefix()
+                geckoPrimary("Die Suche beginnt.")
             }
 
             forEachPlayer {
@@ -555,15 +564,15 @@ class GeckoGame(
 
     private companion object {
         val SEARCH_COUNTDOWN_SUBTITLE = buildText {
-            info("bis die Sucher losgelassen werden".toSmallCaps())
+            geckoUseless("bis die Sucher losgelassen werden".toSmallCaps())
         }
 
         val SEARCH_START_SUBTITLE = buildText {
-            info("Versteckt euch gut".toSmallCaps())
+            geckoUseless("Versteckt euch gut".toSmallCaps())
         }
 
         val END_COUNTDOWN_SUBTITLE = buildText {
-            info("bis das Spiel endet".toSmallCaps())
+            geckoUseless("bis das Spiel endet".toSmallCaps())
         }
     }
 }

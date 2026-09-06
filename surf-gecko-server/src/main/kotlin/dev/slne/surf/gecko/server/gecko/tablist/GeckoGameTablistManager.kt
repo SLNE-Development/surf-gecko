@@ -5,6 +5,8 @@ import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
+import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
+import dev.slne.surf.gecko.server.gecko.util.geckoSecondary
 import kotlinx.coroutines.Job
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
@@ -29,15 +31,15 @@ object GeckoGameTablistManager {
         MinecraftServer.getConnectionManager().onlinePlayers.forEach {
             it.sendPlayerListHeaderAndFooter(buildText {
                 appendNewline()
-                note("           CASTCRAFTER.DE           ")
+                geckoPrimary("           CASTCRAFTER.DE           ")
                 appendNewline()
-                info("Hide 'n Seek")
+                geckoPrimary("Hide 'n Seek")
                 spacer(" » ")
-                info(currentState(it))
+                geckoPrimary(currentState(it))
                 appendNewline()
             }, buildText {
                 appendNewline()
-                primary("castcrafter.de".toSmallCaps())
+                geckoSecondary("castcrafter.de".toSmallCaps())
                 appendNewline()
             })
         }

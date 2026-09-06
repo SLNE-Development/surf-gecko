@@ -6,6 +6,8 @@ import dev.slne.minestom.lobby.api.command.commandapi.dsl.literalArgument
 import dev.slne.minestom.lobby.api.command.commandapi.dsl.playerExecutorSuspend
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
+import dev.slne.surf.gecko.server.gecko.util.appendPrefix
+import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import dev.slne.surf.gecko.server.permission.PermissionList
 import net.minestom.server.MinecraftServer
 
@@ -14,8 +16,8 @@ fun geckoCommand() = commandTree("gecko") {
     literalArgument("info") {
         anyExecutor { sender, _ ->
             sender.sendText {
-                appendInfoPrefix()
-                info("GeckoGames: ${GeckoGameManager.getGames().size}")
+                appendPrefix()
+                geckoPrimary("GeckoGames: ${GeckoGameManager.getGames().size}")
             }
         }
     }
@@ -25,8 +27,8 @@ fun geckoCommand() = commandTree("gecko") {
             GeckoGameManager.selectGame(player)
 
             player.sendText {
-                appendSuccessPrefix()
-                success("Du wurdest einem Spiel zugewiesen.")
+                appendPrefix()
+                geckoPrimary("Du wurdest einem Spiel zugewiesen.")
             }
         }
     }
@@ -34,15 +36,17 @@ fun geckoCommand() = commandTree("gecko") {
     literalArgument("queueAll") {
         playerExecutorSuspend { player, _ ->
             val gamePlayers = GeckoGameManager.playingPlayers()
-            val players = MinecraftServer.getConnectionManager().onlinePlayers.filter { it.uuid !in gamePlayers }.toList()
+            val players =
+                MinecraftServer.getConnectionManager().onlinePlayers.filter { it.uuid !in gamePlayers }
+                    .toList()
 
             players.forEach {
                 GeckoGameManager.selectGame(it)
             }
 
             player.sendText {
-                appendSuccessPrefix()
-                success("Alle Spieler wurden der Warteschlange hinzugefügt.")
+                appendPrefix()
+                geckoPrimary("Alle Spieler wurden der Warteschlange hinzugefügt.")
             }
         }
     }

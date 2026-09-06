@@ -44,7 +44,7 @@ class MarkerToolListener : Listener {
         val draft = PaperGeckoMapManager.draft(player.uniqueId)
         if (draft == null) {
             player.sendText {
-                appendInfoPrefix()
+                appendPrefix()
                 info("Du hast keine aktive Map. Starte mit ")
                 white("/geckomap create <name>")
                 info(".")
@@ -54,7 +54,7 @@ class MarkerToolListener : Listener {
 
         if (player.world.name != draft.worldName) {
             player.sendText {
-                appendInfoPrefix()
+                appendPrefix()
                 info("Deine Map gehört zur Welt ")
                 white(draft.worldName)
                 info(".")
