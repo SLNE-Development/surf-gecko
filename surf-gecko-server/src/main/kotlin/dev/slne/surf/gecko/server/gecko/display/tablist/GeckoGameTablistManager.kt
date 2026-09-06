@@ -1,4 +1,4 @@
-package dev.slne.surf.gecko.server.gecko.tablist
+package dev.slne.surf.gecko.server.gecko.display.tablist
 
 import dev.slne.surf.api.core.font.toSmallCaps
 import dev.slne.surf.api.core.messages.adventure.buildText

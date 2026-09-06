@@ -1,4 +1,4 @@
-package dev.slne.surf.gecko.server.gecko.scoreboard
+package dev.slne.surf.gecko.server.gecko.display.scoreboard
 
 import dev.slne.surf.api.core.font.toSmallCaps
 import dev.slne.surf.api.core.messages.Colors

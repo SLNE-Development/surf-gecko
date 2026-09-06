@@ -10,6 +10,7 @@ import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.gecko.antiafk.GeckoAntiAfkWatcher
+import dev.slne.surf.gecko.server.gecko.display.scoreboard.GeckoScoreboardManager
 import dev.slne.surf.gecko.server.gecko.heartbeat.GeckoHeartbeat
 import dev.slne.surf.gecko.server.gecko.orbs.GeckoOrbSpawner
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
@@ -17,7 +18,6 @@ import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoPlayerRoleSelector
 import dev.slne.surf.gecko.server.gecko.player.lobby.GeckoLobbyPlayer
 import dev.slne.surf.gecko.server.gecko.punishment.GeckoGamePunisher
-import dev.slne.surf.gecko.server.gecko.scoreboard.GeckoScoreboardManager
 import dev.slne.surf.gecko.server.gecko.settings.GeckoGameSettings
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason

@@ -3,11 +3,11 @@ package dev.slne.surf.gecko.server.gecko
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.database.repository.GeckoGameRepository
+import dev.slne.surf.gecko.server.gecko.display.scoreboard.GeckoScoreboardManager
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.map.GeckoMapManager
 import dev.slne.surf.gecko.server.gecko.player.lobby.GeckoLobbyPlayer
 import dev.slne.surf.gecko.server.gecko.punishment.GeckoPunishmentService
-import dev.slne.surf.gecko.server.gecko.scoreboard.GeckoScoreboardManager
 import dev.slne.surf.gecko.server.gecko.settings.GeckoGameSettings
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState

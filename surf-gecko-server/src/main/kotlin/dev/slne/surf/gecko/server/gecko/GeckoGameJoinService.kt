@@ -4,9 +4,9 @@ import com.google.inject.Singleton
 import dev.slne.minestom.lobby.api.event.EventRegistrar
 import dev.slne.minestom.lobby.api.extension.addListener
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.gecko.server.gecko.display.scoreboard.GeckoScoreboardManager
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.punishment.GeckoPunishmentService
-import dev.slne.surf.gecko.server.gecko.scoreboard.GeckoScoreboardManager
 import kotlinx.coroutines.launch
 import net.minestom.server.event.Event
 import net.minestom.server.event.EventNode

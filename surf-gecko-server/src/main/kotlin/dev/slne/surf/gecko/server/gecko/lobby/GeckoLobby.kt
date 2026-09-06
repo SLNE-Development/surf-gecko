@@ -2,7 +2,7 @@ package dev.slne.surf.gecko.server.gecko.lobby
 
 import dev.slne.surf.api.core.messages.adventure.key
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
-import dev.slne.surf.gecko.server.gecko.scoreboard.GeckoScoreboardManager
+import dev.slne.surf.gecko.server.gecko.display.scoreboard.GeckoScoreboardManager
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.GameMode

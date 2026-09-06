@@ -6,9 +6,9 @@ import dev.slne.surf.gecko.server.database.GeckoDatabaseManager
 import dev.slne.surf.gecko.server.gecko.command.geckoCommand
 import dev.slne.surf.gecko.server.gecko.command.lobbyCommand
 import dev.slne.surf.gecko.server.gecko.command.skipCommand
+import dev.slne.surf.gecko.server.gecko.display.tablist.GeckoGameTablistManager
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.punishment.GeckoPunishmentService
-import dev.slne.surf.gecko.server.gecko.tablist.GeckoGameTablistManager
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
