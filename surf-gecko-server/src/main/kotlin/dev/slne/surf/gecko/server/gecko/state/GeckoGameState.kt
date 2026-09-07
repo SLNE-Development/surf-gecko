@@ -2,7 +2,6 @@ package dev.slne.surf.gecko.server.gecko.state
 
 enum class GeckoGameState {
     OFFLINE,
-    PREPARING,
     LOBBY,
     HIDING,
     SEARCHING,
