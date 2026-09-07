@@ -4,15 +4,15 @@ import net.minestom.server.coordinate.Pos
 import java.time.OffsetDateTime
 import java.util.*
 
-data class GeckoMap(
-    val mapUuid: UUID,
-    val mapName: String,
-    val mapDisplayName: String,
-    val mapAuthors: List<MapAuthor>,
-    val mapLocations: MapLocations,
+interface GeckoMap {
+    val mapUuid: UUID
+    val mapName: String
+    val mapDisplayName: String
+    val mapAuthors: List<MapAuthor>
+    val mapLocations: MapLocations
 
-    val submittedAt: OffsetDateTime,
-) {
+    val submittedAt: OffsetDateTime
+
     data class MapAuthor(
         val name: String,
         val uuid: UUID,
