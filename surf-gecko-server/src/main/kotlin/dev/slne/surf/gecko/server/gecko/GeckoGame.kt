@@ -22,6 +22,7 @@ import dev.slne.surf.gecko.server.gecko.settings.GeckoGameSettings
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
+import dev.slne.surf.gecko.server.gecko.stats.GeckoGameStatsTracker
 import dev.slne.surf.gecko.server.gecko.util.*
 import dev.slne.surf.gecko.server.gecko.water.GeckoWaterDamager
 import kotlinx.coroutines.*
@@ -59,6 +60,8 @@ class GeckoGame(
 
     val lobbyPlayers = mutableSetOf<GeckoLobbyPlayer>()
     val gamePlayers = mutableSetOf<GeckoGamePlayer>()
+
+    val stats = GeckoGameStatsTracker()
 
     val countdownBossBar2 = buildText {
         geckoPrimary("Warte auf weitere Spieler.. ".toSmallCaps())
@@ -186,6 +189,10 @@ class GeckoGame(
             return
         }
 
+        if (gamePlayer.role == GeckoGameRole.HIDER) {
+            stats.markFound(gamePlayer.playerUuid)
+        }
+
         when (gamePlayer.role) {
             GeckoGameRole.SEEKER -> startSeekerRespawn(gamePlayer)
             GeckoGameRole.HIDER -> handleHiderDeath(gamePlayer)
@@ -196,6 +203,7 @@ class GeckoGame(
     private fun handleHiderDeath(gamePlayer: GeckoGamePlayer) {
         if (settings.respawnHidersAsSeekers) {
             gamePlayer.role = GeckoGameRole.SEEKER
+            stats.markSeekerTeam(gamePlayer.playerUuid)
             startSeekerRespawn(gamePlayer)
             return
         }
@@ -302,6 +310,7 @@ class GeckoGame(
                 geckoPrimary(" hat das Spiel verlassen.")
             }
 
+            stats.markLeft(gamePlayer.playerUuid)
             gamePlayers.removeAll { it.playerUuid == gamePlayer.playerUuid }
             gamePlayer.clearRespawnState()
 
@@ -334,6 +343,7 @@ class GeckoGame(
 
         val newSeeker = hiders.random()
         newSeeker.role = GeckoGameRole.SEEKER
+        stats.markSeekerTeam(newSeeker.playerUuid)
         newSeeker.applyGameMode()
         newSeeker.applyEquipment()
         newSeeker.teleportToSpawn(settings.map)
@@ -400,6 +410,8 @@ class GeckoGame(
             gamePlayers.add(GeckoGamePlayer(it.playerUuid, role))
         }
         lobbyPlayers.clear()
+
+        stats.beginRound(gamePlayers)
 
         coroutineScope {
             gamePlayers.map { player ->

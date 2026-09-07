@@ -8,8 +8,8 @@ object GeckoGameStatsTable : AuditableLongIdTable("gecko_game_stats") {
     val gameId = ulong("game_id")
 
     val seeker = bool("seeker")
+    val finalSeeker = bool("final_seeker")
     val win = bool("win")
-    val scores = integer("scores")
+    val kills = integer("kills")
     val foundAfter = long("found_after").nullable()
-
 }

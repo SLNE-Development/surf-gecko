@@ -3,6 +3,7 @@ package dev.slne.surf.gecko.server.gecko
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.database.repository.GeckoGameRepository
+import dev.slne.surf.gecko.server.database.repository.GeckoGameStatsRepository
 import dev.slne.surf.gecko.server.gecko.display.scoreboard.GeckoScoreboardManager
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.map.GeckoMapManager
@@ -133,6 +134,7 @@ object GeckoGameManager {
         game.lobbyPlayers.clear()
         game.gamePlayers.clear()
 
+        GeckoGameStatsRepository.insertStats(game.stats.collect(game.internalId, reason))
         GeckoGameRepository.updateGameEndReason(game, reason)
     }
 
