@@ -65,24 +65,27 @@ private fun newGameItem() = ViewIcon(ViewIconType.PLUS, ViewIconColor.GREEN).bui
 
 private fun itemForGame(geckoGame: GeckoGame) = ItemStack.builder(stateMaterial(geckoGame))
     .set(DataComponents.ITEM_NAME, buildText {
-        geckoPrimary("Hide 'n Seek ${geckoGame.internalId}")
-        geckoSecondary("(GeckoGames)")
+        geckoPrimary("Hide 'n Seek")
+        appendSpace()
+        geckoSecondary("(GeckoGames #${geckoGame.internalId})")
     })
     .set(DataComponents.LORE, listOf(Component.empty(), buildText {
-        append(BitmapProvider.translateToComponent("Status", Colors.WHITE, Colors.INFO))
-        decoration(TextDecoration.ITALIC, false)
-    }, buildText {
-        geckoSecondary(stateText(geckoGame))
-        decoration(TextDecoration.ITALIC, false)
-    }, Component.empty(), buildText {
         append(BitmapProvider.translateToComponent("Map", Colors.WHITE, Colors.INFO))
+        decoration(TextDecoration.ITALIC, false)
     }, buildText {
         geckoSecondary(geckoGame.settings.map.mapDisplayName)
         decoration(TextDecoration.ITALIC, false)
     }, Component.empty(), buildText {
         append(BitmapProvider.translateToComponent("Spieler", Colors.WHITE, Colors.INFO))
+        decoration(TextDecoration.ITALIC, false)
     }, buildText {
         geckoSecondary("${geckoGame.players.size} / ${geckoGame.settings.maxPlayers}")
+        decoration(TextDecoration.ITALIC, false)
+    }, Component.empty(), buildText {
+        append(BitmapProvider.translateToComponent("Status", Colors.WHITE, Colors.INFO))
+        decoration(TextDecoration.ITALIC, false)
+    }, buildText {
+        geckoSecondary(stateText(geckoGame))
         decoration(TextDecoration.ITALIC, false)
     }))
     .build()
