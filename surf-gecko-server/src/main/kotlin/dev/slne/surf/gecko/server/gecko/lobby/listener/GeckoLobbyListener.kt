@@ -1,6 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.lobby.listener
 
 import dev.slne.minestom.lobby.api.event.EventRegistrar
+import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import jakarta.inject.Singleton
 import net.minestom.server.entity.GameMode
@@ -9,10 +10,7 @@ import net.minestom.server.event.Event
 import net.minestom.server.event.EventNode
 import net.minestom.server.event.entity.EntityDamageEvent
 import net.minestom.server.event.item.ItemDropEvent
-import net.minestom.server.event.player.PlayerBlockBreakEvent
-import net.minestom.server.event.player.PlayerBlockInteractEvent
-import net.minestom.server.event.player.PlayerBlockPlaceEvent
-import net.minestom.server.event.player.PlayerUseItemEvent
+import net.minestom.server.event.player.*
 import net.minestom.server.event.trait.CancellableEvent
 
 @Singleton
@@ -28,6 +26,13 @@ class GeckoLobbyListener : EventRegistrar {
                 it,
                 it.entity as? Player ?: return@addListener
             )
+        }
+        node.addListener(AsyncPlayerPreLoginEvent::class.java) {
+            if (!GeckoLobby.initialized) {
+                it.connection.kick(buildText {
+                    error("GeckoLobby is not initialized yet. Please try again later.")
+                })
+            }
         }
     }
 

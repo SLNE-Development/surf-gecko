@@ -15,6 +15,8 @@ object GeckoLobby {
     val spawn = Pos(-311.5, 63.5, -54.5, 45f, 0f)
     val npcPos = Pos(-311.5, 63.5, -54.5, 45f, 0f)
 
+    var initialized = false
+
     lateinit var instance: Instance
 
     fun createLobby() = MinecraftServer.getInstanceManager().createInstanceContainer(
@@ -23,6 +25,7 @@ object GeckoLobby {
         )
     ).also {
         instance = it
+        initialized = true
     }
 
     suspend fun join(player: Player) {

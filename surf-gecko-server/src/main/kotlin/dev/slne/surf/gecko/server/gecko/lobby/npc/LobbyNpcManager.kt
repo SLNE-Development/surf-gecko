@@ -1,6 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.lobby.npc
 
 import codes.bed.minestom.npc.api.NpcInteractionType
+import dev.slne.surf.api.core.messages.Colors
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.minestom.inventory.framework.open
@@ -12,6 +13,7 @@ import dev.slne.surf.gecko.server.gecko.util.appendPrefix
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import dev.slne.surf.gecko.server.gecko.util.geckoSecondary
 import kotlinx.coroutines.launch
+import net.kyori.adventure.text.format.ShadowColor
 import net.minestom.server.entity.PlayerSkin
 import net.minestom.server.network.player.ResolvableProfile
 
@@ -22,6 +24,7 @@ object LobbyNpcManager {
                 geckoPrimary("Hide 'n Seek")
                 appendNewline()
                 geckoSecondary("Spiel beitreten")
+                shadowColor(ShadowColor.shadowColor(Colors.BLACK, 0))
             }
             profile = ResolvableProfile(
                 PlayerSkin(
@@ -29,7 +32,6 @@ object LobbyNpcManager {
                     "yR1wX09z7Cl/04vfudjaF0ZPph/JeRcDh9txnJHIWujfjNII/5I48lpfMjwHCgMxbAeGQir/gYSRJGqzYM9/FNzjp4FiW/gflSBD9ERB2gctKpHnzNyKgeq93fJl/9g6mQZ/Z29n9SN1QMudyvLGc92Gi8TIqu5HcBQNatVA3ll1RVC4vG4UdcUtURRIfBrGWvc7Xu9jrOg6UvkGZoyIm5p+EFq/q1YNLEawnc1BWMAaTMb+CH/cTVxt3ZJ15jjIqSNmKu9ej5sgOGyXJNXsk+umArYpE08g7xkEyw969LvDaU7kQcetMtWNH4BAdLpNcTni0+Ej98KdvAE8jByURPgph9qULQjMBA/vhSVeao1otVQbSrgCFaJ145/cLF8mvrK1DNC8GZT9NmhVYQ5+h6Bkhu48mbNe6EAk43/Eu1SRwNRFzafOUddtaL9MyiV99xzPWIvXSJtUQhCr+2BeEFMLmgbqP92KLO1Zp6xr4I0w7qssArmq+HFox6Q9fncpxGug5ekUjh3m+N0xs9FT3rcql6V/dImw1pWvEGi3przWvbPmvFrNwem5togE3woXXeAjUw7H1BTcXTWZOeF4zk81+cdow2WGUBlj2b1qDdoN7rHfwb3Jmu0JGI414Cctd4zf+Vze80zLxB0cFIc3IwxIZO/h/klXYR8oJdOxolY="
                 )
             )
-            scale = 2.0
 
             onInteract {
                 val player = it.player
