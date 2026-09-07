@@ -1,6 +1,7 @@
 package dev.slne.surf.gecko.map.creator.command
 
 import com.github.shynixn.mccoroutine.folia.scope
+import dev.jorel.commandapi.executors.CommandArguments
 import dev.jorel.commandapi.kotlindsl.*
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.core.util.logger
@@ -47,7 +48,7 @@ fun geckoMapCommand() = commandTree("geckomap") {
                 draft.mapDisplayName = arguments.displayName()
 
                 player.sendText {
-                    appendPrefix()
+                    appendInfoPrefix()
                     info("Anzeigename gesetzt: ")
                     white(draft.mapDisplayName)
                 }
@@ -65,7 +66,7 @@ fun geckoMapCommand() = commandTree("geckomap") {
 
                     if (draft.authors.any { it.uuid == target.uniqueId }) {
                         player.sendText {
-                            appendPrefix()
+                            appendInfoPrefix()
                             white(target.name)
                             info(" ist bereits Autor.")
                         }
@@ -77,7 +78,7 @@ fun geckoMapCommand() = commandTree("geckomap") {
                     )
 
                     player.sendText {
-                        appendPrefix()
+                        appendInfoPrefix()
                         info("Autor hinzugefügt: ")
                         white(target.name)
                     }
@@ -94,11 +95,11 @@ fun geckoMapCommand() = commandTree("geckomap") {
 
                     player.sendText {
                         if (removed) {
-                            appendPrefix()
+                            appendInfoPrefix()
                             info("Autor entfernt: ")
                             white(name)
                         } else {
-                            appendPrefix()
+                            appendInfoPrefix()
                             info("Kein Autor mit dem Namen ")
                             white(name)
                             info(" gefunden.")
@@ -117,7 +118,7 @@ fun geckoMapCommand() = commandTree("geckomap") {
 
                 if (type == null) {
                     player.sendText {
-                        appendPrefix()
+                        appendInfoPrefix()
                         info("Unbekannter POI. Möglich: ")
                         white(GeckoPoiType.entries.joinToString { it.id })
                     }
@@ -128,7 +129,7 @@ fun geckoMapCommand() = commandTree("geckomap") {
                 MarkerRenderer.refresh(player)
 
                 player.sendText {
-                    appendPrefix()
+                    appendInfoPrefix()
                     variableValue(removed)
                     info(" Marker von ")
                     white(type.displayName)
@@ -144,7 +145,7 @@ fun geckoMapCommand() = commandTree("geckomap") {
             MarkerItems.giveTools(player)
 
             player.sendText {
-                appendPrefix()
+                appendInfoPrefix()
                 info("Marker-Items in die Hotbar gelegt.")
             }
         }
@@ -155,7 +156,7 @@ fun geckoMapCommand() = commandTree("geckomap") {
             val enabled = MarkerRenderer.toggle(player)
 
             player.sendText {
-                appendPrefix()
+                appendInfoPrefix()
                 info("Marker-Anzeige ")
                 white(if (enabled) "aktiviert" else "deaktiviert")
                 info(".")
@@ -174,7 +175,7 @@ fun geckoMapCommand() = commandTree("geckomap") {
 
             if (missing.isNotEmpty()) {
                 player.sendText {
-                    appendPrefix()
+                    appendInfoPrefix()
                     info("Es fehlen noch POIs: ")
                     white(missing.joinToString { it.displayName })
                 }
@@ -188,15 +189,18 @@ fun geckoMapCommand() = commandTree("geckomap") {
                     .log("Failed to upload map %s to pastes.dev", draft.mapName)
 
                 player.sendText {
-                    appendPrefix()
+                    appendInfoPrefix()
                     info("Upload fehlgeschlagen: ")
                     white(throwable.message ?: throwable::class.simpleName ?: "unbekannt")
                 }
                 return@playerExecutorSuspend
             }
 
+            val filePath = GeckoMapCodeGenerator.filePath(draft)
+            val objectName = GeckoMapCodeGenerator.objectName(draft)
+
             player.sendText {
-                appendPrefix()
+                appendInfoPrefix()
                 info("Map exportiert - ")
                 append {
                     variableValue(url, TextDecoration.UNDERLINED)
@@ -206,6 +210,15 @@ fun geckoMapCommand() = commandTree("geckomap") {
                 append {
                     primary("[Kopieren]")
                     clickCopiesToClipboard(url)
+                }
+
+                appendNewInfoPrefixedLine {
+                    primary("Datei: ")
+                    white(filePath)
+                }
+                appendNewInfoPrefixedLine {
+                    primary("Registrierung: ")
+                    white("GeckoMaps -> maps.add($objectName)")
                 }
             }
         }
@@ -217,10 +230,10 @@ fun geckoMapCommand() = commandTree("geckomap") {
 
             player.sendText {
                 if (removed) {
-                    appendPrefix()
+                    appendInfoPrefix()
                     info("Map verworfen.")
                 } else {
-                    appendPrefix()
+                    appendInfoPrefix()
                     info("Du hast keine aktive Map.")
                 }
             }
@@ -233,7 +246,7 @@ fun Player.sendDraftOverview() {
 
     if (draft == null) {
         sendText {
-            appendPrefix()
+            appendInfoPrefix()
             info("Keine aktive Map. Starte mit ")
             white("/geckomap create <name>")
             info(".")
@@ -242,7 +255,7 @@ fun Player.sendDraftOverview() {
     }
 
     sendText {
-        appendPrefix()
+        appendInfoPrefix()
         primary(draft.mapDisplayName, TextDecoration.BOLD)
         info(" (")
         white(draft.mapName)
@@ -290,7 +303,7 @@ fun Player.sendDraftOverview() {
 private fun createDraft(player: Player, name: String, displayName: String?) {
     if (!NAME_PATTERN.matches(name)) {
         player.sendText {
-            appendPrefix()
+            appendInfoPrefix()
             info("Ungültiger Map-Name. Erlaubt: ")
             white("a-z, 0-9, - und _ (3-32 Zeichen)")
         }
@@ -300,7 +313,7 @@ private fun createDraft(player: Player, name: String, displayName: String?) {
     val existing = PaperGeckoMapManager.draft(player.uniqueId)
     if (existing != null) {
         player.sendText {
-            appendPrefix()
+            appendInfoPrefix()
             info("Die vorherige Map ")
             white(existing.mapName)
             info(" wurde verworfen.")
@@ -311,7 +324,7 @@ private fun createDraft(player: Player, name: String, displayName: String?) {
     PaperGeckoMapManager.create(player, name, displayName ?: name)
 
     player.sendText {
-        appendPrefix()
+        appendInfoPrefix()
         info("Map ")
         variableValue(name)
         info(" gestartet - Marker-Items liegen in der Hotbar.")
@@ -323,7 +336,7 @@ private fun Player.requireDraft(): GeckoMapDraft? {
 
     if (draft == null) {
         sendText {
-            appendPrefix()
+            appendInfoPrefix()
             info("Du hast keine aktive Map. Starte mit ")
             white("/geckomap create <name>")
             info(".")
@@ -341,8 +354,8 @@ private fun readable(pos: DraftPos) = "%.1f / %.1f / %.1f @ %.0f°".format(
     pos.yaw,
 )
 
-private fun dev.jorel.commandapi.executors.CommandArguments.name() =
+private fun CommandArguments.name() =
     getUnchecked<String>("name") ?: ""
 
-private fun dev.jorel.commandapi.executors.CommandArguments.displayName() =
+private fun CommandArguments.displayName() =
     getUnchecked<String>("displayName") ?: ""
