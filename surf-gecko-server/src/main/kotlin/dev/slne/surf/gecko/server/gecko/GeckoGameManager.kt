@@ -134,7 +134,7 @@ object GeckoGameManager {
         game.lobbyPlayers.clear()
         game.gamePlayers.clear()
 
-        GeckoGameStatsRepository.insertStats(game.stats.collect(game.internalId, reason))
+        GeckoGameStatsRepository.insertStats(game.statsTracker.collect(game.internalId, reason))
         GeckoGameRepository.updateGameEndReason(game, reason)
     }
 

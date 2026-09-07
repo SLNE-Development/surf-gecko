@@ -61,7 +61,7 @@ class GeckoGame(
     val lobbyPlayers = mutableSetOf<GeckoLobbyPlayer>()
     val gamePlayers = mutableSetOf<GeckoGamePlayer>()
 
-    val stats = GeckoGameStatsTracker()
+    val statsTracker = GeckoGameStatsTracker()
 
     val countdownBossBar2 = buildText {
         geckoPrimary("Warte auf weitere Spieler.. ".toSmallCaps())
@@ -190,7 +190,7 @@ class GeckoGame(
         }
 
         if (gamePlayer.role == GeckoGameRole.HIDER) {
-            stats.markFound(gamePlayer.playerUuid)
+            statsTracker.markFound(gamePlayer.playerUuid)
         }
 
         when (gamePlayer.role) {
@@ -203,7 +203,7 @@ class GeckoGame(
     private fun handleHiderDeath(gamePlayer: GeckoGamePlayer) {
         if (settings.respawnHidersAsSeekers) {
             gamePlayer.role = GeckoGameRole.SEEKER
-            stats.markSeekerTeam(gamePlayer.playerUuid)
+            statsTracker.markSeekerTeam(gamePlayer.playerUuid)
             startSeekerRespawn(gamePlayer)
             return
         }
@@ -310,7 +310,7 @@ class GeckoGame(
                 geckoPrimary(" hat das Spiel verlassen.")
             }
 
-            stats.markLeft(gamePlayer.playerUuid)
+            statsTracker.markLeft(gamePlayer.playerUuid)
             gamePlayers.removeAll { it.playerUuid == gamePlayer.playerUuid }
             gamePlayer.clearRespawnState()
 
@@ -343,7 +343,7 @@ class GeckoGame(
 
         val newSeeker = hiders.random()
         newSeeker.role = GeckoGameRole.SEEKER
-        stats.markSeekerTeam(newSeeker.playerUuid)
+        statsTracker.markSeekerTeam(newSeeker.playerUuid)
         newSeeker.applyGameMode()
         newSeeker.applyEquipment()
         newSeeker.teleportToSpawn(settings.map)
@@ -411,7 +411,7 @@ class GeckoGame(
         }
         lobbyPlayers.clear()
 
-        stats.beginRound(gamePlayers)
+        statsTracker.beginRound(gamePlayers)
 
         coroutineScope {
             gamePlayers.map { player ->
