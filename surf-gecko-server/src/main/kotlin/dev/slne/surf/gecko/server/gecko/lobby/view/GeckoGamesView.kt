@@ -17,6 +17,7 @@ import net.minestom.server.item.Material
 val geckoGamesView = paginatedSurfView("Games") {
     paginatedViewSettings {
         paginationViewRows(PaginationViewRows.THREE)
+        navigateBackOnOutsideClick(false)
     }
 
     pagination {
