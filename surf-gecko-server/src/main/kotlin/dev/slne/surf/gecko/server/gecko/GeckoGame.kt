@@ -98,6 +98,8 @@ class GeckoGame(
 
     fun findGamePlayer(playerUuid: UUID) = gamePlayers.firstOrNull { it.playerUuid == playerUuid }
 
+    fun hideBossBar(player: Player) = player.hideBossBar(bossBar)
+
     fun stopHeartbeat() = heartbeat.stop()
     fun stopOrbSpawner() = orbSpawner.stop()
     fun stopWaterDamager() = waterDamager.stop()

@@ -55,6 +55,7 @@ object GeckoGameManager {
     suspend fun handleGameLeave(player: Player) {
         val game = findGame(player.uuid) ?: return
         game.handleLeave(player)
+        game.hideBossBar(player)
     }
 
     private suspend fun testFor() {
@@ -117,6 +118,7 @@ object GeckoGameManager {
         game.gamePlayers.forEach { it.clearRespawnState() }
 
         GeckoScoreboardManager.removeSidebar(game)
+        game.players.filterNotNull().forEach { game.hideBossBar(it) }
 
         synchronized(lock) { games.remove(game) }
 
