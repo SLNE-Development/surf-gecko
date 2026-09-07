@@ -12,8 +12,8 @@ import net.minestom.server.instance.anvil.AnvilLoader
 import kotlin.io.path.Path
 
 object GeckoLobby {
-    val spawn = Pos(-311.5, 63.5, -54.5, 45f, 0f)
-    val npcPos = Pos(-311.5, 63.5, -54.5, 45f, 0f)
+    val spawn = Pos(-19.5, 145.0, -8.5, 90f, 0f)
+    val npcPos = Pos(-26.5, 145.0, -8.5, -90f, 0f)
 
     var initialized = false
 
