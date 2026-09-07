@@ -13,6 +13,7 @@ import kotlin.io.path.Path
 
 object GeckoLobby {
     val spawn = Pos(-311.5, 63.5, -54.5, 45f, 0f)
+    val npcPos = Pos(-311.5, 63.5, -54.5, 45f, 0f)
 
     lateinit var instance: Instance
 

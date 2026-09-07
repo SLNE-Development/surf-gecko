@@ -18,6 +18,7 @@ import dev.slne.surf.gecko.server.gecko.GeckoGameJoinService
 import dev.slne.surf.gecko.server.gecko.death.GeckoDamageListener
 import dev.slne.surf.gecko.server.gecko.display.GeckoDisplayListener
 import dev.slne.surf.gecko.server.gecko.lobby.listener.GeckoLobbyListener
+import dev.slne.surf.gecko.server.gecko.lobby.npc.NpcListener
 import dev.slne.surf.gecko.server.gecko.player.listener.GeckoPlayerListener
 import dev.slne.surf.gecko.server.gecko.shop.ShopItemListener
 import dev.slne.surf.gecko.server.player.PlayerConnectionService
@@ -59,6 +60,7 @@ class GeckoServerModule(
         binder().bindEventRegistrar<GeckoLobbyListener>()
         binder().bindEventRegistrar<ShopItemListener>()
         binder().bindEventRegistrar<GeckoDisplayListener>()
+        binder().bindEventRegistrar<NpcListener>()
 
         binder().setBinder<EventRegistrar>()
         binder().setBinder<CommandRegistrar>()

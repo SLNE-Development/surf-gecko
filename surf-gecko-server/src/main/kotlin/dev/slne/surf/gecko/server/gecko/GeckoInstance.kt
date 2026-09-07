@@ -8,6 +8,7 @@ import dev.slne.surf.gecko.server.gecko.command.lobbyCommand
 import dev.slne.surf.gecko.server.gecko.command.skipCommand
 import dev.slne.surf.gecko.server.gecko.display.tablist.GeckoGameTablistManager
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
+import dev.slne.surf.gecko.server.gecko.lobby.npc.LobbyNpcManager
 import dev.slne.surf.gecko.server.gecko.punishment.GeckoPunishmentService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -23,6 +24,7 @@ object GeckoInstance {
         GeckoGameTablistManager.init()
         GeckoPunishmentService.init()
         PlayerCulling.init()
+        LobbyNpcManager.create()
 
         geckoCommand()
         skipCommand()
