@@ -21,7 +21,7 @@ class PlayerConnectionService : EventRegistrar {
     }
 
     private fun handleConnection(event: PlayerLoginEvent) {
-        connectionLogger.info("Player ${event.player.username} (${event.player.uuid}) connected from ${event.player.playerConnection.remoteAddress} on P${event.player.playerConnection.protocolVersion}")
+        connectionLogger.info("${event.player.username} (${event.player.uuid}) connected from ${event.player.playerConnection.remoteAddress} on P${event.player.playerConnection.protocolVersion}")
     }
 
     private fun handleDisconnection(event: PlayerDisconnectEvent) {
