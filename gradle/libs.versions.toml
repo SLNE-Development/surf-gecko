@@ -30,10 +30,11 @@ mariadb-jdbc = "3.5.8"
 postgresql-jdbc = "42.7.13"
 surf-database-r2dbc = "2.3.4"
 
-luckperms-minestom = "5.5+26.2-SNAPSHOT" # substituted by the vendor/LuckPerms included build
-spark = "1.10.181-SNAPSHOT" # substituted by the vendor/spark-minestom included build
+luckperms-minestom = "5.5+26.2-SNAPSHOT"
+spark = "1.10.181-SNAPSHOT"
 guice = "7.0.0"
-minestom-lobby-api = "1.0.0-SNAPSHOT" # plugin/extension contract the surf-*-minestom plugins implement
+minestom-lobby-api = "1.0.0-SNAPSHOT"
+minestom-tab = "1.0.1"
 
 [libraries]
 minestom = { module = "net.minestom:minestom", version.ref = "minestom" }
@@ -93,6 +94,7 @@ surf-database-r2dbc = { module = "dev.slne.surf:surf-database-r2dbc", version.re
 luckperms-minestom = { module = "club.tesseract:luckperms-minestom", version.ref = "luckperms-minestom" }
 spark-common = { module = "me.lucko:spark-common", version.ref = "spark" }
 spark-minestom = { module = "me.lucko:spark-minestom", version.ref = "spark" }
+minestom-tab = { module = "com.bradenkennedy:minestom-tab", version.ref = "minestom-tab" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

@@ -10,6 +10,7 @@ import dev.slne.surf.gecko.server.gecko.map.GeckoMapManager
 import dev.slne.surf.gecko.server.gecko.player.lobby.GeckoLobbyPlayer
 import dev.slne.surf.gecko.server.gecko.punishment.GeckoPunishmentService
 import dev.slne.surf.gecko.server.gecko.settings.GeckoGameSettings
+import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
 import kotlinx.coroutines.Dispatchers
@@ -97,15 +98,19 @@ object GeckoGameManager {
     }
 
     fun joinGame(player: Player, game: GeckoGame): GeckoGame? {
-        if(!game.joinable) {
+        if (!game.joinable) {
             return null
         }
 
         clearDirtyData(player.uuid)
-        game.lobbyPlayers.add(GeckoLobbyPlayer(player.uuid))
+
+        val lobbyPlayer = GeckoLobbyPlayer(player.uuid)
+
+        game.lobbyPlayers.add(lobbyPlayer)
         player.setInstance(game.instance, game.settings.map.mapLocations.lobbySpawn)
         player.gameMode = GameMode.ADVENTURE
 
+        SocialGroupManager.update(lobbyPlayer)
         return game
     }
 

@@ -12,6 +12,7 @@ object MinestomListenerRegistry {
         node: EventNode<Event>,
         listener: MinestomListener
     ) {
+        @Suppress("UNCHECKED_CAST")
         listener::class.declaredFunctions
             .filter { it.findAnnotation<EventHandler>() != null }
             .forEach { function ->

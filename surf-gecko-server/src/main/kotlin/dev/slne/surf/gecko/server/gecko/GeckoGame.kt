@@ -19,6 +19,7 @@ import dev.slne.surf.gecko.server.gecko.player.game.GeckoPlayerRoleSelector
 import dev.slne.surf.gecko.server.gecko.player.lobby.GeckoLobbyPlayer
 import dev.slne.surf.gecko.server.gecko.punishment.GeckoGamePunisher
 import dev.slne.surf.gecko.server.gecko.settings.GeckoGameSettings
+import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
@@ -125,6 +126,8 @@ class GeckoGame(
         antiAfkWatcher.stop()
         endingTimerSeconds = 10
 
+        SocialGroupManager.showAll(this)
+
         sendText {
             appendNewline()
             appendPrefix()
@@ -210,6 +213,7 @@ class GeckoGame(
         }
 
         gamePlayer.role = GeckoGameRole.SPECTATOR
+        gamePlayer.updateSocialGroup()
         gamePlayer.applyGameMode()
         gamePlayer.applyEquipment()
         gamePlayer.teleportToSpawn(settings.map)
@@ -236,6 +240,7 @@ class GeckoGame(
         }
 
         gamePlayer.applyGameMode()
+        gamePlayer.updateSocialGroup()
         gamePlayer.applyEquipment()
     }
 
@@ -346,6 +351,7 @@ class GeckoGame(
         newSeeker.role = GeckoGameRole.SEEKER
         statsTracker.markSeekerTeam(newSeeker.playerUuid)
         newSeeker.applyGameMode()
+        newSeeker.updateSocialGroup()
         newSeeker.applyEquipment()
         newSeeker.teleportToSpawn(settings.map)
 
@@ -419,6 +425,7 @@ class GeckoGame(
                 async {
                     player.applyGameMode()
                     player.applyEquipment()
+                    player.updateSocialGroup()
                     player.teleportToSpawn(settings.map)
                     player.player.hideBossBar(bossBar)
                     player.sendRoleMessage()

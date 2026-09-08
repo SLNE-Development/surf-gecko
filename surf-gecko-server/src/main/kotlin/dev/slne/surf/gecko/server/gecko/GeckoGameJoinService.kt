@@ -7,6 +7,7 @@ import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.gecko.display.scoreboard.GeckoScoreboardManager
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.punishment.GeckoPunishmentService
+import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
 import kotlinx.coroutines.launch
 import net.minestom.server.event.Event
 import net.minestom.server.event.EventNode
@@ -26,6 +27,8 @@ class GeckoGameJoinService : EventRegistrar {
     private fun handleConfiguration(event: AsyncPlayerConfigurationEvent) {
         event.spawningInstance = GeckoLobby.instance
         event.player.respawnPoint = GeckoLobby.spawn
+
+        SocialGroupManager.showLobby(event.player)
     }
 
     private fun handleSpawn(event: PlayerSpawnEvent) {
@@ -47,6 +50,7 @@ class GeckoGameJoinService : EventRegistrar {
         val player = event.player
 
         GeckoScoreboardManager.hideSidebar(player)
+        SocialGroupManager.invalidate(player.uuid)
 
         geckoAsyncScope.launch {
             GeckoGameManager.handleGameLeave(player)

@@ -3,6 +3,7 @@ package dev.slne.surf.gecko.server.gecko.lobby
 import dev.slne.surf.api.core.messages.adventure.key
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.display.scoreboard.GeckoScoreboardManager
+import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.GameMode
@@ -32,6 +33,8 @@ object GeckoLobby {
         GeckoGameManager.handleGameLeave(player)
         GeckoGameManager.clearDirtyData(player.uuid)
         GeckoScoreboardManager.hideSidebar(player)
+
+        SocialGroupManager.showLobby(player)
 
         player.respawnPoint = spawn
         player.gameMode = GameMode.ADVENTURE
