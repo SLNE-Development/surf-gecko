@@ -1,19 +1,19 @@
 package dev.slne.surf.gecko.server.gecko.social
 
-import com.bradenkennedy.tab.TabVisibilityManager
 import dev.slne.surf.gecko.server.gecko.GeckoGame
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.geckoLogger
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.player.lobby.GeckoLobbyPlayer
+import dev.slne.surf.gecko.server.gecko.social.visibility.VisibilityManager
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
 import java.util.*
 
 object SocialGroupManager {
     private val groups = mutableMapOf<UUID, SocialGroup>()
-    private val visibilityManager = TabVisibilityManager(MinecraftServer.getGlobalEventHandler())
+    private val visibilityManager = VisibilityManager(MinecraftServer.getGlobalEventHandler())
 
     fun groups(): Map<UUID, SocialGroup> = groups.toMap()
 
