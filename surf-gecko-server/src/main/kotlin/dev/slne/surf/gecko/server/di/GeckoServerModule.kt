@@ -21,6 +21,7 @@ import dev.slne.surf.gecko.server.gecko.lobby.listener.GeckoLobbyListener
 import dev.slne.surf.gecko.server.gecko.lobby.npc.NpcListener
 import dev.slne.surf.gecko.server.gecko.player.listener.GeckoPlayerListener
 import dev.slne.surf.gecko.server.gecko.shop.ShopItemListener
+import dev.slne.surf.gecko.server.performance.tps.TpsBarService
 import dev.slne.surf.gecko.server.player.PlayerConnectionService
 import dev.slne.surf.gecko.server.player.PlayerLimitService
 import dev.slne.surf.gecko.server.plugin.PluginCatalog
@@ -61,6 +62,7 @@ class GeckoServerModule(
         binder().bindEventRegistrar<ShopItemListener>()
         binder().bindEventRegistrar<GeckoDisplayListener>()
         binder().bindEventRegistrar<NpcListener>()
+        binder().bindEventRegistrar<TpsBarService>()
 
         binder().setBinder<EventRegistrar>()
         binder().setBinder<CommandRegistrar>()
