@@ -15,16 +15,3 @@ object SameGameGroup : VisibilityGroup {
         return !(gameObserver == null || gameTarget == null) && gameObserver.internalId == gameTarget.internalId
     }
 }
-
-object SameRoleGroup : VisibilityGroup {
-    override fun canSee(
-        observer: Player,
-        target: Player
-    ): Boolean {
-        val observerGamePlayer =
-            GeckoGameManager.findGame(observer.uuid)?.findGamePlayer(observer.uuid)
-        val targetGamePlayer = GeckoGameManager.findGame(target.uuid)?.findGamePlayer(target.uuid)
-
-        return !(observerGamePlayer == null || targetGamePlayer == null) && observerGamePlayer.role == targetGamePlayer.role
-    }
-}

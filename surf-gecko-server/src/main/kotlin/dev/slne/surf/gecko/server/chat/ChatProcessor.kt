@@ -5,6 +5,7 @@ import dev.slne.minestom.lobby.api.chat.ChatRenderer
 import dev.slne.minestom.lobby.api.extension.ConnectionManager
 import dev.slne.minestom.lobby.api.player.LobbyPlayer
 import dev.slne.surf.gecko.server.chat.signature.PlayerChatMessage
+import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
 import dev.slne.surf.gecko.server.player.GeckoPlayer
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet
 import kotlinx.coroutines.launch
@@ -31,7 +32,12 @@ class ChatProcessor(
     suspend fun process() {
         val players = ConnectionManager.onlinePlayers
         val viewers = ObjectLinkedOpenHashSet<Audience>(players.size + 1).apply {
-            addAll(players)
+            addAll(players.filter {
+                SocialGroupManager.canSee(
+                    player.uuid,
+                    it.uuid
+                )
+            })
             add(Audiences.console())
         }
 
@@ -44,8 +50,6 @@ class ChatProcessor(
             originalMessage = originalMessage,
             signedMessage = message.adventureView()
         )
-
-        AsyncChatEvent.node.call(event)
 
         readModifications(event, renderer)
         complete(event)

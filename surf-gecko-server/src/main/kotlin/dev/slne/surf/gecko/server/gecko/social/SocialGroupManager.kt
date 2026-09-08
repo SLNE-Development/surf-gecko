@@ -2,6 +2,7 @@ package dev.slne.surf.gecko.server.gecko.social
 
 import com.bradenkennedy.tab.TabVisibilityManager
 import dev.slne.surf.gecko.server.gecko.GeckoGame
+import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.geckoLogger
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
@@ -13,6 +14,8 @@ import java.util.*
 object SocialGroupManager {
     private val groups = mutableMapOf<UUID, SocialGroup>()
     private val visibilityManager = TabVisibilityManager(MinecraftServer.getGlobalEventHandler())
+
+    fun groups(): Map<UUID, SocialGroup> = groups.toMap()
 
     fun update(gamePlayer: GeckoGamePlayer) = when (gamePlayer.role) {
         GeckoGameRole.SEEKER -> internalUpdate(gamePlayer.playerUuid, SocialGroup.GAME_SEEKER)
@@ -29,8 +32,8 @@ object SocialGroupManager {
     fun update(lobbyPlayer: GeckoLobbyPlayer) =
         internalUpdate(lobbyPlayer.playerUuid, SocialGroup.GAME_ALL)
 
-    fun showLobby(player: Player) = groups.put(player.uuid, SocialGroup.LOBBY)
-    fun setWatcher(player: Player) = groups.put(player.uuid, SocialGroup.WATCHER)
+    fun showLobby(player: Player) = internalUpdate(player.uuid, SocialGroup.LOBBY)
+    fun setWatcher(player: Player) = internalUpdate(player.uuid, SocialGroup.WATCHER)
 
     fun invalidate(playerUuid: UUID) = groups.remove(playerUuid)
 
@@ -44,10 +47,19 @@ object SocialGroupManager {
     }
 
     fun canSee(playerUuid: UUID, targetUuid: UUID): Boolean {
+        if (playerUuid == targetUuid) return true
+
         val playerGroup = groups[playerUuid] ?: return failAndReturn(playerUuid)
         val targetGroup = groups[targetUuid] ?: return failAndReturn(targetUuid)
 
-        return playerGroup == targetGroup
+        if (playerGroup == SocialGroup.WATCHER) return true
+        if (playerGroup != targetGroup) return false
+        if (!playerGroup.gameScoped) return true
+
+        val playerGame = GeckoGameManager.findGame(playerUuid) ?: return false
+        val targetGame = GeckoGameManager.findGame(targetUuid) ?: return false
+
+        return playerGame.internalId == targetGame.internalId
     }
 
     private fun failAndReturn(playerUuid: UUID): Boolean {
