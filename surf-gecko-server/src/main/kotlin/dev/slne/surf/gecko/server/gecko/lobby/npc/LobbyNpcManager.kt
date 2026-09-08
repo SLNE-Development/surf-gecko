@@ -1,7 +1,6 @@
 package dev.slne.surf.gecko.server.gecko.lobby.npc
 
 import codes.bed.minestom.npc.api.NpcInteractionType
-import dev.slne.surf.api.core.messages.Colors
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.minestom.inventory.framework.open
@@ -13,7 +12,7 @@ import dev.slne.surf.gecko.server.gecko.util.appendPrefix
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import dev.slne.surf.gecko.server.gecko.util.geckoSecondary
 import kotlinx.coroutines.launch
-import net.kyori.adventure.text.format.ShadowColor
+import net.kyori.adventure.text.format.TextDecoration
 import net.minestom.server.entity.PlayerSkin
 import net.minestom.server.network.player.ResolvableProfile
 
@@ -21,10 +20,9 @@ object LobbyNpcManager {
     fun create() {
         equipableMannequinNpc("games", GeckoLobby.instance, GeckoLobby.npcPos) {
             displayName = buildText {
-                geckoPrimary("Hide 'n Seek")
+                geckoPrimary("Hide 'n Seek", TextDecoration.BOLD)
                 appendNewline()
                 geckoSecondary("Spiel beitreten")
-                shadowColor(ShadowColor.shadowColor(Colors.BLACK, 0))
             }
             profile = ResolvableProfile(
                 PlayerSkin(
