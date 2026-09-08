@@ -20,20 +20,21 @@ class LeaderboardSnapshot(
             names: Map<UUID, String>,
             topSize: Int
         ): LeaderboardSnapshot {
-            val places = HashMap<UUID, LeaderboardPlacement>(totals.size)
-            var rank = 0
-            var lastValue: Long? = null
+            val sorted = totals.sortedWith(
+                compareByDescending<LeaderboardSummary> { it.value }
+                    .thenBy { names[it.playerUuid] ?: "Unbekannt" }
+            )
 
-            totals.forEachIndexed { index, total ->
-                if (total.value != lastValue) {
-                    rank = index + 1
-                    lastValue = total.value
-                }
+            val places = HashMap<UUID, LeaderboardPlacement>(sorted.size)
 
-                places[total.playerUuid] = LeaderboardPlacement(rank, total.value)
+            sorted.forEachIndexed { index, total ->
+                places[total.playerUuid] = LeaderboardPlacement(
+                    rank = index + 1,
+                    value = total.value
+                )
             }
 
-            val top = totals.take(topSize).map { total ->
+            val top = sorted.take(topSize).map { total ->
                 LeaderboardTopEntry(
                     rank = places.getValue(total.playerUuid).rank,
                     name = names[total.playerUuid] ?: "Unbekannt",
