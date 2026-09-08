@@ -1,6 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.player.game
 
 import dev.slne.surf.gecko.server.gecko.settings.GeckoGameSettings
+import dev.slne.surf.gecko.server.util.secureRandom
 import java.util.*
 
 object GeckoPlayerRoleSelector {

@@ -26,6 +26,6 @@ class PlayerConnectionService : EventRegistrar {
 
     private fun handleDisconnection(event: PlayerDisconnectEvent) {
         AwaitSettingsTask.handleDisconnect(event)
-        connectionLogger.info("Player ${event.player.username} (${event.player.uuid}) disconnected")
+        connectionLogger.info("${event.player.username} (${event.player.uuid}) disconnected")
     }
 }

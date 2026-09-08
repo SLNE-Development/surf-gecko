@@ -23,6 +23,7 @@ import kotlin.time.Duration.Companion.seconds
 
 object GeckoGameManager {
     private const val MAX_GAMES = 5
+    private const val MIN_GAMES = 2
 
     private val lock = Any()
     private val games = mutableSetOf<GeckoGame>()
@@ -155,7 +156,7 @@ object GeckoGameManager {
     }
 
     fun requiresGame() = synchronized(lock) {
-        games.size < MAX_GAMES && games.none { it.joinable }
+        (games.size < MIN_GAMES) || (!games.any { it.joinable } && games.size < MAX_GAMES)
     }
 
     fun playingPlayers(): Set<UUID> = synchronized(lock) {
