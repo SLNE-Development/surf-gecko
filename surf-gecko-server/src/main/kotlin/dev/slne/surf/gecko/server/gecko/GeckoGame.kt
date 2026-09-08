@@ -25,6 +25,7 @@ import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
 import dev.slne.surf.gecko.server.gecko.stats.GeckoGameStatsTracker
 import dev.slne.surf.gecko.server.gecko.util.*
 import dev.slne.surf.gecko.server.gecko.water.GeckoWaterDamager
+import dev.slne.surf.gecko.server.util.secureRandom
 import kotlinx.coroutines.*
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.sound.Sound
@@ -341,7 +342,7 @@ class GeckoGame(
             return
         }
 
-        val newSeeker = hiders.random()
+        val newSeeker = hiders.secureRandom()
         newSeeker.role = GeckoGameRole.SEEKER
         statsTracker.markSeekerTeam(newSeeker.playerUuid)
         newSeeker.applyGameMode()

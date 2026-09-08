@@ -23,7 +23,7 @@ object GeckoPlayerRoleSelector {
         val hasSeeker = roles.values.any { it == GeckoGameRole.SEEKER }
 
         if (!hasSeeker && remainingUuids.isNotEmpty()) {
-            val randomSeeker = remainingUuids.random()
+            val randomSeeker = remainingUuids.secureRandom()
             roles[randomSeeker] = GeckoGameRole.SEEKER
             remainingUuids.remove(randomSeeker)
         }
