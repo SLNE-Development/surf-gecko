@@ -38,6 +38,7 @@ object GeckoLobby {
         player.isInvulnerable = false
         player.inventory.clear()
         player.heal()
+        player.gameMode = GameMode.SURVIVAL
 
         if (contains(player)) {
             player.teleport(spawn)

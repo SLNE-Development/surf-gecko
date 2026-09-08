@@ -15,6 +15,7 @@ import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
+import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -94,6 +95,7 @@ object GeckoGameManager {
         clearDirtyData(player.uuid)
         joinableGame.lobbyPlayers.add(GeckoLobbyPlayer(player.uuid))
         player.setInstance(joinableGame.instance, joinableGame.settings.map.mapLocations.lobbySpawn)
+        player.gameMode = GameMode.ADVENTURE
 
         return joinableGame
     }
