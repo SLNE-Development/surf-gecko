@@ -18,11 +18,8 @@ class LeaderboardHologram(playerUuid: UUID) {
         entity.setNoGravity(true)
         entity.editEntityMeta<TextDisplayMeta> { meta ->
             meta.billboardRenderConstraints = AbstractDisplayMeta.BillboardConstraints.FIXED
-            meta.alignment = TextDisplayMeta.Alignment.CENTER
             meta.isShadow = true
-            meta.backgroundColor = 0x40000000
-            meta.lineWidth = 400
-            meta.text = Component.empty()
+            meta.backgroundColor = 0x60000000
         }
     }
 
