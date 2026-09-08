@@ -552,10 +552,6 @@ class GeckoGame(
             return true
         }
 
-        if (state != GeckoGameState.SEARCHING) {
-            return false
-        }
-
         if (gamePlayers.none { it.role == GeckoGameRole.HIDER }) {
             beginEnding(GeckoGameEndReason.SEEKER_WIN)
             return true
