@@ -1,4 +1,4 @@
-package dev.slne.surf.gecko.server.performance.tps
+package dev.slne.surf.gecko.server.performance.monitor
 
 import com.google.inject.Singleton
 import dev.slne.minestom.lobby.api.event.EventRegistrar
@@ -8,7 +8,7 @@ import net.minestom.server.event.EventNode
 import net.minestom.server.event.server.ServerTickMonitorEvent
 
 @Singleton
-class TpsBarService : GeckoService, EventRegistrar {
+class StatusBarService : GeckoService, EventRegistrar {
 
     override fun register(node: EventNode<Event>) {
         node.addListener(ServerTickMonitorEvent::class.java) { event ->
@@ -17,10 +17,10 @@ class TpsBarService : GeckoService, EventRegistrar {
     }
 
     override suspend fun start() {
-        TpsBarManager.init()
+        StatusBarManager.init()
     }
 
     override suspend fun stop() {
-        TpsBarManager.shutdown()
+        StatusBarManager.shutdown()
     }
 }

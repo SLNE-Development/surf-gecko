@@ -1,4 +1,4 @@
-package dev.slne.surf.gecko.server.performance.tps
+package dev.slne.surf.gecko.server.performance.monitor
 
 import net.minestom.server.ServerFlag
 

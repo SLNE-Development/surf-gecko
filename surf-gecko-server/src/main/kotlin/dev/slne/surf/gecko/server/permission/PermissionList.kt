@@ -6,8 +6,8 @@ object PermissionList {
     private const val BASE_GAME = "$BASE.game"
 
     const val COMMAND_STOP = "$BASE_SERVER.stop.command"
-    const val COMMAND_TPSBAR = "$BASE_SERVER.tpsbar.command"
-    const val COMMAND_TPSBAR_OTHERS = "$BASE_SERVER.tpsbar.others.command"
+    const val COMMAND_STATUSBAR = "$BASE_SERVER.statusbar.command"
+    const val COMMAND_STATUSBAR_OTHERS = "$BASE_SERVER.statusbar.others.command"
     const val COMMAND_GAMEMODE = "$BASE_GAME.gamemode.command"
     const val COMMAND_TELEPORT = "$BASE_GAME.teleport.command"
     const val COMMAND_MINIMESSAGE = "$BASE_GAME.minimessage.command"
