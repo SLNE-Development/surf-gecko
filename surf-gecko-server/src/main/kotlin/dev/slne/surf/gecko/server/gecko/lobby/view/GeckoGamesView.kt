@@ -2,6 +2,7 @@ package dev.slne.surf.gecko.server.gecko.lobby.view
 
 import dev.slne.surf.api.core.messages.Colors
 import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.minestom.inventory.framework.view.icon.ViewIcon
 import dev.slne.surf.api.minestom.inventory.framework.view.icon.ViewIconColor
 import dev.slne.surf.api.minestom.inventory.framework.view.icon.ViewIconType
@@ -16,6 +17,7 @@ import dev.slne.surf.bitmap.common.provider.BitmapProvider
 import dev.slne.surf.gecko.server.gecko.GeckoGame
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
+import dev.slne.surf.gecko.server.gecko.util.appendPrefix
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import dev.slne.surf.gecko.server.gecko.util.geckoSecondary
 import net.kyori.adventure.text.Component
@@ -43,9 +45,19 @@ val geckoGamesView = paginatedSurfView("Spieleübersicht") {
                 )
         }
 
-        elementFactory { _, builder, _, value ->
+        elementFactory { _, builder, _, game ->
             builder.renderWith {
-                itemForGame(value)
+                itemForGame(game)
+            }
+            builder.onClick { click ->
+                click.closeForPlayer()
+
+                if(GeckoGameManager.joinGame(click.player, game) == null) {
+                    click.player.sendText {
+                        appendPrefix()
+                        geckoPrimary("Das Spiel ist nicht mehr verfügbar.")
+                    }
+                }
             }
         }
     }

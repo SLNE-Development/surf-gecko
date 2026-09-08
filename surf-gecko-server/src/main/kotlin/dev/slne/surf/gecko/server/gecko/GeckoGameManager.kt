@@ -93,12 +93,20 @@ object GeckoGameManager {
             games.filter { it.joinable }.sortedByDescending { it.playerCount }
         }.firstOrNull() ?: return null
 
+        return joinGame(player, joinableGame)
+    }
+
+    fun joinGame(player: Player, game: GeckoGame): GeckoGame? {
+        if(!game.joinable) {
+            return null
+        }
+
         clearDirtyData(player.uuid)
-        joinableGame.lobbyPlayers.add(GeckoLobbyPlayer(player.uuid))
-        player.setInstance(joinableGame.instance, joinableGame.settings.map.mapLocations.lobbySpawn)
+        game.lobbyPlayers.add(GeckoLobbyPlayer(player.uuid))
+        player.setInstance(game.instance, game.settings.map.mapLocations.lobbySpawn)
         player.gameMode = GameMode.ADVENTURE
 
-        return joinableGame
+        return game
     }
 
     suspend fun startNewGame(settings: GeckoGameSettings = GeckoGameSettings.default()): GeckoGame {

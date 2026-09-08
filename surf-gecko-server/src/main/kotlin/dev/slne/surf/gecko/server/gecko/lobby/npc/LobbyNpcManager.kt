@@ -38,12 +38,7 @@ object LobbyNpcManager {
                 when (type) {
                     NpcInteractionType.RIGHT_CLICK -> {
                         geckoAsyncScope.launch {
-                            if (GeckoGameManager.selectGame(player) != null) {
-                                player.sendText {
-                                    appendPrefix()
-                                    geckoPrimary("Du wurdest einer Runde zugewiesen.")
-                                }
-                            } else {
+                            if (GeckoGameManager.selectGame(player) == null) {
                                 player.sendText {
                                     appendPrefix()
                                     geckoPrimary("Du konntest keiner Runde zugewiesen werden.")
