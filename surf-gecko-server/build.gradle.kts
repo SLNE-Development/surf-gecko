@@ -40,7 +40,6 @@ dependencies {
     compileOnly(libs.polar)
     compileOnly(libs.brigadier)
     compileOnly(libs.surf.database.r2dbc)
-    compileOnly(libs.minestom.tab)
 
     runtimeDownload(libs.minestom)
     runtimeDownload(libs.minestom.lobby.api)
@@ -96,7 +95,6 @@ dependencies {
     runtimeDownload(libs.surf.queue.minestom)
     runtimeDownload(libs.surf.playtime.minestom)
     runtimeDownload(libs.surf.bitmap.provider.minestom)
-    runtimeDownload(libs.minestom.tab)
 }
 
 kotlin {
