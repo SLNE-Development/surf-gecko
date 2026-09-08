@@ -3,12 +3,14 @@ package dev.slne.surf.gecko.server.gecko
 import dev.slne.minestom.lobby.api.command.commandapi.CommandAPI
 import dev.slne.surf.gecko.server.antiesp.PlayerCulling
 import dev.slne.surf.gecko.server.database.GeckoDatabaseManager
+import dev.slne.surf.gecko.server.event.MinestomListenerRegistry
 import dev.slne.surf.gecko.server.gecko.command.geckoCommand
 import dev.slne.surf.gecko.server.gecko.command.lobbyCommand
 import dev.slne.surf.gecko.server.gecko.command.skipCommand
 import dev.slne.surf.gecko.server.gecko.display.tablist.GeckoGameTablistManager
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.lobby.npc.LobbyNpcManager
+import dev.slne.surf.gecko.server.gecko.map.GeckoMapManager
 import dev.slne.surf.gecko.server.gecko.punishment.GeckoPunishmentService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -19,8 +21,10 @@ object GeckoInstance {
     suspend fun enable() {
         geckoLogger.info("Enabling GeckoInstance...")
         GeckoDatabaseManager.create()
+        MinestomListenerRegistry.create()
         GeckoLobby.createLobby()
         GeckoGameManager.init()
+        GeckoMapManager.registerMechanics()
         GeckoGameTablistManager.init()
         GeckoPunishmentService.init()
         PlayerCulling.init()
@@ -38,6 +42,7 @@ object GeckoInstance {
     suspend fun shutdown() {
         geckoLogger.info("Stopping GeckoInstance...")
         GeckoGameManager.shutdown()
+        GeckoMapManager.unregisterMechanics()
         GeckoGameTablistManager.shutdown()
         GeckoPunishmentService.shutdown()
         PlayerCulling.shutdown()
