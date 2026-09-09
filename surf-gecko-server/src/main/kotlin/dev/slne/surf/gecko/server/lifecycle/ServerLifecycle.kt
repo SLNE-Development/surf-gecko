@@ -2,6 +2,7 @@ package dev.slne.surf.gecko.server.lifecycle
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import dev.slne.surf.gecko.server.anticheat.AntiCheatService
 import dev.slne.surf.gecko.server.chat.GeckoChatService
 import dev.slne.surf.gecko.server.command.GeckoCommandApiService
 import dev.slne.surf.gecko.server.command.GeckoCommandService
@@ -25,10 +26,12 @@ class ServerLifecycle @Inject constructor(
     commands: GeckoCommandService,
     chat: GeckoChatService,
     players: GeckoPlayerService,
+    antiCheat: AntiCheatService,
 ) {
     private val services =
         listOf<GeckoService>(
-            events, views, luckPerms, spark, statusBar, commandApi, commands, chat, players
+            events, views, luckPerms, spark, statusBar, commandApi, commands, chat, players,
+            antiCheat
         )
 
     private val started = ArrayDeque<GeckoService>()

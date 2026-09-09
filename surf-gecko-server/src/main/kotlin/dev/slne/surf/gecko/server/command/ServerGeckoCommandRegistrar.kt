@@ -1,5 +1,6 @@
 package dev.slne.surf.gecko.server.command
 
+import dev.slne.surf.gecko.server.anticheat.command.antiCheatCommand
 import dev.slne.surf.gecko.server.command.commands.gameModeCommand
 import dev.slne.surf.gecko.server.command.commands.miniMessageCommand
 import dev.slne.surf.gecko.server.command.commands.stopCommand
@@ -13,5 +14,6 @@ object ServerGeckoCommandRegistrar {
         miniMessageCommand()
         teleportCommand()
         statusBarCommand()
+        antiCheatCommand()
     }
 }

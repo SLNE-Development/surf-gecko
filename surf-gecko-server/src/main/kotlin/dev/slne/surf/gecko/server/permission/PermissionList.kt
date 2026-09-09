@@ -14,4 +14,6 @@ object PermissionList {
     const val COMMAND_GECKO = "$BASE_GAME.gecko.command"
     const val COMMAND_SKIP = "$BASE_GAME.skip.command"
     const val COMMAND_LOBBY = "$BASE_GAME.lobby.command"
+    const val COMMAND_ANTICHEAT = "$BASE_SERVER.anticheat.command"
+    const val ANTICHEAT_BYPASS = "$BASE_SERVER.anticheat.bypass"
 }

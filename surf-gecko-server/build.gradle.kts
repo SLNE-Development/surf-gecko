@@ -90,7 +90,7 @@ dependencies {
     }
     runtimeDownload(libs.surf.rabbitmq.minestom)
     runtimeDownload(libs.surf.core.minestom)
-    runtimeDownload(libs.surf.settings.minestom)
+    //runtimeDownload(libs.surf.settings.minestom)
     runtimeDownload(libs.surf.punish.minestom)
     runtimeDownload(libs.surf.queue.minestom)
     runtimeDownload(libs.surf.playtime.minestom)

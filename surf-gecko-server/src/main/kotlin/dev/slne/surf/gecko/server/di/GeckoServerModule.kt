@@ -9,6 +9,7 @@ import dev.slne.minestom.lobby.api.di.setBinder
 import dev.slne.minestom.lobby.api.event.EventRegistrar
 import dev.slne.minestom.lobby.api.player.PlayerLimit
 import dev.slne.surf.gecko.command.platform.MinestomCommandOwnership
+import dev.slne.surf.gecko.server.anticheat.AntiCheatService
 import dev.slne.surf.gecko.server.chat.GeckoChatService
 import dev.slne.surf.gecko.server.combat.BowCombatListener
 import dev.slne.surf.gecko.server.combat.MeleeCombatListener
@@ -63,6 +64,7 @@ class GeckoServerModule(
         binder().bindEventRegistrar<GeckoDisplayListener>()
         binder().bindEventRegistrar<NpcListener>()
         binder().bindEventRegistrar<StatusBarService>()
+        binder().bindEventRegistrar<AntiCheatService>()
 
         binder().setBinder<EventRegistrar>()
         binder().setBinder<CommandRegistrar>()

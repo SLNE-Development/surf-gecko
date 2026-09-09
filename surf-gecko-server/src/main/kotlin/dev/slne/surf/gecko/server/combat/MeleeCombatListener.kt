@@ -1,6 +1,7 @@
 package dev.slne.surf.gecko.server.combat
 
 import dev.slne.minestom.lobby.api.event.EventRegistrar
+import dev.slne.surf.gecko.server.anticheat.AntiCheatTracker
 import dev.slne.surf.api.core.messages.adventure.key
 import dev.slne.surf.api.core.messages.adventure.sound
 import jakarta.inject.Singleton
@@ -31,6 +32,10 @@ class MeleeCombatListener : EventRegistrar {
         val target = event.target as? LivingEntity ?: return
 
         if (target === attacker) {
+            return
+        }
+
+        if (AntiCheatTracker.find(attacker)?.validateAttack(target) == false) {
             return
         }
 
