@@ -35,19 +35,20 @@ object VentMechanic : GeckoMapMechanic, MinestomListener {
 
     override suspend fun start() {
         job = geckoAsyncScope.runAtFixedRate(1.seconds) {
-            GeckoGameManager.getGames().forEach { game ->
-                game.gamePlayers.forEach { gamePlayer ->
-                    val player = gamePlayer.player
+            GeckoGameManager.getGames().filter { hasThisMechanic(it) }
+                .forEach { game ->
+                    game.gamePlayers.forEach { gamePlayer ->
+                        val player = gamePlayer.player
 
-                    findVent(player) ?: return@forEach
+                        findVent(player) ?: return@forEach
 
-                    player.sendActionBar(buildText {
-                        geckoPrimary("Drücke ")
-                        translatable("key.sneak", GECKO_SECONDARY)
-                        geckoPrimary(" um den Schacht zu betreten")
-                    })
+                        player.sendActionBar(buildText {
+                            geckoPrimary("Drücke ")
+                            translatable("key.sneak", GECKO_SECONDARY)
+                            geckoPrimary(" um den Schacht zu betreten")
+                        })
+                    }
                 }
-            }
         }
     }
 
@@ -60,6 +61,10 @@ object VentMechanic : GeckoMapMechanic, MinestomListener {
     @EventHandler
     fun onSneak(event: PlayerInputEvent) {
         if (!event.hasPressedShiftKey()) {
+            return
+        }
+
+        if (!hasThisMechanic(event.player)) {
             return
         }
 

@@ -1,6 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.map.maps.test
 
 import dev.slne.surf.gecko.server.gecko.map.GeckoMap
+import dev.slne.surf.gecko.server.gecko.map.mechanic.VentMechanic
 import net.minestom.server.coordinate.Pos
 import java.time.OffsetDateTime
 import java.util.*
@@ -21,5 +22,6 @@ object TestMap : GeckoMap {
         Pos(1209.5, 87.0, -1392.5, -73f, 0f),
         listOf()
     )
+    override val mechanics = listOf(VentMechanic)
     override val submittedAt: OffsetDateTime = OffsetDateTime.now()
 }
