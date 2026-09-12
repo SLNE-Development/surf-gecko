@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.StandardOpenOption
 import java.time.Duration
+import java.util.UUID
 
 fun parseDotEnv(text: String): Map<String, String> = text.lineSequence()
     .map { it.trim() }
@@ -59,63 +60,47 @@ abstract class DeployDevGeckoTask : DefaultTask() {
     @get:Internal
     abstract val powerSignal: Property<String>
 
-    private val http: HttpClient by lazy {
-        HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(30))
-            .followRedirects(HttpClient.Redirect.NORMAL)
-            .build()
-    }
-
     @TaskAction
     fun deploy() {
         val source = jar.get().asFile
         val directory = remoteDirectory.get()
         val fileName = remoteFileName.get()
 
-        logger.lifecycle("Uploading ${source.name} (${source.length() / 1024 / 1024} MiB) to ${serverId.get()}:$directory")
-        val uploadedAs = upload(source, directory)
+        val client = PterodactylClient(
+            panelUrl.get(),
+            apiKey.get(),
+            serverId.get()
+        )
+
+        logger.lifecycle(
+            "Uploading ${source.name} (${source.length() / 1024 / 1024} MiB) to ${serverId.get()}:$directory"
+        )
+        val uploadedAs = client.upload(source, directory)
 
         if (uploadedAs != fileName) {
             logger.lifecycle("Replacing $directory$fileName")
-            deleteRemote(directory, fileName)
-            rename(directory, uploadedAs, fileName)
+            client.delete(directory, fileName)
+            client.rename(directory, uploadedAs, fileName)
         }
 
         logger.lifecycle("Sending power signal '${powerSignal.get()}'")
-        power(powerSignal.get())
+        client.power(powerSignal.get())
 
         logger.lifecycle("Deployed $fileName to server ${serverId.get()}")
     }
+}
 
-    private fun clientApi(path: String): URI {
-        val base = panelUrl.get().trimEnd('/')
-        return URI.create("$base/api/client/servers/${serverId.get()}$path")
-    }
+class PterodactylClient(panelUrl: String, private val apiKey: String, serverId: String) {
 
-    private fun request(uri: URI): HttpRequest.Builder = HttpRequest.newBuilder(uri)
-        .timeout(Duration.ofMinutes(15))
-        .header("Authorization", "Bearer ${apiKey.get()}")
-        .header("Accept", "application/json")
+    private val base = "${panelUrl.trimEnd('/')}/api/client/servers/$serverId"
 
-    private fun send(request: HttpRequest, allowed: IntRange = 200..299): HttpResponse<String> {
-        val response = http.send(request, HttpResponse.BodyHandlers.ofString())
-        if (response.statusCode() !in allowed) {
-            throw GradleException(
-                "Pterodactyl request to ${request.uri()} failed with ${response.statusCode()}: ${response.body()}"
-            )
-        }
-        return response
-    }
+    private val http: HttpClient = HttpClient.newBuilder()
+        .connectTimeout(Duration.ofSeconds(30))
+        .followRedirects(HttpClient.Redirect.NORMAL)
+        .build()
 
-    private fun json(uri: URI, method: String, body: String) = send(
-        request(uri)
-            .header("Content-Type", "application/json")
-            .method(method, HttpRequest.BodyPublishers.ofString(body))
-            .build()
-    )
-
-    private fun upload(source: File, directory: String): String {
-        val signed = send(request(clientApi("/files/upload")).GET().build())
+    fun upload(source: File, directory: String): String {
+        val signed = send(request(URI.create("$base/files/upload")).GET().build())
 
         @Suppress("UNCHECKED_CAST")
         val parsed = JsonSlurper().parseText(signed.body()) as Map<String, Any>
@@ -129,7 +114,7 @@ abstract class DeployDevGeckoTask : DefaultTask() {
             uploadUrl + separator + "directory=" + URLEncoder.encode(directory, StandardCharsets.UTF_8)
         )
 
-        val boundary = "gecko-" + java.util.UUID.randomUUID()
+        val boundary = "gecko-" + UUID.randomUUID()
         val payload = Files.createTempFile("gecko-upload", ".multipart")
 
         try {
@@ -144,7 +129,7 @@ abstract class DeployDevGeckoTask : DefaultTask() {
             send(
                 HttpRequest.newBuilder(target)
                     .timeout(Duration.ofMinutes(30))
-                    .header("Authorization", "Bearer ${apiKey.get()}")
+                    .header("Authorization", "Bearer $apiKey")
                     .header("Content-Type", "multipart/form-data; boundary=$boundary")
                     .POST(HttpRequest.BodyPublishers.ofFile(payload))
                     .build()
@@ -156,39 +141,51 @@ abstract class DeployDevGeckoTask : DefaultTask() {
         return source.name
     }
 
-    private fun OutputStream.ascii(value: String) = write(value.toByteArray(StandardCharsets.UTF_8))
-
-    private fun deleteRemote(directory: String, fileName: String) {
-        val response = http.send(
-            request(clientApi("/files/delete"))
-                .header("Content-Type", "application/json")
-                .POST(
-                    HttpRequest.BodyPublishers.ofString(
-                        """{"root":"$directory","files":["$fileName"]}"""
-                    )
-                )
-                .build(),
-            HttpResponse.BodyHandlers.ofString()
+    fun delete(directory: String, fileName: String) {
+        send(
+            json("$base/files/delete", "POST", """{"root":"$directory","files":["$fileName"]}"""),
+            allowed = setOf(404)
         )
-
-        if (response.statusCode() !in 200..299 && response.statusCode() != 404) {
-            throw GradleException(
-                "Could not delete $directory$fileName: ${response.statusCode()} ${response.body()}"
-            )
-        }
     }
 
-    private fun rename(directory: String, from: String, to: String) = json(
-        clientApi("/files/rename"),
-        "PUT",
-        """{"root":"$directory","files":[{"from":"$from","to":"$to"}]}"""
-    )
+    fun rename(directory: String, from: String, to: String) {
+        send(
+            json(
+                "$base/files/rename",
+                "PUT",
+                """{"root":"$directory","files":[{"from":"$from","to":"$to"}]}"""
+            )
+        )
+    }
 
-    private fun power(signal: String) = json(
-        clientApi("/power"),
-        "POST",
-        """{"signal":"$signal"}"""
-    )
+    fun power(signal: String) {
+        send(json("$base/power", "POST", """{"signal":"$signal"}"""))
+    }
+
+    private fun request(uri: URI): HttpRequest.Builder = HttpRequest.newBuilder(uri)
+        .timeout(Duration.ofMinutes(15))
+        .header("Authorization", "Bearer $apiKey")
+        .header("Accept", "application/json")
+
+    private fun json(url: String, method: String, body: String): HttpRequest =
+        request(URI.create(url))
+            .header("Content-Type", "application/json")
+            .method(method, HttpRequest.BodyPublishers.ofString(body))
+            .build()
+
+    private fun send(request: HttpRequest, allowed: Set<Int> = emptySet()): HttpResponse<String> {
+        val response = http.send(request, HttpResponse.BodyHandlers.ofString())
+        val status = response.statusCode()
+
+        if (status !in 200..299 && status !in allowed) {
+            throw GradleException(
+                "Pterodactyl request to ${request.uri()} failed with $status: ${response.body()}"
+            )
+        }
+        return response
+    }
+
+    private fun OutputStream.ascii(value: String) = write(value.toByteArray(StandardCharsets.UTF_8))
 }
 
 val shadowJarTask = tasks.named<Jar>("shadowJar")
@@ -196,6 +193,8 @@ val shadowJarTask = tasks.named<Jar>("shadowJar")
 tasks.register<DeployDevGeckoTask>("deployDevGecko") {
     group = "deployment"
     description = "Builds the shadow jar and deploys it to the dev Pterodactyl server from .env"
+
+    notCompatibleWithConfigurationCache("Deployment task talks to the Pterodactyl API at execution time")
 
     dependsOn(shadowJarTask)
     jar.set(shadowJarTask.flatMap { it.archiveFile })
