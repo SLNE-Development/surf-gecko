@@ -2,6 +2,8 @@ package dev.slne.surf.gecko.server.gecko.display.tablist
 
 import dev.slne.surf.api.core.messages.Colors
 import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.minimessage.miniMessage
+import dev.slne.surf.bitmap.common.provider.BitmapProvider
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.social.SocialGroup
 import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
@@ -113,19 +115,18 @@ object GeckoTablistRenderer {
             player = player,
             group = SocialGroupManager.groupOf(player.uuid),
             gameId = game?.internalId,
-            rankedName = buildText {
-                if (prefix != null) {
-                    append(prefix)
-                    appendSpace()
-                }
-                text(player.username, Colors.WHITE)
-            },
+            rankedName = miniMessage.deserialize("$prefix${player.username}"),
             rankOrder = RANK_ORDER_BASE + weight,
             roleName = role?.let {
                 buildText {
-                    append(it.displayText)
-                    appendSpace()
-                    text(player.username, Colors.WHITE)
+                    append(
+                        BitmapProvider.translateToComponent(
+                            it.displayName,
+                            Colors.WHITE,
+                            it.color
+                        )
+                    )
+                    text(player.username, it.color)
                 }
             },
             grayName = buildText { text(player.username, Colors.DARK_GRAY) }

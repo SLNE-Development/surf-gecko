@@ -10,17 +10,18 @@ val COLOR_SPECTATOR = Colors.SPACER
 
 enum class GeckoGameRole(
     val id: String,
+    val displayName: String,
     val color: TextColor,
     val description: String,
     display: SurfComponentBuilder.() -> Unit
 ) {
-    SEEKER("seeker", COLOR_SEEKER, "Finde alle Verstecker", {
+    SEEKER("seeker", "Sucher", COLOR_SEEKER, "Finde alle Verstecker", {
         text("Sucher", COLOR_SEEKER)
     }),
-    HIDER("hider", COLOR_HIDER, "Verstecke dich vor den Suchern", {
+    HIDER("hider", "Verstecker", COLOR_HIDER, "Verstecke dich vor den Suchern", {
         text("Verstecker", COLOR_HIDER)
     }),
-    SPECTATOR("spectator", COLOR_SPECTATOR, "Du bist ausgeschieden.", {
+    SPECTATOR("spectator", "Zuschauer", COLOR_SPECTATOR, "Du bist ausgeschieden.", {
         text("Zuschauer", COLOR_SPECTATOR)
     });
 
