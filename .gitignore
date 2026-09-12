@@ -49,3 +49,5 @@ bin/
 /.projectatlas/*
 !/.projectatlas/config.toml
 !/.projectatlas/projectatlas-nonsource-files.toon
+# local deploy credentials
+.env

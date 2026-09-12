@@ -6,14 +6,12 @@ import dev.slne.surf.gecko.server.gecko.geckoLogger
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.player.lobby.GeckoLobbyPlayer
-import dev.slne.surf.gecko.server.gecko.social.visibility.VisibilityManager
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
 import java.util.*
 
 object SocialGroupManager {
     private val groups = mutableMapOf<UUID, SocialGroup>()
-    private val visibilityManager = VisibilityManager(MinecraftServer.getGlobalEventHandler())
 
     fun groups(): Map<UUID, SocialGroup> = groups.toMap()
 
@@ -42,8 +40,6 @@ object SocialGroupManager {
 
         val player =
             MinecraftServer.getConnectionManager().getOnlinePlayerByUuid(playerUuid) ?: return
-
-        visibilityManager.setGroup(player, socialGroup.tabGroup)
     }
 
     fun canSee(playerUuid: UUID, targetUuid: UUID): Boolean {
