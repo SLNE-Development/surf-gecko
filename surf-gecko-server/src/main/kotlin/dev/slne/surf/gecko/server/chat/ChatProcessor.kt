@@ -3,8 +3,11 @@ package dev.slne.surf.gecko.server.chat
 import dev.slne.minestom.lobby.api.chat.ChatRenderer
 import dev.slne.minestom.lobby.api.extension.ConnectionManager
 import dev.slne.minestom.lobby.api.player.LobbyPlayer
+import dev.slne.surf.api.core.messages.Colors
 import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.displayName
 import dev.slne.surf.api.core.messages.adventure.hasPermission
+import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.core.minimessage.miniMessage
 import dev.slne.surf.gecko.server.chat.packet.DeleteChatPacketModern
 import dev.slne.surf.gecko.server.chat.packet.framed
@@ -20,6 +23,7 @@ import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.audience.ForwardingAudience
 import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.translation.GlobalTranslator
 import net.minestom.server.MinecraftServer
 import net.minestom.server.adventure.MinestomAdventure
@@ -60,6 +64,27 @@ class ChatProcessor(
                         appendSpace()
                         clickCallback {
                             deleteMessage(this@ChatProcessor.message.adventureView())
+
+                            MinecraftServer.getConnectionManager().onlinePlayers.filter {
+                                it.hasPermission(
+                                    PermissionList.DELETE_MESSAGE
+                                )
+                            }.forEach {
+                                it.sendText {
+                                    darkSpacer(">>")
+                                    appendSpace()
+                                    error("TEAM", TextDecoration.BOLD)
+                                    darkSpacer(" | ")
+                                    append(viewer.displayName())
+                                    primary(" hat eine Nachricht von ")
+                                    append(source.displayName())
+                                    primary(" gelöscht.")
+
+                                    hoverEvent(buildText {
+                                        append(message).colorIfAbsent(Colors.WHITE)
+                                    })
+                                }
+                            }
                         }
                         hoverEvent(buildText {
                             error("Nachricht löschen")
