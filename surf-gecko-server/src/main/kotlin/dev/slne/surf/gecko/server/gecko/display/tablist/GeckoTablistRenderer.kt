@@ -148,7 +148,7 @@ object GeckoTablistRenderer {
         true
     )
 
-    private fun Component.darkenColors(factor: Double = 0.7): Component {
+    private fun Component.darkenColors(factor: Double = 0.45): Component {
         val color = style().color()
         val newColor = color?.let {
             TextColor.color(
