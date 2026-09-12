@@ -125,9 +125,11 @@ object GeckoTablistRenderer {
                         BitmapProvider.translateToComponent(
                             it.displayName,
                             Colors.WHITE,
-                            it.color
+                            it.color,
+                            affixAmount = 3
                         )
                     )
+                    appendSpace()
                     text(player.username, it.color)
                 }
             },
