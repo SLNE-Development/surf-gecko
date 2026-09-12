@@ -9,6 +9,8 @@ import dev.slne.surf.gecko.server.gecko.social.SocialGroup
 import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
 import dev.slne.surf.gecko.server.integration.luckperms.LuckPermsAccess
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextColor
 import net.luckperms.api.event.EventSubscription
 import net.luckperms.api.event.user.UserDataRecalculateEvent
 import net.minestom.server.MinecraftServer
@@ -129,7 +131,7 @@ object GeckoTablistRenderer {
                     text(player.username, it.color)
                 }
             },
-            grayName = buildText { text(player.username, Colors.DARK_GRAY) }
+            grayName = miniMessage.deserialize("$prefix${player.username}").darkenColors()
         )
     }
 
@@ -145,4 +147,21 @@ object GeckoTablistRenderer {
         entry.listOrder,
         true
     )
+
+    private fun Component.darkenColors(factor: Double = 0.7): Component {
+        val color = style().color()
+        val newColor = color?.let {
+            TextColor.color(
+                (it.red() * factor).toInt(),
+                (it.green() * factor).toInt(),
+                (it.blue() * factor).toInt()
+            )
+        }
+
+        return children(
+            children().map { it.darkenColors(factor) }
+        ).style(
+            style().color(newColor)
+        )
+    }
 }
