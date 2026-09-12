@@ -68,6 +68,7 @@ class ChatProcessor(
                 }
 
                 append(miniMessage.deserialize("${LuckPermsAccess.prefix(source.uuid)}${source.username}"))
+                darkSpacer(":")
                 appendSpace()
                 append(message)
             }
