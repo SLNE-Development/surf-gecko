@@ -33,7 +33,7 @@ class ChatProcessor(
         val players = ConnectionManager.onlinePlayers
         val viewers = ObjectLinkedOpenHashSet<Audience>(players.size + 1).apply {
             addAll(players.filter {
-                SocialGroupManager.canSee(
+                SocialGroupManager.canChat(
                     player.uuid,
                     it.uuid
                 )

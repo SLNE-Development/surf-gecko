@@ -5,6 +5,7 @@ import dev.slne.minestom.lobby.api.event.EventRegistrar
 import dev.slne.minestom.lobby.api.extension.addListener
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.gecko.display.scoreboard.GeckoScoreboardManager
+import dev.slne.surf.gecko.server.gecko.display.tablist.GeckoTablistRenderer
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.punishment.GeckoPunishmentService
 import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
@@ -32,6 +33,9 @@ class GeckoGameJoinService : EventRegistrar {
     }
 
     private fun handleSpawn(event: PlayerSpawnEvent) {
+        GeckoTablistRenderer.reset(event.player.uuid)
+        GeckoTablistRenderer.refresh()
+
         if (event.isFirstSpawn) {
             geckoAsyncScope.launch { GeckoPunishmentService.handleJoin(event.player) }
         }

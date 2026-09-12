@@ -4,7 +4,6 @@ enum class SocialGroup(
     val displayName: String,
     val gameScoped: Boolean = false
 ) {
-    WATCHER("Beobachter"),
     LOBBY("Lobbymitglied"),
     GAME_ALL("Spielmitspieler", gameScoped = true),
     GAME_HIDER("Spieler (Hider)", gameScoped = true),

@@ -8,6 +8,7 @@ import dev.slne.surf.gecko.server.gecko.command.geckoCommand
 import dev.slne.surf.gecko.server.gecko.command.lobbyCommand
 import dev.slne.surf.gecko.server.gecko.command.skipCommand
 import dev.slne.surf.gecko.server.gecko.display.tablist.GeckoGameTablistManager
+import dev.slne.surf.gecko.server.gecko.display.tablist.GeckoTablistRenderer
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.lobby.leaderbord.LeaderboardManager
 import dev.slne.surf.gecko.server.gecko.lobby.npc.LobbyNpcManager
@@ -27,6 +28,7 @@ object GeckoInstance {
         GeckoGameManager.init()
         GeckoMapManager.registerMechanics()
         GeckoGameTablistManager.init()
+        GeckoTablistRenderer.init()
         GeckoPunishmentService.init()
         PlayerCulling.init()
         LobbyNpcManager.create()
@@ -46,6 +48,7 @@ object GeckoInstance {
         GeckoGameManager.shutdown()
         GeckoMapManager.unregisterMechanics()
         GeckoGameTablistManager.shutdown()
+        GeckoTablistRenderer.shutdown()
         GeckoPunishmentService.shutdown()
         LeaderboardManager.shutdown()
         PlayerCulling.shutdown()
