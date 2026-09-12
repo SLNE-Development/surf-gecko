@@ -49,11 +49,19 @@ object GeckoSounds {
         pitch(0.6f)
     }
 
+    val PHASE_GAME = sound {
+        type(key("minecraft:entity.evoker.prepare_summon"))
+        pitch(0.8f)
+    }
+
+    val VENT_ENTER = sound {
+        type(key("minecraft:block.iron_door.open"))
+        pitch(0.6f)
+    }
+
     fun countdownTick(secondsLeft: Int) = sound {
-        type(key("minecraft:block.note_block.pling"))
-        source(Sound.Source.MASTER)
-        volume(1f)
-        pitch(1f + (COUNTDOWN_SECONDS - secondsLeft).coerceIn(0, COUNTDOWN_SECONDS) * 0.2f)
+        type(key("minecraft:ui.button.click"))
+        pitch(2f)
     }
 
     fun heartbeat(volume: Float, pitch: Float) = sound {

@@ -7,11 +7,13 @@ import dev.slne.surf.gecko.server.coroutine.geckoScope
 import dev.slne.surf.gecko.server.event.EventHandler
 import dev.slne.surf.gecko.server.event.MinestomListener
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
+import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.util.GECKO_SECONDARY
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import net.kyori.adventure.sound.Sound
 import net.minestom.server.coordinate.BlockVec
 import net.minestom.server.coordinate.Vec
 import net.minestom.server.entity.Player
@@ -80,6 +82,7 @@ object VentMechanic : GeckoMapMechanic, MinestomListener {
         )
 
         player.velocity = toVent.normalize().mul(LAUNCH_SPEED)
+        player.playSound(GeckoSounds.VENT_ENTER, Sound.Emitter.self())
     }
 
     private fun findVent(player: Player): BlockVec? {

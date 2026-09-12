@@ -429,6 +429,7 @@ class GeckoGame(
                     player.teleportToSpawn(settings.map)
                     player.player.hideBossBar(bossBar)
                     player.sendRoleMessage()
+                    player.player.playSound(GeckoSounds.PHASE_GAME, Sound.Emitter.self())
                 }
             }.awaitAll()
         }
