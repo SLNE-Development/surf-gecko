@@ -1,22 +1,31 @@
 package dev.slne.surf.gecko.server.chat
 
-import dev.slne.minestom.lobby.api.chat.AsyncChatEvent
 import dev.slne.minestom.lobby.api.chat.ChatRenderer
 import dev.slne.minestom.lobby.api.extension.ConnectionManager
 import dev.slne.minestom.lobby.api.player.LobbyPlayer
+import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.hasPermission
+import dev.slne.surf.api.core.minimessage.miniMessage
+import dev.slne.surf.gecko.server.chat.packet.DeleteChatPacketModern
+import dev.slne.surf.gecko.server.chat.packet.framed
 import dev.slne.surf.gecko.server.chat.signature.PlayerChatMessage
 import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
+import dev.slne.surf.gecko.server.integration.luckperms.LuckPermsAccess
+import dev.slne.surf.gecko.server.permission.PermissionList
 import dev.slne.surf.gecko.server.player.GeckoPlayer
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.audience.ForwardingAudience
+import net.kyori.adventure.chat.SignedMessage
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.translation.GlobalTranslator
+import net.minestom.server.MinecraftServer
 import net.minestom.server.adventure.MinestomAdventure
 import net.minestom.server.adventure.audience.Audiences
 import net.minestom.server.command.ConsoleSender
+import net.minestom.server.crypto.MessageSignature
 import net.minestom.server.message.ChatType
 
 class ChatProcessor(
@@ -41,34 +50,39 @@ class ChatProcessor(
             add(Audiences.console())
         }
 
-        val renderer = ChatRenderer.defaultRenderer()
-        val event = AsyncChatEvent(
-            player = player,
-            viewers = viewers,
-            renderer = renderer,
-            message = originalMessage,
-            originalMessage = originalMessage,
-            signedMessage = message.adventureView()
-        )
+        val renderer = ChatRenderer { source, _, message, viewer ->
+            buildText {
+                if (viewer.hasPermission(PermissionList.DELETE_MESSAGE)) {
+                    append {
+                        darkSpacer("[")
+                        error("✘")
+                        darkSpacer("]")
+                        appendSpace()
+                        clickCallback {
+                            deleteMessage(this@ChatProcessor.message.adventureView())
+                        }
+                        hoverEvent(buildText {
+                            error("Nachricht löschen")
+                        })
+                    }
+                }
 
-        readModifications(event, renderer)
-        complete(event)
-    }
-
-    private fun readModifications(event: AsyncChatEvent, originalRenderer: ChatRenderer) {
-        messageChanged = event.message != originalMessage
-        if (originalRenderer !== event.renderer) {
-            formatChanged = true
+                append(miniMessage.deserialize("${LuckPermsAccess.prefix(source.uuid)}${source.username}"))
+                appendSpace()
+                append(message)
+            }
         }
+
+        formatChanged = true
+        complete(originalMessage, renderer, viewers)
     }
 
-    private suspend fun complete(event: AsyncChatEvent) {
-        if (event.isCancelled) return
-
+    private suspend fun complete(
+        message: Component,
+        renderer: ChatRenderer,
+        viewers: Set<Audience>
+    ) {
         val displayName = player.displayName()
-        val message = event.message
-        val renderer = event.renderer
-        val viewers = event.viewers
 
         val useVanillaChatType = renderer is ChatRenderer.Default
         val chatType = BoundChatType(
@@ -149,4 +163,18 @@ class ChatProcessor(
             }
         }
     }
+
+
+    private fun deleteMessage(signedMessage: SignedMessage) =
+        MinecraftServer.getConnectionManager().onlinePlayers.forEach {
+            it.sendPacket(
+                DeleteChatPacketModern(
+                    MessageSignature.Packed(
+                        MessageSignature(
+                            signedMessage.signature()?.bytes()
+                        )
+                    )
+                ).framed()
+            )
+        }
 }
