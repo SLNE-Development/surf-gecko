@@ -76,9 +76,9 @@ class ChatProcessor(
                                     error("TEAM", TextDecoration.BOLD)
                                     darkSpacer(" | ")
                                     append(viewer.displayName())
-                                    primary(" hat eine Nachricht von ")
+                                    info(" hat eine Nachricht von ")
                                     append(source.displayName())
-                                    primary(" gelöscht.")
+                                    info(" gelöscht.")
 
                                     hoverEvent(buildText {
                                         append(message).colorIfAbsent(Colors.WHITE)
