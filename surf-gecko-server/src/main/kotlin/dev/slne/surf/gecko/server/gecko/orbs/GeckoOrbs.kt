@@ -26,6 +26,39 @@ object GeckoOrbs {
         .filter { it.hasTag(ORB_TAG_KEY) }
         .sumOf { it.amount() }
 
+    fun give(player: Player, amount: Int) {
+        if (amount <= 0) {
+            return
+        }
+
+        var remaining = amount
+
+        for (slot in 0 until PlayerInventory.INNER_INVENTORY_SIZE) {
+            if (remaining <= 0) {
+                break
+            }
+
+            val stack = player.inventory.getItemStack(slot)
+
+            if (!stack.hasTag(ORB_TAG_KEY)) {
+                continue
+            }
+
+            val space = stack.maxStackSize() - stack.amount()
+            val toGive = minOf(remaining, space)
+
+            remaining -= toGive
+            player.inventory.setItemStack(slot, stack.withAmount(toGive))
+        }
+
+        while (remaining > 0) {
+            val toGive = minOf(remaining, ITEM.maxStackSize())
+            remaining -= toGive
+
+            player.inventory.addItemStack(ITEM.withAmount(toGive))
+        }
+    }
+
     fun take(player: Player, amount: Int): Boolean {
         if (amount <= 0) {
             return true

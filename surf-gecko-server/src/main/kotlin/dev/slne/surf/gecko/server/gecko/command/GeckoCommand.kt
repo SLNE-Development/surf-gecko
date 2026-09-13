@@ -2,8 +2,13 @@ package dev.slne.surf.gecko.server.gecko.command
 
 import dev.slne.minestom.lobby.api.command.commandapi.dsl.*
 import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.api.minestom.inventory.framework.open
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
+import dev.slne.surf.gecko.server.gecko.map.GeckoMaps
+import dev.slne.surf.gecko.server.gecko.orbs.GeckoOrbs
+import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
+import dev.slne.surf.gecko.server.gecko.shop.shopView
 import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
 import dev.slne.surf.gecko.server.gecko.util.appendPrefix
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
@@ -74,6 +79,47 @@ fun geckoCommand() = commandTree("gecko") {
                         SocialGroupManager.groups().map { "${it.key}=${it.value}" }
                     }"
                 )
+            }
+        }
+    }
+
+    literalArgument("shop") {
+        multiLiteralArgument("type", "seeker", "hider") {
+            playerExecutor { player, arguments ->
+                val type: String by arguments
+
+                val role = when (type) {
+                    "seeker" -> GeckoGameRole.SEEKER
+                    "hider" -> GeckoGameRole.HIDER
+                    else -> null
+                }
+
+                if (role == null) {
+                    player.sendText {
+                        appendPrefix()
+                        geckoPrimary("Die Rolle wurde nicht gefunden.")
+                    }
+                    return@playerExecutor
+                }
+
+                val map = GeckoMaps.random()
+
+                shopView.open(player, mapOf("map" to map, "role" to role))
+            }
+        }
+    }
+
+    literalArgument("giveOrbs") {
+        integerArgument("amount") {
+            playerExecutor { player, arguments ->
+                val amount: Int by arguments
+
+                GeckoOrbs.give(player, amount)
+
+                player.sendText {
+                    appendPrefix()
+                    geckoPrimary("Du hast $amount Orbs erhalten.")
+                }
             }
         }
     }
