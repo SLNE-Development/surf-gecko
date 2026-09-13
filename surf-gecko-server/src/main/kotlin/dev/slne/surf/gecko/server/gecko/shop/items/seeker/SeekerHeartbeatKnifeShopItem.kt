@@ -8,7 +8,6 @@ import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
 import dev.slne.surf.gecko.server.gecko.shop.effect.ShopItemUsages
 import dev.slne.surf.gecko.server.gecko.shop.nearestTo
-import dev.slne.surf.gecko.server.gecko.shop.sendShopItemMessage
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.util.appendPrefix
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
