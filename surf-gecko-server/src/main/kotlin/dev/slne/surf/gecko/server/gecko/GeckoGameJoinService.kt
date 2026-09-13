@@ -10,6 +10,7 @@ import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.punishment.GeckoPunishmentService
 import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
 import kotlinx.coroutines.launch
+import net.minestom.server.MinecraftServer
 import net.minestom.server.event.Event
 import net.minestom.server.event.EventNode
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent
@@ -34,7 +35,10 @@ class GeckoGameJoinService : EventRegistrar {
 
     private fun handleSpawn(event: PlayerSpawnEvent) {
         GeckoTablistRenderer.reset(event.player.uuid)
-        GeckoTablistRenderer.refresh()
+
+        MinecraftServer.getSchedulerManager().scheduleNextTick {
+            GeckoTablistRenderer.refresh()
+        }
 
         if (event.isFirstSpawn) {
             geckoAsyncScope.launch { GeckoPunishmentService.handleJoin(event.player) }
