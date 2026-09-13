@@ -41,7 +41,7 @@ class ShopItemListener : EventRegistrar {
     }
 
     private fun handleInteract(player: Player, item: ItemStack) {
-        if(item.hasTag(ShopItem.ID_TAG)) {
+        if (item.hasTag(ShopItem.ID_TAG)) {
             val item = ShopItem.byId(item.getTag(ShopItem.ID_TAG)) ?: return
             item.onUse(player)
         }
@@ -57,7 +57,7 @@ class ShopItemListener : EventRegistrar {
             return
         }
 
-        shopView.open(player, mapOf("role" to gamePlayer.role))
+        shopView.open(player, mapOf("role" to gamePlayer.role, "map" to game.settings.map))
     }
 
     companion object {

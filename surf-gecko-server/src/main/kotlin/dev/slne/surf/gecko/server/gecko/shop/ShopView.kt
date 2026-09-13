@@ -7,6 +7,7 @@ import dev.slne.surf.api.minestom.inventory.framework.view.settings
 import dev.slne.surf.api.minestom.inventory.framework.view.state.get
 import dev.slne.surf.api.minestom.inventory.framework.view.state.initialState
 import dev.slne.surf.api.minestom.inventory.framework.view.surfView
+import dev.slne.surf.gecko.server.gecko.map.GeckoMap
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
@@ -16,6 +17,7 @@ import net.minestom.server.item.ItemStack
 val shopView by lazy {
     surfView("Shop") {
         val roleState = initialState<GeckoGameRole>("role")
+        val mapState = initialState<GeckoMap>("map")
 
         settings {
             rows(1)
@@ -27,7 +29,8 @@ val shopView by lazy {
         }
 
         onFirstRender {
-            val items = ShopItem.byRole(roleState[this])
+            val map = mapState[this]
+            val items = ShopItem.byRole(roleState[this]).filter { it.maps?.contains(map) == true }
 
             layoutSlot('I') { index, builder ->
                 val item = items.getOrNull(index)

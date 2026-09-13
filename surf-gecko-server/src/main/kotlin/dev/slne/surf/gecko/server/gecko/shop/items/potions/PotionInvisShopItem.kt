@@ -1,4 +1,4 @@
-package dev.slne.surf.gecko.server.gecko.shop.items
+package dev.slne.surf.gecko.server.gecko.shop.items.potions
 
 import dev.slne.surf.api.core.messages.adventure.key
 import dev.slne.surf.api.core.messages.adventure.playSound
@@ -15,16 +15,16 @@ import net.minestom.server.potion.Potion
 import net.minestom.server.potion.PotionEffect
 import net.minestom.server.potion.PotionType
 
-object SeekerSpeedShopItem : ShopItem {
-    override val id = "seeker_speed"
-    override val role = GeckoGameRole.SEEKER
+object PotionInvisShopItem : ShopItem {
+    override val id = "invisibility_potion"
+    override val roles = listOf(GeckoGameRole.HIDER)
     override val price = 5
-    override val displayName = "Geschwindigkeitstrank"
-    override val description = "Werde für 5 Sekunden schneller"
+    override val displayName = "Unsichtbarkeitstrank"
+    override val description = "Werde für 10 Sekunden unsichtbar"
     override val displayItem: ItemStack = ItemStack.builder(Material.POTION)
         .set(
             DataComponents.POTION_CONTENTS, PotionContents(
-                PotionType.SWIFTNESS
+                PotionType.INVISIBILITY
             )
         )
         .set(
@@ -32,10 +32,11 @@ object SeekerSpeedShopItem : ShopItem {
             TooltipDisplay(false, setOf(DataComponents.POTION_CONTENTS))
         )
         .build()
+    override val maps = null
     override val inventoryItem: ItemStack = ItemStack.builder(Material.POTION)
         .set(
             DataComponents.POTION_CONTENTS, PotionContents(
-                PotionType.SWIFTNESS
+                PotionType.INVISIBILITY
             )
         )
         .set(
@@ -46,7 +47,7 @@ object SeekerSpeedShopItem : ShopItem {
         .build()
 
     override fun onUse(player: Player) {
-        player.addEffect(Potion(PotionEffect.SPEED, 1, 5 * 20))
+        player.addEffect(Potion(PotionEffect.INVISIBILITY, 1, 10 * 20))
         player.playSound(true) {
             type(key("minecraft:entity.generic.drink"))
         }
