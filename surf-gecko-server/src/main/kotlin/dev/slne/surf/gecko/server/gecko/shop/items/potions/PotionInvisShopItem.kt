@@ -46,10 +46,12 @@ object PotionInvisShopItem : ShopItem {
         .withTag(ShopItem.ID_TAG, id)
         .build()
 
-    override fun onUse(player: Player) {
+    override fun onUse(player: Player): Boolean {
         player.addEffect(Potion(PotionEffect.INVISIBILITY, 1, 10 * 20))
         player.playSound(true) {
             type(key("minecraft:entity.generic.drink"))
         }
+
+        return true
     }
 }

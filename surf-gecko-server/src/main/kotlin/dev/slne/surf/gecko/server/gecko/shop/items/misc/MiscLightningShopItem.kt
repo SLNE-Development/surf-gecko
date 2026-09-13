@@ -1,49 +1,89 @@
 package dev.slne.surf.gecko.server.gecko.shop.items.misc
 
-import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.core.util.random
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
-import dev.slne.surf.gecko.server.gecko.util.appendPrefix
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
+import dev.slne.surf.gecko.server.gecko.shop.activeHiders
+import dev.slne.surf.gecko.server.gecko.shop.activeSeekers
+import dev.slne.surf.gecko.server.gecko.shop.sendShopItemMessage
+import dev.slne.surf.gecko.server.util.withTag
 import net.minestom.server.component.DataComponents
+import net.minestom.server.entity.Entity
+import net.minestom.server.entity.EntityType
 import net.minestom.server.entity.Player
+import net.minestom.server.entity.damage.Damage
+import net.minestom.server.entity.damage.DamageType
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
+import java.time.Duration
+
+private const val STRIKE_CHANCE_PERCENT = 30
+private const val STRIKE_DAMAGE = 5f
+private val STRIKE_LIFETIME: Duration = Duration.ofMillis(500)
 
 object MiscLightningShopItem : ShopItem {
     override val id = "misc_lightning"
     override val price = 100
     override val displayName = "Blitz"
     override val description = "Rufe einen Blitz herbei!"
-    override val displayItem: ItemStack = ItemStack.of(Material.PAPER).builder()
-        .set(DataComponents.ITEM_MODEL, "surf:gecko/shop/lightning").build()
     override val maps = null
     override val roles = listOf(GeckoGameRole.HIDER, GeckoGameRole.SEEKER)
-    override val inventoryItem: ItemStack = ItemStack.of(Material.PAPER).builder()
+
+    private val model = ItemStack.of(Material.PAPER).builder()
         .set(DataComponents.ITEM_MODEL, "surf:gecko/shop/lightning").build()
 
-    override fun onUse(player: Player) {
-        val game = GeckoGameManager.findGame(player.uuid) ?: return
-        val gamePlayer = game.findGamePlayer(player.uuid) ?: return
+    override val displayItem: ItemStack = model
+    override val inventoryItem: ItemStack = model.builder().withTag(ShopItem.ID_TAG, id).build()
+
+    override fun onUse(player: Player): Boolean {
+        val game = GeckoGameManager.findGame(player.uuid) ?: return false
+        val gamePlayer = game.findGamePlayer(player.uuid) ?: return false
+
+        if (!game.state.isGame()) {
+            return false
+        }
 
         val targets = when (gamePlayer.role) {
-            GeckoGameRole.HIDER -> game.gamePlayers.filter { it.role == GeckoGameRole.SEEKER }
-            GeckoGameRole.SEEKER -> game.gamePlayers.filter { it.role == GeckoGameRole.HIDER }
-            else -> null
+            GeckoGameRole.HIDER -> game.activeSeekers()
+            GeckoGameRole.SEEKER -> game.activeHiders()
+            GeckoGameRole.SPECTATOR -> emptyList()
         }
 
-        if (targets.isNullOrEmpty()) {
-            player.sendText {
-                appendPrefix()
-                geckoPrimary("Es gibt keine Spieler, die du mit dem Blitz treffen könntest!")
-            }
-            return
+        if (targets.isEmpty()) {
+            player.sendShopItemMessage("Es gibt keine Spieler, die du mit dem Blitz treffen könntest!")
+            return false
         }
 
-        targets.filter { random.nextInt(10) < 3 }.forEach {
-            // TODO: Lightning effect
+        val struck = targets.filter { random.nextInt(100) < STRIKE_CHANCE_PERCENT }
+
+        if (struck.isEmpty()) {
+            player.sendShopItemMessage("Der Blitz hat niemanden getroffen.")
+            return true
         }
+
+        struck.forEach { strike(it, player) }
+
+        player.sendShopItemMessage("Der Blitz hat ${struck.size} Spieler getroffen.")
+
+        return true
+    }
+
+    private fun strike(target: Player, caster: Player) {
+        val instance = target.instance ?: return
+        val bolt = Entity(EntityType.LIGHTNING_BOLT)
+
+        bolt.setInstance(instance, target.position)
+        bolt.scheduleRemove(STRIKE_LIFETIME)
+
+        target.damage(
+            Damage(
+                DamageType.LIGHTNING_BOLT,
+                null,
+                caster,
+                target.position,
+                STRIKE_DAMAGE
+            )
+        )
     }
 }

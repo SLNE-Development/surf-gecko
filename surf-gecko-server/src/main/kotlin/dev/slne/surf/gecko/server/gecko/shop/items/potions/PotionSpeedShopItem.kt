@@ -46,10 +46,12 @@ object PotionSpeedShopItem : ShopItem {
         .withTag(ShopItem.ID_TAG, id)
         .build()
 
-    override fun onUse(player: Player) {
+    override fun onUse(player: Player): Boolean {
         player.addEffect(Potion(PotionEffect.SPEED, 1, 5 * 20))
         player.playSound(true) {
             type(key("minecraft:entity.generic.drink"))
         }
+
+        return true
     }
 }

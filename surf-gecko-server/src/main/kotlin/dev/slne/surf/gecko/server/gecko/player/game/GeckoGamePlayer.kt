@@ -41,6 +41,7 @@ data class GeckoGamePlayer(
         GeckoGameRole.SEEKER -> {
             player.scheduleNextTick {
                 player.inventory.clear()
+                player.setCanPickupItem(true)
                 player.inventory.setEquipment(EquipmentSlot.HELMET, player.heldSlot, SEEKER_HELMET)
                 player.inventory.setEquipment(
                     EquipmentSlot.CHESTPLATE,
@@ -66,11 +67,13 @@ data class GeckoGamePlayer(
 
         GeckoGameRole.HIDER -> {
             player.inventory.clear()
+            player.setCanPickupItem(true)
             ShopItemListener.giveShop(this)
         }
 
         GeckoGameRole.SPECTATOR -> {
             player.inventory.clear()
+            player.setCanPickupItem(false)
         }
     }
 

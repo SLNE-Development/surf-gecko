@@ -63,6 +63,83 @@ object GeckoSounds {
         type(key("minecraft:entity.firework_rocket.launch"))
     }
 
+    val ORB_PICKUP = sound {
+        type(key("minecraft:entity.experience_orb.pickup"))
+        source(Sound.Source.MASTER)
+        volume(0.7f)
+        pitch(1.4f)
+    }
+
+    val SHOP_BUY = sound {
+        type(key("minecraft:entity.player.levelup"))
+        source(Sound.Source.MASTER)
+        volume(0.6f)
+        pitch(1.5f)
+    }
+
+    val SHOP_DENY = sound {
+        type(key("minecraft:block.note_block.bass"))
+        source(Sound.Source.MASTER)
+        volume(0.8f)
+        pitch(0.6f)
+    }
+
+    val SHOP_SONAR_PING = sound {
+        type(key("minecraft:block.note_block.pling"))
+        source(Sound.Source.MASTER)
+        volume(1f)
+        pitch(1.6f)
+    }
+
+    val SHOP_SPY_DEVICE = sound {
+        type(key("minecraft:block.beacon.activate"))
+        source(Sound.Source.MASTER)
+        volume(0.6f)
+        pitch(1.8f)
+    }
+
+    val SHOP_LASER = sound {
+        type(key("minecraft:block.beacon.power_select"))
+        source(Sound.Source.MASTER)
+        volume(0.8f)
+        pitch(1.2f)
+    }
+
+    val SHOP_NET_TRAP = sound {
+        type(key("minecraft:block.wool.place"))
+        source(Sound.Source.MASTER)
+        volume(1f)
+        pitch(0.7f)
+    }
+
+    val SHOP_SMOKE_BOMB = sound {
+        type(key("minecraft:block.fire.extinguish"))
+        source(Sound.Source.MASTER)
+        volume(1f)
+        pitch(0.8f)
+    }
+
+    val SHOP_SPRING = sound {
+        type(key("minecraft:entity.slime.jump"))
+        source(Sound.Source.MASTER)
+        volume(1f)
+        pitch(0.9f)
+    }
+
+    val SHOP_SHIELD = sound {
+        type(key("minecraft:item.shield.block"))
+        source(Sound.Source.MASTER)
+        volume(1f)
+        pitch(1.2f)
+    }
+
+    val SHOP_TELEPORT = sound {
+        type(key("minecraft:entity.enderman.teleport"))
+        source(Sound.Source.MASTER)
+        volume(1f)
+        pitch(1f)
+    }
+
     fun countdownTick(secondsLeft: Int) = sound {
         type(key("minecraft:ui.button.click"))
         pitch(2f)

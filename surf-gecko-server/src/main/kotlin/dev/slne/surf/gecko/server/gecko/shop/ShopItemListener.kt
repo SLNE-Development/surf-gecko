@@ -19,6 +19,8 @@ import net.minestom.server.event.player.PlayerUseItemEvent
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 import net.minestom.server.tag.Tag
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 @Singleton
 class ShopItemListener : EventRegistrar {
@@ -41,9 +43,18 @@ class ShopItemListener : EventRegistrar {
     }
 
     private fun handleInteract(player: Player, item: ItemStack) {
+        if (!debounce(player)) {
+            return
+        }
+
         if (item.hasTag(ShopItem.ID_TAG)) {
-            val item = ShopItem.byId(item.getTag(ShopItem.ID_TAG)) ?: return
-            item.onUse(player)
+            val shopItem = ShopItem.byId(item.getTag(ShopItem.ID_TAG)) ?: return
+
+            if (shopItem.onUse(player)) {
+                ShopPurchase.consume(player, shopItem)
+            }
+
+            return
         }
 
         if (!item.hasTag(itemTag)) {
@@ -60,7 +71,24 @@ class ShopItemListener : EventRegistrar {
         shopView.open(player, mapOf("role" to gamePlayer.role, "map" to game.settings.map))
     }
 
+    private val lastUseAt = ConcurrentHashMap<UUID, Long>()
+
+    private fun debounce(player: Player): Boolean {
+        val now = System.currentTimeMillis()
+        var allowed = false
+
+        lastUseAt.compute(player.uuid) { _, previous ->
+            allowed = previous == null || now - previous >= USE_DEBOUNCE_MILLIS
+
+            if (allowed) now else previous
+        }
+
+        return allowed
+    }
+
     companion object {
+        private const val USE_DEBOUNCE_MILLIS = 150L
+
         val itemTag: Tag<Boolean> = Tag.Boolean("shop_item")
 
         fun giveShop(gamePlayer: GeckoGamePlayer) {

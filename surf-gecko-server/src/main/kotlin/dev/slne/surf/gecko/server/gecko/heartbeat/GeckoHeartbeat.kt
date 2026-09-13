@@ -15,14 +15,6 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration.Companion.milliseconds
 
-private const val TICK_MILLIS = 100L
-private const val MIN_BEAT_INTERVAL_MILLIS = 250L
-private const val MAX_BEAT_INTERVAL_MILLIS = 1400L
-private const val MIN_VOLUME = 0.4f
-private const val MAX_VOLUME = 1.6f
-private const val MIN_PITCH = 0.8f
-private const val MAX_PITCH = 1.5f
-
 class GeckoHeartbeat(private val game: GeckoGame) {
     private val nextBeatAt = ConcurrentHashMap<UUID, Long>()
     private val affectedScreens = ConcurrentHashMap.newKeySet<UUID>()
@@ -33,10 +25,12 @@ class GeckoHeartbeat(private val game: GeckoGame) {
             return
         }
 
-        job =
-            geckoAsyncScope.runAtFixedRate(TICK_MILLIS.milliseconds, taskName = "gecko-heartbeat") {
-                tick()
-            }
+        job = geckoAsyncScope.runAtFixedRate(
+            GeckoHeartbeatPulse.TICK_MILLIS.milliseconds,
+            taskName = "gecko-heartbeat"
+        ) {
+            tick()
+        }
     }
 
     fun stop() {
@@ -76,11 +70,12 @@ class GeckoHeartbeat(private val game: GeckoGame) {
                     return@forEach
                 }
 
-                val proximity = (distance / game.settings.heartbeatRadius).coerceIn(0.0, 1.0)
+                val proximity =
+                    GeckoHeartbeatPulse.proximityFor(distance, game.settings.heartbeatRadius)
 
                 nearby.add(player.uuid)
                 affectedScreens.add(player.uuid)
-                GeckoScreenEffect.apply(player, screenIntensityFor(proximity))
+                GeckoScreenEffect.apply(player, GeckoHeartbeatPulse.screenIntensityFor(proximity))
 
                 val nextBeat = nextBeatAt[player.uuid]
 
@@ -89,11 +84,14 @@ class GeckoHeartbeat(private val game: GeckoGame) {
                 }
 
                 player.playSound(
-                    GeckoSounds.heartbeat(volumeFor(proximity), pitchFor(proximity)),
+                    GeckoSounds.heartbeat(
+                        GeckoHeartbeatPulse.volumeFor(proximity),
+                        GeckoHeartbeatPulse.pitchFor(proximity)
+                    ),
                     Sound.Emitter.self()
                 )
 
-                nextBeatAt[player.uuid] = now + intervalFor(proximity)
+                nextBeatAt[player.uuid] = now + GeckoHeartbeatPulse.intervalFor(proximity)
             }
 
         clearScreens(nearby)
@@ -115,19 +113,4 @@ class GeckoHeartbeat(private val game: GeckoGame) {
     private fun nearestSeekerDistance(hider: Player, seekers: List<Player>) = seekers
         .filter { it.instance == hider.instance }
         .minOfOrNull { it.position.distance(hider.position) }
-
-    private fun intervalFor(proximity: Double) =
-        (MIN_BEAT_INTERVAL_MILLIS + (MAX_BEAT_INTERVAL_MILLIS - MIN_BEAT_INTERVAL_MILLIS) * proximity).toLong()
-
-    private fun volumeFor(proximity: Double) =
-        (MAX_VOLUME - (MAX_VOLUME - MIN_VOLUME) * proximity).toFloat()
-
-    private fun pitchFor(proximity: Double) =
-        (MAX_PITCH - (MAX_PITCH - MIN_PITCH) * proximity).toFloat()
-
-    private fun screenIntensityFor(proximity: Double): Double {
-        val closeness = 1.0 - proximity
-
-        return closeness * closeness
-    }
 }

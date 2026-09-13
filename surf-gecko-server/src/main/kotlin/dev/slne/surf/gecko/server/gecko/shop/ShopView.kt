@@ -1,6 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.shop
 
 import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.minestom.inventory.framework.dsl.onItemClick
 import dev.slne.surf.api.minestom.inventory.framework.view.onFirstRender
 import dev.slne.surf.api.minestom.inventory.framework.view.onInit
 import dev.slne.surf.api.minestom.inventory.framework.view.settings
@@ -30,10 +31,14 @@ val shopView by lazy {
 
         onFirstRender {
             val map = mapState[this]
-            val items = ShopItem.byRole(roleState[this]).filter { it.maps?.contains(map) == true }
+            val items = ShopItem.byRole(roleState[this]).filter { it.availableOn(map) }
 
             layoutSlot('I') { index, builder ->
                 val item = items.getOrNull(index)
+
+                if (item != null) {
+                    builder.onItemClick { ShopPurchase.buy(player, item) }
+                }
 
                 builder.withItem(
                     item?.let {

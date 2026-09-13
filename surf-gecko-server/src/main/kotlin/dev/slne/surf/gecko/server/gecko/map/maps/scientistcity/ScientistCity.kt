@@ -12,10 +12,16 @@ object ScientistCity : GeckoMap {
     override val mapDisplayName = "Wissenschaftler Stadt"
     override val mapAuthors = listOf(
         GeckoMap.MapAuthor(
-            "Kanickelul", UUID.fromString("5e4cb19a-748e-4cb6-9f8a-1cbfde687aee")
+            "Kanickelul", UUID.fromString("5e4cb19a-748e-4cb6-9f8a-1cbfde687aee"),
         ),
         GeckoMap.MapAuthor(
-            "CXN Bauteam", UUID.fromString("0af13c4b-b536-4d71-b945-868c527a450f")
+            "Jennoii", UUID.fromString("7e8175e0-47b3-460f-aef2-d14296d3f67d")
+        ),
+        GeckoMap.MapAuthor(
+            "Dr3g0ntheRadio", UUID.fromString("a831fe38-d77b-4332-9144-36e8c24e9671")
+        ),
+        GeckoMap.MapAuthor(
+            "marbrueck", UUID.fromString("b9f90553-b812-4653-9e4d-f345d1b3712f")
         )
     )
     override val mapContributors = listOf(
