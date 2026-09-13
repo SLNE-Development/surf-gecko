@@ -10,7 +10,6 @@ import dev.slne.surf.gecko.server.gecko.shop.effect.ShopItemUsages
 import dev.slne.surf.gecko.server.gecko.shop.sendShopItemMessage
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.util.withTag
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.component.DataComponents
@@ -19,7 +18,7 @@ import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 import kotlin.time.Duration.Companion.seconds
 
-private const val DURATION_MILLIS = 10_000L
+private val DURATION = 10.seconds
 
 object HiderScoutShopItem : ShopItem {
     override val id = "hider_scout"
@@ -60,18 +59,8 @@ object HiderScoutShopItem : ShopItem {
 
         geckoScope.launch {
             try {
-                val until = System.currentTimeMillis() + DURATION_MILLIS
-
-                while (System.currentTimeMillis() < until && player.isOnline) {
-                    seekers.forEach { GeckoGlowEffect.send(player, it, true) }
-                    delay(1.seconds)
-                }
+                GeckoGlowEffect.glow(player, seekers, DURATION)
             } finally {
-                if (player.isOnline) {
-                    seekers.filter { it.isOnline }
-                        .forEach { GeckoGlowEffect.send(player, it, false) }
-                }
-
                 ShopItemUsages.finish(id, player)
             }
         }

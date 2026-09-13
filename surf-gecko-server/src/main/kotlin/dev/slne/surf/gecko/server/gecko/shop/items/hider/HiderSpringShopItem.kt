@@ -13,9 +13,9 @@ import net.minestom.server.item.Material
 import net.minestom.server.potion.Potion
 import net.minestom.server.potion.PotionEffect
 
-private const val HORIZONTAL_SPEED = 12.0
-private const val VERTICAL_SPEED = 14.0
-private const val SLOW_FALLING_TICKS = 6 * 20
+private const val HORIZONTAL_SPEED = 30.0
+private const val VERTICAL_SPEED = 20.0
+private const val SLOW_FALLING_TICKS = 3 * 20
 
 object HiderSpringShopItem : ShopItem {
     override val id = "hider_spring"

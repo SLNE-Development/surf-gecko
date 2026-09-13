@@ -36,6 +36,7 @@ object PlayerCulling {
         job?.cancel()
         job = null
 
+        PlayerXRay.clear()
         states.keys.forEach { it.updateViewableRule(null) }
         states.clear()
     }
@@ -85,6 +86,7 @@ object PlayerCulling {
         val hidden = arrayOfNulls<IntArrayList>(size)
         val alwaysVisible = BooleanArray(size) { players[it].isAlwaysVisible() }
         val seesThroughWalls = BooleanArray(size) { players[it].seesThroughWalls() }
+        val xray = Array(size) { PlayerXRay.targetsOf(players[it]) }
 
         OcclusionRaycaster(instance).use { raycaster ->
             for (viewerIndex in 0 until size) {
@@ -93,10 +95,12 @@ object PlayerCulling {
                 for (targetIndex in viewerIndex + 1 until size) {
                     val target = players[targetIndex]
 
-                    val hideViewer =
-                        !alwaysVisible[viewerIndex] && !seesThroughWalls[targetIndex]
-                    val hideTarget =
-                        !alwaysVisible[targetIndex] && !seesThroughWalls[viewerIndex]
+                    val hideViewer = !alwaysVisible[viewerIndex] &&
+                            !seesThroughWalls[targetIndex] &&
+                            viewer.uuid !in xray[targetIndex]
+                    val hideTarget = !alwaysVisible[targetIndex] &&
+                            !seesThroughWalls[viewerIndex] &&
+                            target.uuid !in xray[viewerIndex]
 
                     if (!hideViewer && !hideTarget) {
                         continue

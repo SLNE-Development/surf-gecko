@@ -11,7 +11,6 @@ import dev.slne.surf.gecko.server.gecko.shop.nearestTo
 import dev.slne.surf.gecko.server.gecko.shop.sendShopItemMessage
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.util.withTag
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.component.DataComponents
@@ -20,7 +19,7 @@ import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 import kotlin.time.Duration.Companion.seconds
 
-private const val DURATION_MILLIS = 30_000L
+private val DURATION = 30.seconds
 
 object SeekerSpyDeviceShopItem : ShopItem {
     override val id = "seeker_spy_device"
@@ -61,17 +60,8 @@ object SeekerSpyDeviceShopItem : ShopItem {
 
         geckoScope.launch {
             try {
-                val until = System.currentTimeMillis() + DURATION_MILLIS
-
-                while (System.currentTimeMillis() < until && player.isOnline && target.isOnline) {
-                    GeckoGlowEffect.send(player, target, true)
-                    delay(1.seconds)
-                }
+                GeckoGlowEffect.glow(player, listOf(target), DURATION)
             } finally {
-                if (player.isOnline && target.isOnline) {
-                    GeckoGlowEffect.send(player, target, false)
-                }
-
                 ShopItemUsages.finish(id, player)
             }
         }
