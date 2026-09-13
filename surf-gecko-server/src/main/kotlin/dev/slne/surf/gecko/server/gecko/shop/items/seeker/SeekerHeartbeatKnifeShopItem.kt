@@ -31,7 +31,7 @@ object SeekerHeartbeatKnifeShopItem : ShopItem {
     override val roles = listOf(GeckoGameRole.SEEKER)
 
     private val model = ItemStack.of(Material.PAPER).builder()
-        .set(DataComponents.ITEM_MODEL, "surf:gecko/shop/heartbeat_knife").build()
+        .set(DataComponents.ITEM_MODEL, "gecko:shop/heartbeat_knife").build()
 
     override val displayItem: ItemStack = model
     override val inventoryItem: ItemStack = model.builder().withTag(ShopItem.ID_TAG, id).build()

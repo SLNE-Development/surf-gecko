@@ -1,11 +1,14 @@
 package dev.slne.surf.gecko.server.gecko.shop.items.hider
 
+import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
 import dev.slne.surf.gecko.server.gecko.shop.activeSeekers
 import dev.slne.surf.gecko.server.gecko.shop.sendShopItemMessage
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
+import dev.slne.surf.gecko.server.gecko.util.appendPrefix
+import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import dev.slne.surf.gecko.server.util.secureRandom
 import dev.slne.surf.gecko.server.util.withTag
 import net.kyori.adventure.sound.Sound
@@ -25,7 +28,7 @@ object HiderEmergencyExitShopItem : ShopItem {
     override val roles = listOf(GeckoGameRole.HIDER)
 
     private val model = ItemStack.of(Material.PAPER).builder()
-        .set(DataComponents.ITEM_MODEL, "surf:gecko/shop/emergency_exit").build()
+        .set(DataComponents.ITEM_MODEL, "gecko:shop/emergency_exit").build()
 
     override val displayItem: ItemStack = model
     override val inventoryItem: ItemStack = model.builder().withTag(ShopItem.ID_TAG, id).build()
@@ -35,6 +38,14 @@ object HiderEmergencyExitShopItem : ShopItem {
         val gamePlayer = game.findGamePlayer(player.uuid) ?: return false
 
         if (!game.state.isGame() || gamePlayer.role != GeckoGameRole.HIDER) {
+            return false
+        }
+
+        if ((game.gameTimerSeconds ?: 0) < game.settings.roundTimeSeconds * 0.1) {
+            player.sendText {
+                appendPrefix()
+                geckoPrimary("Der Notausgang kann nicht mehr benutzt werden.")
+            }
             return false
         }
 

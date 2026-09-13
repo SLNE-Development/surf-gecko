@@ -31,7 +31,7 @@ object MiscLightningShopItem : ShopItem {
     override val roles = listOf(GeckoGameRole.HIDER, GeckoGameRole.SEEKER)
 
     private val model = ItemStack.of(Material.PAPER).builder()
-        .set(DataComponents.ITEM_MODEL, "surf:gecko/shop/lightning").build()
+        .set(DataComponents.ITEM_MODEL, "gecko:shop/lightning").build()
 
     override val displayItem: ItemStack = model
     override val inventoryItem: ItemStack = model.builder().withTag(ShopItem.ID_TAG, id).build()

@@ -26,12 +26,13 @@ object SeekerLaserShopItem : ShopItem {
     override val id = "seeker_laser"
     override val price = 12
     override val displayName = "Laser"
-    override val description = "Markiert allen Suchern 7,5 Sekunden lang den Standort jedes Versteckers"
+    override val description =
+        "Markiert allen Suchern 7,5 Sekunden lang den Standort jedes Versteckers"
     override val maps = null
     override val roles = listOf(GeckoGameRole.SEEKER)
 
     private val model = ItemStack.of(Material.PAPER).builder()
-        .set(DataComponents.ITEM_MODEL, "surf:gecko/shop/laser").build()
+        .set(DataComponents.ITEM_MODEL, "gecko:shop/laser").build()
 
     override val displayItem: ItemStack = model
     override val inventoryItem: ItemStack = model.builder().withTag(ShopItem.ID_TAG, id).build()

@@ -27,7 +27,7 @@ object SeekerSonarShopItem : ShopItem {
     override val roles = listOf(GeckoGameRole.SEEKER)
 
     private val model = ItemStack.of(Material.PAPER).builder()
-        .set(DataComponents.ITEM_MODEL, "surf:gecko/shop/sonar").build()
+        .set(DataComponents.ITEM_MODEL, "gecko:shop/sonar").build()
 
     override val displayItem: ItemStack = model
     override val inventoryItem: ItemStack = model.builder().withTag(ShopItem.ID_TAG, id).build()

@@ -40,7 +40,7 @@ object HiderSmokeBombShopItem : ShopItem {
     override val roles = listOf(GeckoGameRole.HIDER)
 
     private val model = ItemStack.of(Material.PAPER).builder()
-        .set(DataComponents.ITEM_MODEL, "surf:gecko/shop/smoke_bomb").build()
+        .set(DataComponents.ITEM_MODEL, "gecko:shop/smoke_bomb").build()
 
     override val displayItem: ItemStack = model
     override val inventoryItem: ItemStack = model.builder().withTag(ShopItem.ID_TAG, id).build()

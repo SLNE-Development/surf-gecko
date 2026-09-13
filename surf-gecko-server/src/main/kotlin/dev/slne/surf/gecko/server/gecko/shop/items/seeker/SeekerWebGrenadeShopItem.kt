@@ -38,7 +38,7 @@ object SeekerWebGrenadeShopItem : ShopItem {
     override val roles = listOf(GeckoGameRole.SEEKER)
 
     private val model = ItemStack.of(Material.PAPER).builder()
-        .set(DataComponents.ITEM_MODEL, "surf:gecko/shop/web_grenade").build()
+        .set(DataComponents.ITEM_MODEL, "gecko:shop/web_grenade").build()
 
     override val displayItem: ItemStack = model
     override val inventoryItem: ItemStack = model.builder().withTag(ShopItem.ID_TAG, id).build()
@@ -70,7 +70,12 @@ object SeekerWebGrenadeShopItem : ShopItem {
                     val target = origin.add(x, y, z)
 
                     if (instance.getBlock(target).isAir) {
-                        instance.setBlock(target.blockX(), target.blockY(), target.blockZ(), Block.COBWEB)
+                        instance.setBlock(
+                            target.blockX(),
+                            target.blockY(),
+                            target.blockZ(),
+                            Block.COBWEB
+                        )
                         placed.add(target)
                     }
                 }
