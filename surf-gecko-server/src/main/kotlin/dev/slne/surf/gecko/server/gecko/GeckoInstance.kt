@@ -2,6 +2,7 @@ package dev.slne.surf.gecko.server.gecko
 
 import dev.slne.minestom.lobby.api.command.commandapi.CommandAPI
 import dev.slne.surf.gecko.server.antiesp.PlayerCulling
+import dev.slne.surf.gecko.server.antimap.AntiMap
 import dev.slne.surf.gecko.server.database.GeckoDatabaseManager
 import dev.slne.surf.gecko.server.event.MinestomListenerRegistry
 import dev.slne.surf.gecko.server.event.register
@@ -34,6 +35,7 @@ object GeckoInstance {
         GeckoTablistRenderer.init()
         GeckoPunishmentService.init()
         PlayerCulling.init()
+        AntiMap.init()
         LobbyNpcManager.create()
         LeaderboardManager.init()
 
