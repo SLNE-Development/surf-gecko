@@ -5,7 +5,6 @@ import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
 import dev.slne.surf.gecko.server.gecko.shop.activeHiders
-import dev.slne.surf.gecko.server.gecko.shop.sendShopItemMessage
 import dev.slne.surf.gecko.server.gecko.shop.within
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.util.geckoHighlight
@@ -43,8 +42,7 @@ object SeekerSonarShopItem : ShopItem {
         val hiders = game.activeHiders().within(player, RADIUS)
 
         if (hiders.isEmpty()) {
-            player.sendShopItemMessage("Das Sonar findet keinen Verstecker in Reichweite.")
-            return false
+            return true
         }
 
         hiders.forEach {
@@ -54,7 +52,7 @@ object SeekerSonarShopItem : ShopItem {
                 it.position.y,
                 it.position.z
             )
-        }
+        } // TODO: Improve sound vfx or add visual effect for the sonar ping
 
         player.sendActionBar(buildText {
             geckoHighlight(hiders.size.toString())

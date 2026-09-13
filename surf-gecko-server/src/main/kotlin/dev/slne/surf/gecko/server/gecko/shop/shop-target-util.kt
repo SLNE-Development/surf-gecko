@@ -1,10 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.shop
 
-import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.gecko.server.gecko.GeckoGame
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
-import dev.slne.surf.gecko.server.gecko.util.appendPrefix
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import net.minestom.server.coordinate.Point
 import net.minestom.server.entity.Player
 import net.minestom.server.instance.Instance
@@ -29,7 +26,3 @@ internal fun List<Player>.within(player: Player, radius: Double) = otherThan(pla
 internal fun List<Player>.within(instance: Instance, position: Point, radius: Double) =
     filter { it.instance == instance && it.position.distance(position) <= radius }
 
-internal fun Player.sendShopItemMessage(message: String) = sendText {
-    appendPrefix()
-    geckoPrimary(message)
-}

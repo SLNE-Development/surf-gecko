@@ -1,5 +1,6 @@
 package dev.slne.surf.gecko.server.gecko.shop.items.seeker
 
+import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.gecko.server.coroutine.geckoScope
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.heartbeat.GeckoHeartbeatPulse
@@ -9,11 +10,12 @@ import dev.slne.surf.gecko.server.gecko.shop.effect.ShopItemUsages
 import dev.slne.surf.gecko.server.gecko.shop.nearestTo
 import dev.slne.surf.gecko.server.gecko.shop.sendShopItemMessage
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
+import dev.slne.surf.gecko.server.gecko.util.appendPrefix
+import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import dev.slne.surf.gecko.server.util.withTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.kyori.adventure.sound.Sound
-import net.minestom.server.component.DataComponents
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
@@ -26,12 +28,11 @@ object SeekerHeartbeatKnifeShopItem : ShopItem {
     override val id = "seeker_heartbeat_knife"
     override val price = 6
     override val displayName = "Herzschlag-Messer"
-    override val description = "Höre 15 Sekunden lang den Herzschlag des nähesten Versteckers"
+    override val description = "Höre den Herzschlag der Verstecker in deiner Nähe"
     override val maps = null
     override val roles = listOf(GeckoGameRole.SEEKER)
 
-    private val model = ItemStack.of(Material.PAPER).builder()
-        .set(DataComponents.ITEM_MODEL, "gecko:shop/heartbeat_knife").build()
+    private val model = ItemStack.of(Material.RED_DYE)
 
     override val displayItem: ItemStack = model
     override val inventoryItem: ItemStack = model.builder().withTag(ShopItem.ID_TAG, id).build()
@@ -45,11 +46,12 @@ object SeekerHeartbeatKnifeShopItem : ShopItem {
         }
 
         if (!ShopItemUsages.start(id, player)) {
-            player.sendShopItemMessage("Dein Herzschlag-Messer ist bereits aktiv.")
+            player.sendText {
+                appendPrefix()
+                geckoPrimary("Dein Herzschlag-Messer ist bereits aktiv.")
+            }
             return false
         }
-
-        player.sendShopItemMessage("Das Herzschlag-Messer ist für 15 Sekunden scharf.")
 
         geckoScope.launch {
             try {

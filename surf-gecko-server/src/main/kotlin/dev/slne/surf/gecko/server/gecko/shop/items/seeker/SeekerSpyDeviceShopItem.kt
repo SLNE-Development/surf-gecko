@@ -1,5 +1,6 @@
 package dev.slne.surf.gecko.server.gecko.shop.items.seeker
 
+import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.gecko.server.coroutine.geckoScope
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
@@ -8,8 +9,9 @@ import dev.slne.surf.gecko.server.gecko.shop.activeHiders
 import dev.slne.surf.gecko.server.gecko.shop.effect.GeckoGlowEffect
 import dev.slne.surf.gecko.server.gecko.shop.effect.ShopItemUsages
 import dev.slne.surf.gecko.server.gecko.shop.nearestTo
-import dev.slne.surf.gecko.server.gecko.shop.sendShopItemMessage
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
+import dev.slne.surf.gecko.server.gecko.util.appendPrefix
+import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import dev.slne.surf.gecko.server.util.withTag
 import kotlinx.coroutines.launch
 import net.kyori.adventure.sound.Sound
@@ -43,19 +45,16 @@ object SeekerSpyDeviceShopItem : ShopItem {
             return false
         }
 
-        val target = game.activeHiders().nearestTo(player)
-
-        if (target == null) {
-            player.sendShopItemMessage("Das Spionagegerät findet keinen Verstecker.")
-            return false
-        }
+        val target = game.activeHiders().nearestTo(player) ?: return true
 
         if (!ShopItemUsages.start(id, player)) {
-            player.sendShopItemMessage("Dein Spionagegerät ist bereits aktiv.")
+            player.sendText {
+                appendPrefix()
+                geckoPrimary("Dein Spionagegerät ist bereits aktiv.")
+            }
             return false
         }
 
-        player.sendShopItemMessage("Das Spionagegerät hat einen Verstecker markiert.")
         player.playSound(GeckoSounds.SHOP_SPY_DEVICE, Sound.Emitter.self())
 
         geckoScope.launch {

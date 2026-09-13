@@ -39,9 +39,8 @@ object HiderSpringShopItem : ShopItem {
             return false
         }
 
-        val direction = player.position.direction().withY(0.0).normalize()
-
-        player.velocity = direction.mul(HORIZONTAL_SPEED).withY(VERTICAL_SPEED)
+        player.velocity = player.position.direction().withY(0.0).normalize().mul(HORIZONTAL_SPEED)
+            .withY(VERTICAL_SPEED)
         player.addEffect(Potion(PotionEffect.SLOW_FALLING, 0, SLOW_FALLING_TICKS))
         player.playSound(GeckoSounds.SHOP_SPRING, Sound.Emitter.self())
 

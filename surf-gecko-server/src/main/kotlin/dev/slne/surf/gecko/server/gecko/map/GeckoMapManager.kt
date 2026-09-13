@@ -21,6 +21,8 @@ object GeckoMapManager {
                 )
             )
 
+        map.defaultClock()?.pause()
+
         map
     }
 

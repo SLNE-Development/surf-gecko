@@ -10,38 +10,32 @@ import dev.slne.surf.gecko.server.util.withTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.kyori.adventure.sound.Sound
-import net.minestom.server.component.DataComponents
 import net.minestom.server.coordinate.BlockVec
 import net.minestom.server.coordinate.Pos
-import net.minestom.server.entity.EntityType
+import net.minestom.server.coordinate.Vec
 import net.minestom.server.entity.Player
 import net.minestom.server.instance.Instance
 import net.minestom.server.instance.block.Block
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
+import net.minestom.server.network.packet.server.play.ParticlePacket
+import net.minestom.server.particle.Particle
 import kotlin.time.Duration.Companion.seconds
 
-private const val SIZE_X = 4
-private const val SIZE_Y = 3
-private const val SIZE_Z = 3
-private const val THROW_POWER = 1.4
-private val WEB_DURATION = 10.seconds
-
 object SeekerWebGrenadeShopItem : ShopItem {
-    const val PROJECTILE_KIND = "web_grenade"
-
     override val id = "seeker_web_grenade"
     override val price = 7
     override val displayName = "Netzgranate"
-    override val description = "Wirf ein Netz, das 10 Sekunden lang Spinnweben spannt"
+    override val description = "Fange die Sucher mit einem Netz"
     override val maps = null
     override val roles = listOf(GeckoGameRole.SEEKER)
 
-    private val model = ItemStack.of(Material.PAPER).builder()
-        .set(DataComponents.ITEM_MODEL, "gecko:shop/web_grenade").build()
+    private val itemBase = ItemStack.of(Material.COBWEB)
 
-    override val displayItem: ItemStack = model
-    override val inventoryItem: ItemStack = model.builder().withTag(ShopItem.ID_TAG, id).build()
+    override val displayItem: ItemStack = itemBase
+    override val inventoryItem: ItemStack = itemBase.builder().withTag(ShopItem.ID_TAG, id).build()
+
+    private val projectileItem = ItemStack.of(Material.COBWEB)
 
     override fun onUse(player: Player): Boolean {
         val game = GeckoGameManager.findGame(player.uuid) ?: return false
@@ -51,25 +45,24 @@ object SeekerWebGrenadeShopItem : ShopItem {
             return false
         }
 
-        if (!ShopProjectiles.launch(player, PROJECTILE_KIND, EntityType.EGG, THROW_POWER)) {
+        if (!ShopProjectiles.launch(player, projectileItem, 20.0, ::detonate)) {
             return false
         }
 
         player.playSound(GeckoSounds.SHOP_NET_TRAP, Sound.Emitter.self())
-
         return true
     }
 
-    fun detonate(instance: Instance, position: Pos) {
-        val origin = position.asBlockVec()
+    private fun detonate(instance: Instance, position: Pos, thrower: Player) {
+        val anchor = anchorFor(instance, position.asBlockVec())
         val placed = mutableListOf<BlockVec>()
 
-        offsets(SIZE_X).forEach { x ->
-            offsets(SIZE_Y).forEach { y ->
-                offsets(SIZE_Z).forEach { z ->
-                    val target = origin.add(x, y, z)
+        offsets(4).forEach { x ->
+            offsets(3).forEach { z ->
+                (0 until 3).forEach { y ->
+                    val target = anchor.add(x, y, z)
 
-                    if (instance.getBlock(target).isAir) {
+                    if (instance.getBlock(target).replaceable()) {
                         instance.setBlock(
                             target.blockX(),
                             target.blockY(),
@@ -82,14 +75,19 @@ object SeekerWebGrenadeShopItem : ShopItem {
             }
         }
 
-        if (placed.isEmpty()) {
-            return
-        }
-
         instance.playSound(GeckoSounds.SHOP_NET_TRAP, position.x, position.y, position.z)
+        instance.sendGroupedPacket(
+            ParticlePacket(
+                Particle.CLOUD,
+                position.add(0.0, 0.3, 0.0),
+                Vec(0.8, 0.5, 0.8),
+                0.02f,
+                30
+            )
+        )
 
         geckoScope.launch {
-            delay(WEB_DURATION)
+            delay(10.seconds)
 
             placed.forEach {
                 if (instance.getBlock(it).compare(Block.COBWEB)) {
@@ -97,6 +95,20 @@ object SeekerWebGrenadeShopItem : ShopItem {
                 }
             }
         }
+    }
+
+    private fun anchorFor(instance: Instance, impact: BlockVec): BlockVec {
+        var current = impact
+
+        repeat(3) {
+            if (!instance.getBlock(current).solid()) {
+                return current
+            }
+
+            current = current.add(0, 1, 0)
+        }
+
+        return impact
     }
 
     private fun offsets(size: Int) = -(size / 2)..(size - 1) / 2

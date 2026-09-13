@@ -26,6 +26,8 @@ object GeckoLobby {
         )
     ).also {
         instance = it
+        instance.defaultClock()?.pause()
+        instance.chunkSupplier
         initialized = true
     }
 

@@ -1,10 +1,12 @@
 package dev.slne.surf.gecko.server.gecko.shop.items.hider
 
+import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
-import dev.slne.surf.gecko.server.gecko.shop.sendShopItemMessage
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
+import dev.slne.surf.gecko.server.gecko.util.appendPrefix
+import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import dev.slne.surf.gecko.server.util.withTag
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.component.DataComponents
@@ -13,8 +15,6 @@ import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 import net.minestom.server.potion.Potion
 import net.minestom.server.potion.PotionEffect
-
-private const val DURATION_TICKS = 10 * 20
 
 object HiderShieldShopItem : ShopItem {
     override val id = "hider_shield"
@@ -38,10 +38,16 @@ object HiderShieldShopItem : ShopItem {
             return false
         }
 
-        player.addEffect(Potion(PotionEffect.RESISTANCE, 1, DURATION_TICKS))
-        player.addEffect(Potion(PotionEffect.ABSORPTION, 1, DURATION_TICKS))
+        val durationTicks = 10 * 20
+
+        player.addEffect(Potion(PotionEffect.RESISTANCE, 1, durationTicks))
+        player.addEffect(Potion(PotionEffect.ABSORPTION, 1, durationTicks))
+
         player.playSound(GeckoSounds.SHOP_SHIELD, Sound.Emitter.self())
-        player.sendShopItemMessage("Dein Schutzschild hält 10 Sekunden.")
+        player.sendText {
+            appendPrefix()
+            geckoPrimary("Dein Schutzschild hält 10 Sekunden.")
+        }
 
         return true
     }
