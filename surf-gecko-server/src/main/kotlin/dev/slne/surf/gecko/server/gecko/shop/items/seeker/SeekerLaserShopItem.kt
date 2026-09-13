@@ -6,16 +6,16 @@ import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
 import dev.slne.surf.gecko.server.gecko.shop.activeHiders
 import dev.slne.surf.gecko.server.gecko.shop.activeSeekers
+import dev.slne.surf.gecko.server.gecko.shop.effect.beam.BeamEffect
+import dev.slne.surf.gecko.server.gecko.shop.effect.beam.ParticleBeam
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
+import dev.slne.surf.gecko.server.gecko.util.GECKO_HIGHLIGHT
 import dev.slne.surf.gecko.server.util.withTag
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.entity.Player
-import net.minestom.server.instance.block.Block
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
-import net.minestom.server.network.packet.server.play.BlockChangePacket
 import kotlin.time.Duration.Companion.seconds
 
 object SeekerLaserShopItem : ShopItem {
@@ -28,6 +28,7 @@ object SeekerLaserShopItem : ShopItem {
     override val roles = listOf(GeckoGameRole.SEEKER)
 
     private val itemBase = ItemStack.of(Material.BEACON)
+    private val beam = ParticleBeam(GECKO_HIGHLIGHT, height = 24.0)
 
     override val displayItem: ItemStack = itemBase
     override val inventoryItem: ItemStack = itemBase.builder().withTag(ShopItem.ID_TAG, id).build()
@@ -40,25 +41,18 @@ object SeekerLaserShopItem : ShopItem {
             return false
         }
 
-        val beams = game.activeHiders().map { it.position.asBlockVec().sub(0, 1, 0) }.toSet()
+        val origins = game.activeHiders().map { it.position.asVec() }
 
-        if (beams.isEmpty()) {
+        if (origins.isEmpty()) {
             return true
         }
 
-        game.activeSeekers().forEach { seeker ->
-            beams.forEach { seeker.sendPacket(BlockChangePacket(it, Block.BEACON)) }
-            seeker.playSound(GeckoSounds.SHOP_LASER, Sound.Emitter.self())
-        }
+        val seekers = game.activeSeekers()
+
+        seekers.forEach { it.playSound(GeckoSounds.SHOP_LASER, Sound.Emitter.self()) }
 
         geckoScope.launch {
-            delay(7.5.seconds)
-
-            game.activeSeekers().forEach { seeker ->
-                beams.forEach {
-                    seeker.sendPacket(BlockChangePacket(it, game.instance.getBlock(it)))
-                }
-            }
+            BeamEffect(seekers, origins, beam).playFor(7.5.seconds)
         }
 
         return true

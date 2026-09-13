@@ -1,27 +1,23 @@
 package dev.slne.surf.gecko.server.gecko.shop.items.seeker
 
 import dev.slne.surf.api.core.messages.adventure.sendText
-import dev.slne.surf.gecko.server.coroutine.geckoScope
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
 import dev.slne.surf.gecko.server.gecko.shop.activeHiders
-import dev.slne.surf.gecko.server.gecko.shop.effect.GeckoGlowEffect
-import dev.slne.surf.gecko.server.gecko.shop.effect.ShopItemUsages
+import dev.slne.surf.gecko.server.gecko.shop.effect.glow.GlowEffect
+import dev.slne.surf.gecko.server.gecko.shop.effect.playOnce
 import dev.slne.surf.gecko.server.gecko.shop.nearestTo
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.util.appendPrefix
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import dev.slne.surf.gecko.server.util.withTag
-import kotlinx.coroutines.launch
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.component.DataComponents
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 import kotlin.time.Duration.Companion.seconds
-
-private val DURATION = 30.seconds
 
 object SeekerSpyDeviceShopItem : ShopItem {
     override val id = "seeker_spy_device"
@@ -47,7 +43,7 @@ object SeekerSpyDeviceShopItem : ShopItem {
 
         val target = game.activeHiders().nearestTo(player) ?: return true
 
-        if (!ShopItemUsages.start(id, player)) {
+        if (!playOnce(player, 30.seconds, GlowEffect(player, listOf(target)))) {
             player.sendText {
                 appendPrefix()
                 geckoPrimary("Dein Spionagegerät ist bereits aktiv.")
@@ -56,14 +52,6 @@ object SeekerSpyDeviceShopItem : ShopItem {
         }
 
         player.playSound(GeckoSounds.SHOP_SPY_DEVICE, Sound.Emitter.self())
-
-        geckoScope.launch {
-            try {
-                GeckoGlowEffect.glow(player, listOf(target), DURATION)
-            } finally {
-                ShopItemUsages.finish(id, player)
-            }
-        }
 
         return true
     }

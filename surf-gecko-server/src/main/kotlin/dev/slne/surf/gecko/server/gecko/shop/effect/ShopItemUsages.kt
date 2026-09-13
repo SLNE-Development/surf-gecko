@@ -4,10 +4,13 @@ import net.minestom.server.entity.Player
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-internal object ShopItemUsages {
-    private val active = ConcurrentHashMap.newKeySet<Pair<String, UUID>>()
+object ShopItemUsages {
+    private val active = ConcurrentHashMap.newKeySet<Usage>()
 
-    fun start(itemId: String, player: Player) = active.add(itemId to player.uuid)
+    fun claim(itemId: String, player: Player) = active.add(Usage(itemId, player.uuid))
+    fun release(itemId: String, player: Player) {
+        active.remove(Usage(itemId, player.uuid))
+    }
 
-    fun finish(itemId: String, player: Player) = active.remove(itemId to player.uuid)
+    data class Usage(val itemId: String, val player: UUID)
 }

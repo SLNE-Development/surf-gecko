@@ -7,6 +7,7 @@ import dev.slne.surf.api.core.messages.adventure.uuidOrNull
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
 import dev.slne.surf.gecko.server.gecko.util.appendPrefix
+import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import dev.slne.surf.gecko.server.permission.PermissionList
 
 fun skipCommand() = commandTree("skip") {
@@ -29,12 +30,12 @@ fun skipCommand() = commandTree("skip") {
 
         game.sendText {
             appendPrefix()
-            success("Der Countdown wurde verkürzt.")
+            geckoPrimary("Der Countdown wurde verkürzt.")
         }
 
         player.sendText {
             appendPrefix()
-            success("Der Countdown wurde verkürzt.")
+            geckoPrimary("Der Countdown wurde verkürzt.")
         }
     }
 }

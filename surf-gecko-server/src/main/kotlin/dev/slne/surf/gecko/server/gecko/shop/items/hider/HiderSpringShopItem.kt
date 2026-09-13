@@ -13,10 +13,6 @@ import net.minestom.server.item.Material
 import net.minestom.server.potion.Potion
 import net.minestom.server.potion.PotionEffect
 
-private const val HORIZONTAL_SPEED = 30.0
-private const val VERTICAL_SPEED = 20.0
-private const val SLOW_FALLING_TICKS = 3 * 20
-
 object HiderSpringShopItem : ShopItem {
     override val id = "hider_spring"
     override val price = 3
@@ -39,9 +35,8 @@ object HiderSpringShopItem : ShopItem {
             return false
         }
 
-        player.velocity = player.position.direction().withY(0.0).normalize().mul(HORIZONTAL_SPEED)
-            .withY(VERTICAL_SPEED)
-        player.addEffect(Potion(PotionEffect.SLOW_FALLING, 0, SLOW_FALLING_TICKS))
+        player.velocity = player.position.direction().withY(0.0).normalize().mul(30.0).withY(20.0)
+        player.addEffect(Potion(PotionEffect.SLOW_FALLING, 0, 3 * 20))
         player.playSound(GeckoSounds.SHOP_SPRING, Sound.Emitter.self())
 
         return true

@@ -1,27 +1,18 @@
 package dev.slne.surf.gecko.server.gecko.shop.items.seeker
 
 import dev.slne.surf.api.core.messages.adventure.sendText
-import dev.slne.surf.gecko.server.coroutine.geckoScope
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
-import dev.slne.surf.gecko.server.gecko.heartbeat.GeckoHeartbeatPulse
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
-import dev.slne.surf.gecko.server.gecko.shop.effect.ShopItemUsages
-import dev.slne.surf.gecko.server.gecko.shop.nearestTo
-import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
+import dev.slne.surf.gecko.server.gecko.shop.effect.heart.HeartbeatEffect
+import dev.slne.surf.gecko.server.gecko.shop.effect.playOnce
 import dev.slne.surf.gecko.server.gecko.util.appendPrefix
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import dev.slne.surf.gecko.server.util.withTag
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import net.kyori.adventure.sound.Sound
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
-import kotlin.time.Duration.Companion.milliseconds
-
-private const val DURATION_MILLIS = 15_000L
-private const val RADIUS = 25.0
+import kotlin.time.Duration.Companion.seconds
 
 object SeekerHeartbeatKnifeShopItem : ShopItem {
     override val id = "seeker_heartbeat_knife"
@@ -44,7 +35,7 @@ object SeekerHeartbeatKnifeShopItem : ShopItem {
             return false
         }
 
-        if (!ShopItemUsages.start(id, player)) {
+        if (!playOnce(player, 15.seconds, HeartbeatEffect(player))) {
             player.sendText {
                 appendPrefix()
                 geckoPrimary("Dein Herzschlag-Messer ist bereits aktiv.")
@@ -52,45 +43,6 @@ object SeekerHeartbeatKnifeShopItem : ShopItem {
             return false
         }
 
-        geckoScope.launch {
-            try {
-                val until = System.currentTimeMillis() + DURATION_MILLIS
-                var nextBeatAt = 0L
-
-                while (System.currentTimeMillis() < until && player.isOnline) {
-                    val now = System.currentTimeMillis()
-                    val distance = nearestHiderDistance(player)
-
-                    if (distance != null && distance <= RADIUS && now >= nextBeatAt) {
-                        val proximity = GeckoHeartbeatPulse.proximityFor(distance, RADIUS)
-
-                        player.playSound(
-                            GeckoSounds.heartbeat(
-                                GeckoHeartbeatPulse.volumeFor(proximity),
-                                GeckoHeartbeatPulse.pitchFor(proximity)
-                            ),
-                            Sound.Emitter.self()
-                        )
-
-                        nextBeatAt = now + GeckoHeartbeatPulse.intervalFor(proximity)
-                    }
-
-                    delay(GeckoHeartbeatPulse.TICK_MILLIS.milliseconds)
-                }
-            } finally {
-                ShopItemUsages.finish(id, player)
-            }
-        }
-
         return true
-    }
-
-    private fun nearestHiderDistance(player: Player): Double? {
-        val game = GeckoGameManager.findGame(player.uuid) ?: return null
-        val hiders = game.gamePlayers
-            .filter { it.role == GeckoGameRole.HIDER && !it.awaitingRespawn }
-            .mapNotNull { it.playerOrNull }
-
-        return hiders.nearestTo(player)?.position?.distance(player.position)
     }
 }

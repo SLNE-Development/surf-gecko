@@ -7,7 +7,8 @@ import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
 import dev.slne.surf.gecko.server.gecko.shop.activeSeekers
-import dev.slne.surf.gecko.server.gecko.shop.effect.ShopProjectiles
+import dev.slne.surf.gecko.server.gecko.shop.effect.grenade.GrenadeImpact
+import dev.slne.surf.gecko.server.gecko.shop.effect.grenade.ShopGrenade
 import dev.slne.surf.gecko.server.gecko.shop.within
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.util.appendPrefix
@@ -27,18 +28,8 @@ import net.minestom.server.particle.Particle
 import net.minestom.server.potion.Potion
 import net.minestom.server.potion.PotionEffect
 import java.util.*
-
-private const val RADIUS = 6.0
-private const val CLOUD_TICKS = 100
-private const val PULSE_TICKS = 5
-private const val EFFECT_TICKS = 40
-private const val THROW_POWER = 20.0
-private const val BURST_PARTICLES = 120
-private const val CLOUD_PARTICLES = 45
-private const val CORE_PARTICLES = 12
-private val BURST_SPREAD = Vec(1.0, 0.6, 1.0)
-private val CLOUD_SPREAD = Vec(RADIUS / 2.5, 0.9, RADIUS / 2.5)
-private val CORE_SPREAD = Vec(0.6, 0.3, 0.6)
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
 
 object HiderSmokeBombShopItem : ShopItem {
     override val id = "hider_smoke_bomb"
@@ -53,7 +44,7 @@ object HiderSmokeBombShopItem : ShopItem {
     override val displayItem: ItemStack = base
     override val inventoryItem: ItemStack = base.builder().withTag(ShopItem.ID_TAG, id).build()
 
-    private val projectileItem = ItemStack.of(Material.FIREWORK_STAR)
+    private val grenade = ShopGrenade(base, 20.0, ::detonate)
 
     override fun onUse(player: Player): Boolean {
         val game = GeckoGameManager.findGame(player.uuid) ?: return false
@@ -63,7 +54,7 @@ object HiderSmokeBombShopItem : ShopItem {
             return false
         }
 
-        if (!ShopProjectiles.launch(player, projectileItem, THROW_POWER, ::detonate)) {
+        if (!grenade.throwBy(player)) {
             return false
         }
 
@@ -72,30 +63,31 @@ object HiderSmokeBombShopItem : ShopItem {
         return true
     }
 
-    private fun detonate(instance: Instance, position: Pos, thrower: Player) {
+    private fun detonate(impact: GrenadeImpact) {
+        val (instance, position, thrower) = impact
+
         instance.playSound(GeckoSounds.SHOP_SMOKE_BOMB, position.x, position.y, position.z)
         instance.sendGroupedPacket(
             ParticlePacket(
                 Particle.LARGE_SMOKE,
                 position.add(0.0, 0.3, 0.0),
-                BURST_SPREAD,
+                Vec(1.0, 0.6, 1.0),
                 0.08f,
-                BURST_PARTICLES
+                120
             )
         )
 
         val game = GeckoGameManager.findGame(thrower.uuid) ?: return
         val blinded = mutableSetOf<UUID>()
+        val deadline = TimeSource.Monotonic.markNow() + 5.seconds
 
         geckoScope.launch {
-            var elapsed = 0
-
-            while (elapsed <= CLOUD_TICKS && instance.isRegistered) {
+            while (deadline.hasNotPassedNow() && instance.isRegistered) {
                 emitCloud(instance, position)
 
-                game.activeSeekers().within(instance, position, RADIUS).forEach { seeker ->
-                    seeker.addEffect(Potion(PotionEffect.BLINDNESS, 0, EFFECT_TICKS))
-                    seeker.addEffect(Potion(PotionEffect.SLOWNESS, 0, EFFECT_TICKS))
+                game.activeSeekers().within(instance, position, 6.0).forEach { seeker ->
+                    seeker.addEffect(Potion(PotionEffect.BLINDNESS, 0, 40))
+                    seeker.addEffect(Potion(PotionEffect.SLOWNESS, 0, 40))
 
                     if (blinded.add(seeker.uuid)) {
                         seeker.sendText {
@@ -105,8 +97,7 @@ object HiderSmokeBombShopItem : ShopItem {
                     }
                 }
 
-                delay(PULSE_TICKS.ticks)
-                elapsed += PULSE_TICKS
+                delay(5.ticks)
             }
         }
     }
@@ -116,18 +107,18 @@ object HiderSmokeBombShopItem : ShopItem {
             ParticlePacket(
                 Particle.LARGE_SMOKE,
                 position.add(0.0, 1.0, 0.0),
-                CLOUD_SPREAD,
+                Vec(2.4, 0.9, 2.4),
                 0.01f,
-                CLOUD_PARTICLES
+                45
             )
         )
         instance.sendGroupedPacket(
             ParticlePacket(
                 Particle.CAMPFIRE_COSY_SMOKE,
                 position.add(0.0, 0.4, 0.0),
-                CORE_SPREAD,
+                Vec(0.6, 0.3, 0.6),
                 0.02f,
-                CORE_PARTICLES
+                12
             )
         )
     }

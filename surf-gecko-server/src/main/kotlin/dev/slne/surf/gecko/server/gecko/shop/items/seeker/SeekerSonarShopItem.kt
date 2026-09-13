@@ -15,8 +15,6 @@ import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 
-private const val RADIUS = 40.0
-
 object SeekerSonarShopItem : ShopItem {
     override val id = "seeker_sonar"
     override val price = 4
@@ -39,7 +37,7 @@ object SeekerSonarShopItem : ShopItem {
             return false
         }
 
-        val hiders = game.activeHiders().within(player, RADIUS)
+        val hiders = game.activeHiders().within(player, 40.0)
 
         if (hiders.isEmpty()) {
             return true

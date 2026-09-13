@@ -1,18 +1,16 @@
 package dev.slne.surf.gecko.server.gecko.shop.items.hider
 
 import dev.slne.surf.api.core.messages.adventure.sendText
-import dev.slne.surf.gecko.server.coroutine.geckoScope
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
 import dev.slne.surf.gecko.server.gecko.shop.activeSeekers
-import dev.slne.surf.gecko.server.gecko.shop.effect.GeckoGlowEffect
-import dev.slne.surf.gecko.server.gecko.shop.effect.ShopItemUsages
+import dev.slne.surf.gecko.server.gecko.shop.effect.glow.GlowEffect
+import dev.slne.surf.gecko.server.gecko.shop.effect.playOnce
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.util.appendPrefix
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import dev.slne.surf.gecko.server.util.withTag
-import kotlinx.coroutines.launch
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.component.DataComponents
 import net.minestom.server.entity.Player
@@ -48,7 +46,7 @@ object HiderScoutShopItem : ShopItem {
             return true
         }
 
-        if (!ShopItemUsages.start(id, player)) {
+        if (!playOnce(player, 10.seconds, GlowEffect(player, seekers))) {
             player.sendText {
                 appendPrefix()
                 geckoPrimary("Du bist bereits auf dem Ausguck.")
@@ -57,14 +55,6 @@ object HiderScoutShopItem : ShopItem {
         }
 
         player.playSound(GeckoSounds.SHOP_SPY_DEVICE, Sound.Emitter.self())
-
-        geckoScope.launch {
-            try {
-                GeckoGlowEffect.glow(player, seekers, 10.seconds)
-            } finally {
-                ShopItemUsages.finish(id, player)
-            }
-        }
 
         return true
     }

@@ -6,7 +6,7 @@ import net.minestom.server.coordinate.Pos
 import java.time.OffsetDateTime
 import java.util.*
 
-object ScientistCity : GeckoMap {
+object ScientistCityMap : GeckoMap {
     override val mapUuid = UUID.fromString("e3f1c2d4-5b6a-4c7d-8e9f-0a1b2c3d4e5f")
     override val mapName = "scientist-city"
     override val mapDisplayName = "Wissenschaftler Stadt"
@@ -31,9 +31,9 @@ object ScientistCity : GeckoMap {
     )
 
     override val mapLocations = GeckoMap.MapLocations(
-        lobbySpawn = Pos(362.24, 2.0, -0.66, 98.73f, -2.71f),
-        seekerSpawn = Pos(97.51, 63.06, 55.27, -179.07f, 1.2f),
-        spawn = Pos(17.37, -1.0, 13.31, -89.99f, -0.3f),
+        lobbySpawn = Pos(362.24, 3.0, -0.66, 98.73f, -2.71f),
+        seekerSpawn = Pos(97.51, 64.0, 55.27, -179.07f, 1.2f),
+        spawn = Pos(17.37, 0.0, 13.0, -89.99f, -0.3f),
         orbSpawns = listOf(
             Pos(130.5, 1.0, -19.5),
             Pos(130.5, 1.0, -24.5),

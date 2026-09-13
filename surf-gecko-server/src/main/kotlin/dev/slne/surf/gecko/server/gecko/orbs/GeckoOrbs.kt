@@ -48,7 +48,7 @@ object GeckoOrbs {
             val toGive = minOf(remaining, space)
 
             remaining -= toGive
-            player.inventory.setItemStack(slot, stack.withAmount(toGive))
+            player.inventory.setItemStack(slot, stack.withAmount(stack.amount() + toGive))
         }
 
         while (remaining > 0) {

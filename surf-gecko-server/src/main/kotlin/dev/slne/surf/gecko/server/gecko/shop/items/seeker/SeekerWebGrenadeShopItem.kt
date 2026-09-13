@@ -4,14 +4,14 @@ import dev.slne.surf.gecko.server.coroutine.geckoScope
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
-import dev.slne.surf.gecko.server.gecko.shop.effect.ShopProjectiles
+import dev.slne.surf.gecko.server.gecko.shop.effect.grenade.GrenadeImpact
+import dev.slne.surf.gecko.server.gecko.shop.effect.grenade.ShopGrenade
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.util.withTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.coordinate.BlockVec
-import net.minestom.server.coordinate.Pos
 import net.minestom.server.coordinate.Vec
 import net.minestom.server.entity.Player
 import net.minestom.server.instance.Instance
@@ -35,7 +35,7 @@ object SeekerWebGrenadeShopItem : ShopItem {
     override val displayItem: ItemStack = itemBase
     override val inventoryItem: ItemStack = itemBase.builder().withTag(ShopItem.ID_TAG, id).build()
 
-    private val projectileItem = ItemStack.of(Material.COBWEB)
+    private val grenade = ShopGrenade(itemBase, 20.0, ::detonate)
 
     override fun onUse(player: Player): Boolean {
         val game = GeckoGameManager.findGame(player.uuid) ?: return false
@@ -45,7 +45,7 @@ object SeekerWebGrenadeShopItem : ShopItem {
             return false
         }
 
-        if (!ShopProjectiles.launch(player, projectileItem, 20.0, ::detonate)) {
+        if (!grenade.throwBy(player)) {
             return false
         }
 
@@ -53,7 +53,8 @@ object SeekerWebGrenadeShopItem : ShopItem {
         return true
     }
 
-    private fun detonate(instance: Instance, position: Pos, thrower: Player) {
+    private fun detonate(impact: GrenadeImpact) {
+        val (instance, position) = impact
         val anchor = anchorFor(instance, position.asBlockVec())
         val placed = mutableListOf<BlockVec>()
 

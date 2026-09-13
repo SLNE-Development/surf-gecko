@@ -1,6 +1,6 @@
 package dev.slne.surf.gecko.server.gecko.map
 
-import dev.slne.surf.gecko.server.gecko.map.maps.scientistcity.ScientistCity
+import dev.slne.surf.gecko.server.gecko.map.maps.scientistcity.ScientistCityMap
 import dev.slne.surf.gecko.server.util.secureRandomOrNull
 
 object GeckoMaps {
@@ -8,6 +8,6 @@ object GeckoMaps {
     fun random() = maps.secureRandomOrNull() ?: error("No maps available")
 
     init {
-        maps.add(ScientistCity)
+        maps.add(ScientistCityMap)
     }
 }
