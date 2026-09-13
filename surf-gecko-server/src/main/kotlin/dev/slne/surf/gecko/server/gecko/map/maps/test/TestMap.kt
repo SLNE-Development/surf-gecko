@@ -16,6 +16,7 @@ object TestMap : GeckoMap {
             UUID.fromString("1c779cb1-3860-4e23-9cac-7f160b2acc61")
         )
     )
+    override val mapContributors = listOf<GeckoMap.MapAuthor>()
     override val mapLocations = GeckoMap.MapLocations(
         Pos(1313.5, 113.0, -1431.5, 90f, 0f),
         Pos(1279.5, 87.0, -1376.5, 56f, 19f),

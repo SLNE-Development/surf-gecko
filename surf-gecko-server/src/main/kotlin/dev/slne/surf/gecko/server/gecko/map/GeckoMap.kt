@@ -10,6 +10,7 @@ interface GeckoMap {
     val mapName: String
     val mapDisplayName: String
     val mapAuthors: List<MapAuthor>
+    val mapContributors: List<MapAuthor>
     val mapLocations: MapLocations
     val mechanics: List<GeckoMapMechanic>
 
