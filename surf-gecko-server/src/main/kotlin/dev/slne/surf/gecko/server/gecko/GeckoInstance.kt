@@ -4,14 +4,17 @@ import dev.slne.minestom.lobby.api.command.commandapi.CommandAPI
 import dev.slne.surf.gecko.server.antiesp.PlayerCulling
 import dev.slne.surf.gecko.server.database.GeckoDatabaseManager
 import dev.slne.surf.gecko.server.event.MinestomListenerRegistry
+import dev.slne.surf.gecko.server.event.register
 import dev.slne.surf.gecko.server.gecko.command.geckoCommand
 import dev.slne.surf.gecko.server.gecko.command.lobbyCommand
 import dev.slne.surf.gecko.server.gecko.command.skipCommand
 import dev.slne.surf.gecko.server.gecko.display.tablist.GeckoGameTablistManager
 import dev.slne.surf.gecko.server.gecko.display.tablist.GeckoTablistRenderer
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
+import dev.slne.surf.gecko.server.gecko.lobby.elytra.ElytraBoostListener
 import dev.slne.surf.gecko.server.gecko.lobby.leaderbord.LeaderboardManager
 import dev.slne.surf.gecko.server.gecko.lobby.npc.LobbyNpcManager
+import dev.slne.surf.gecko.server.gecko.lobby.riseup.RiseUpListener
 import dev.slne.surf.gecko.server.gecko.map.GeckoMapManager
 import dev.slne.surf.gecko.server.gecko.punishment.GeckoPunishmentService
 import org.slf4j.Logger
@@ -33,6 +36,9 @@ object GeckoInstance {
         PlayerCulling.init()
         LobbyNpcManager.create()
         LeaderboardManager.init()
+
+        RiseUpListener.register()
+        ElytraBoostListener.register()
 
         geckoCommand()
         skipCommand()

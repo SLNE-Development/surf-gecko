@@ -16,4 +16,6 @@ object PermissionList {
     const val COMMAND_LOBBY = "$BASE_GAME.lobby.command"
 
     const val DELETE_MESSAGE = "$BASE.delete-messages"
+    const val RISEUP = "$BASE.riseup"
+    const val ELYTRA_BOOST = "$BASE.elytra-boost"
 }

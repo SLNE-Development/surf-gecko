@@ -59,6 +59,10 @@ object GeckoSounds {
         pitch(0.6f)
     }
 
+    val LOBBY_RISEUP = sound {
+        type(key("minecraft:entity.firework_rocket.launch"))
+    }
+
     fun countdownTick(secondsLeft: Int) = sound {
         type(key("minecraft:ui.button.click"))
         pitch(2f)
