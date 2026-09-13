@@ -84,7 +84,7 @@ object ElytraBoostHandler {
         )
     }
 
-    private val elytraItem by lazy {
+    val elytraItem by lazy {
         buildItem(Material.ELYTRA) {
             displayName {
                 geckoPrimary("Elytra Boost")

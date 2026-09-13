@@ -4,6 +4,7 @@ import dev.slne.surf.gecko.server.event.EventHandler
 import dev.slne.surf.gecko.server.event.MinestomListener
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import net.minestom.server.entity.GameMode
+import net.minestom.server.event.inventory.InventoryPreClickEvent
 import net.minestom.server.event.player.PlayerMoveEvent
 import net.minestom.server.event.player.PlayerSwapItemEvent
 
@@ -18,7 +19,18 @@ object ElytraBoostListener : MinestomListener {
     }
 
     @EventHandler
+    fun onInventoryClick(event: InventoryPreClickEvent) {
+        if (event.clickedItem == ElytraBoostHandler.elytraItem) {
+            event.isCancelled = true
+        }
+    }
+
+    @EventHandler
     fun onSwap(event: PlayerSwapItemEvent) {
+        if (event.offHandItem == ElytraBoostHandler.elytraItem || event.mainHandItem == ElytraBoostHandler.elytraItem) {
+            event.isCancelled = true
+        }
+
         if (event.player.gameMode == GameMode.CREATIVE || event.player.gameMode == GameMode.SPECTATOR) {
             return
         }
