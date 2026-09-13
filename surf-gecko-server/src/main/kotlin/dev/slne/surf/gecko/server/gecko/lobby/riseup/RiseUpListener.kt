@@ -4,7 +4,6 @@ import dev.slne.surf.api.core.messages.adventure.hasPermission
 import dev.slne.surf.gecko.server.event.EventHandler
 import dev.slne.surf.gecko.server.event.MinestomListener
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
-import dev.slne.surf.gecko.server.gecko.player.lobby.GeckoLobbyPlayer
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.permission.PermissionList
 import net.kyori.adventure.sound.Sound
@@ -18,7 +17,7 @@ object RiseUpListener : MinestomListener {
         val source = event.entity as? Player ?: return
         val target = event.target as? Player ?: return
 
-        if(!GeckoLobby.contains(source) || !GeckoLobby.contains(target)) {
+        if (!GeckoLobby.contains(source) || !GeckoLobby.contains(target)) {
             return
         }
 
@@ -38,8 +37,6 @@ object RiseUpListener : MinestomListener {
             it.velocity = Vec(0.0, 18.0, 0.0)
         }
 
-        listOf(target, source).forEach {
-            it.playSound(GeckoSounds.LOBBY_RISEUP, Sound.Emitter.self())
-        }
+        source.playSound(GeckoSounds.LOBBY_RISEUP, Sound.Emitter.self())
     }
 }

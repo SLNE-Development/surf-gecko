@@ -34,6 +34,10 @@ object ElytraBoostHandler {
             return
         }
 
+        if (player.position.pitch > 0) {
+            return
+        }
+
         ElytraBoostTracker.startBoosting(player.uuid)
 
         player.spawnCloudParticles(player.position)
