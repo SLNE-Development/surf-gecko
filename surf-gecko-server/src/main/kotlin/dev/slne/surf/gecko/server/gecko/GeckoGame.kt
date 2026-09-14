@@ -321,6 +321,7 @@ class GeckoGame(
             statsTracker.markLeft(gamePlayer.playerUuid)
             gamePlayers.removeAll { it.playerUuid == gamePlayer.playerUuid }
             gamePlayer.clearRespawnState()
+            gamePlayer.resetSpeed()
 
             if (gamePlayer.role != GeckoGameRole.SPECTATOR) {
                 GeckoGamePunisher.punish(player, "Verlassen des Spiels während der Runde")

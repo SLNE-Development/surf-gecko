@@ -127,6 +127,11 @@ object VentMechanic : GeckoMapMechanic, MinestomListener {
         ventedPlayers.remove(event.player.uuid)
     }
 
+    fun clearVentState(player: Player) {
+        ventedPlayers.remove(player.uuid)
+        player.entityMeta.isSwimming = false
+    }
+
     private fun findVent(player: Player): BlockVec? {
         val instance = player.instance ?: return null
         val pos = player.position

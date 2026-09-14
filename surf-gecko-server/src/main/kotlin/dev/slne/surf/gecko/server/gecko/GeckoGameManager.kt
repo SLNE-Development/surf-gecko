@@ -132,7 +132,10 @@ object GeckoGameManager {
         game.stopOrbSpawner()
         game.stopWaterDamager()
         game.stopAntiAfkWatcher()
-        game.gamePlayers.forEach { it.clearRespawnState() }
+        game.gamePlayers.forEach {
+            it.clearRespawnState()
+            it.resetSpeed()
+        }
 
         GeckoScoreboardManager.removeSidebar(game)
         game.players.filterNotNull().forEach { game.hideBossBar(it) }
