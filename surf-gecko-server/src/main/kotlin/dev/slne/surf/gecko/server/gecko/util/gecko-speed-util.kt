@@ -1,6 +1,6 @@
 package dev.slne.surf.gecko.server.gecko.util
 
-import dev.slne.surf.gecko.server.gecko.map.mechanic.VentMechanic
+import dev.slne.surf.gecko.server.gecko.map.mechanic.impl.VentMechanic
 import net.minestom.server.entity.Player
 import net.minestom.server.entity.attribute.Attribute
 

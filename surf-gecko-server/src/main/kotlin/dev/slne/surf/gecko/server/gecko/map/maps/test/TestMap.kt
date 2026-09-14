@@ -1,7 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.map.maps.test
 
 import dev.slne.surf.gecko.server.gecko.map.GeckoMap
-import dev.slne.surf.gecko.server.gecko.map.mechanic.VentMechanic
+import dev.slne.surf.gecko.server.gecko.map.mechanic.impl.VentMechanic
 import net.minestom.server.coordinate.Pos
 import java.time.OffsetDateTime
 import java.util.*

@@ -4,7 +4,7 @@ import dev.slne.surf.api.core.messages.adventure.key
 import dev.slne.surf.gecko.server.bootstrapLogger
 import dev.slne.surf.gecko.server.event.register
 import dev.slne.surf.gecko.server.gecko.map.mechanic.GeckoMapMechanic
-import dev.slne.surf.gecko.server.gecko.map.mechanic.VentMechanic
+import dev.slne.surf.gecko.server.gecko.map.mechanic.impl.VentMechanic
 import kotlinx.coroutines.coroutineScope
 import net.minestom.server.MinecraftServer
 import net.minestom.server.instance.InstanceContainer

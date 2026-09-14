@@ -4,15 +4,11 @@ import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.core.messages.adventure.showTitle
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.map.GeckoMap
-import dev.slne.surf.gecko.server.gecko.map.mechanic.VentMechanic
+import dev.slne.surf.gecko.server.gecko.map.mechanic.impl.VentMechanic
 import dev.slne.surf.gecko.server.gecko.player.listener.GeckoPlayerListener
 import dev.slne.surf.gecko.server.gecko.shop.ShopItemListener
 import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
-import dev.slne.surf.gecko.server.gecko.util.appendPrefix
-import dev.slne.surf.gecko.server.gecko.util.applyMovementSpeedFactor
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
-import dev.slne.surf.gecko.server.gecko.util.geckoSecondary
-import dev.slne.surf.gecko.server.gecko.util.resetGeckoSpeed
+import dev.slne.surf.gecko.server.gecko.util.*
 import dev.slne.surf.gecko.server.util.withTag
 import net.kyori.adventure.text.format.TextColor
 import net.minestom.server.MinecraftServer

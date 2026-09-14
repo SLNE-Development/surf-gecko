@@ -1,4 +1,4 @@
-package dev.slne.surf.gecko.server.gecko.map.mechanic
+package dev.slne.surf.gecko.server.gecko.map.mechanic.impl
 
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.util.runAtFixedRate
@@ -7,6 +7,7 @@ import dev.slne.surf.gecko.server.coroutine.geckoScope
 import dev.slne.surf.gecko.server.event.EventHandler
 import dev.slne.surf.gecko.server.event.MinestomListener
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
+import dev.slne.surf.gecko.server.gecko.map.mechanic.GeckoMapMechanic
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.util.GECKO_SECONDARY
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
