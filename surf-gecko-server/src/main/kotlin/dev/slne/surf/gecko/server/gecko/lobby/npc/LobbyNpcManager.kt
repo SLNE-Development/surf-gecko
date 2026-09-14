@@ -22,6 +22,10 @@ object LobbyNpcManager {
             displayName = buildText {
                 geckoPrimary("Hide 'n Seek", TextDecoration.BOLD)
                 appendNewline()
+                white("꒑ ")
+                geckoSecondary("Spiele ansehen")
+                appendNewline()
+                white("ꊐ ")
                 geckoSecondary("Spiel beitreten")
             }
             profile = ResolvableProfile(
