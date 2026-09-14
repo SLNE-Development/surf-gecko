@@ -31,7 +31,7 @@ object ScientistCityMap : GeckoMap {
     )
 
     override val mapLocations = GeckoMap.MapLocations(
-        lobbySpawn = Pos(362.24, 3.0, -0.66, 98.73f, -2.71f),
+        lobbySpawn = Pos(355.5, 2.0, -0.5, -134.0f, 0.71f),
         seekerSpawn = Pos(97.51, 64.0, 55.27, -179.07f, 1.2f),
         spawn = Pos(17.37, 0.0, 13.0, -89.99f, -0.3f),
         orbSpawns = listOf(

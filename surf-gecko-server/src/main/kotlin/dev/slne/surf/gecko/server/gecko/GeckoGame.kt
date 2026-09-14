@@ -215,6 +215,7 @@ class GeckoGame(
         gamePlayer.role = GeckoGameRole.SPECTATOR
         gamePlayer.updateSocialGroup()
         gamePlayer.applyGameMode()
+        gamePlayer.applySpeed()
         gamePlayer.applyEquipment()
         gamePlayer.teleportToSpawn(settings.map)
 
@@ -240,6 +241,7 @@ class GeckoGame(
         }
 
         gamePlayer.applyGameMode()
+        gamePlayer.applySpeed()
         gamePlayer.updateSocialGroup()
         gamePlayer.applyEquipment()
     }
@@ -351,6 +353,7 @@ class GeckoGame(
         newSeeker.role = GeckoGameRole.SEEKER
         statsTracker.markSeekerTeam(newSeeker.playerUuid)
         newSeeker.applyGameMode()
+        newSeeker.applySpeed()
         newSeeker.updateSocialGroup()
         newSeeker.applyEquipment()
         newSeeker.teleportToSpawn(settings.map)
@@ -424,6 +427,7 @@ class GeckoGame(
             gamePlayers.map { player ->
                 async {
                     player.applyGameMode()
+                    player.applySpeed()
                     player.applyEquipment()
                     player.updateSocialGroup()
                     player.teleportToSpawn(settings.map)

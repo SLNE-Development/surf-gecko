@@ -16,10 +16,15 @@ import kotlinx.coroutines.launch
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.coordinate.BlockVec
 import net.minestom.server.coordinate.Vec
+import net.minestom.server.entity.EntityPose
 import net.minestom.server.entity.Player
+import net.minestom.server.event.player.PlayerDisconnectEvent
 import net.minestom.server.event.player.PlayerInputEvent
+import net.minestom.server.event.player.PlayerTickEvent
 import net.minestom.server.instance.block.Block
 import net.minestom.server.network.packet.server.play.BlockChangePacket
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
@@ -30,10 +35,18 @@ object VentMechanic : GeckoMapMechanic, MinestomListener {
     override val listeners = listOf<MinestomListener>(this)
 
     private val ventBlock = Block.IRON_TRAPDOOR
+    private val ventBaseBlock = Block.SMOOTH_STONE
     private const val LAUNCH_SPEED = 6.0
     private val VENT_ENTRY_DURATION = 750.milliseconds
 
+    private val ventedPlayers: MutableSet<UUID> = ConcurrentHashMap.newKeySet()
+
     private lateinit var job: Job
+
+    val playersInVent: Set<UUID> get() = Collections.unmodifiableSet(ventedPlayers)
+
+    fun isInVent(uuid: UUID) = ventedPlayers.contains(uuid)
+    fun isInVent(player: Player) = isInVent(player.uuid)
 
     override suspend fun start() {
         job = geckoAsyncScope.runAtFixedRate(1.seconds) {
@@ -42,6 +55,7 @@ object VentMechanic : GeckoMapMechanic, MinestomListener {
                     game.gamePlayers.forEach { gamePlayer ->
                         val player = gamePlayer.player
 
+                        if (isInVent(player)) return@forEach
                         findVent(player) ?: return@forEach
 
                         player.sendActionBar(buildText {
@@ -58,6 +72,8 @@ object VentMechanic : GeckoMapMechanic, MinestomListener {
         if (::job.isInitialized && job.isActive) {
             job.cancel()
         }
+
+        ventedPlayers.clear()
     }
 
     @EventHandler
@@ -71,6 +87,11 @@ object VentMechanic : GeckoMapMechanic, MinestomListener {
         }
 
         val player = event.player
+
+        if (isInVent(player)) {
+            return
+        }
+
         val vent = findVent(player) ?: return
 
         enterVent(player)
@@ -83,6 +104,27 @@ object VentMechanic : GeckoMapMechanic, MinestomListener {
 
         player.velocity = toVent.normalize().mul(LAUNCH_SPEED)
         player.playSound(GeckoSounds.VENT_ENTER, Sound.Emitter.self())
+    }
+
+    @EventHandler
+    fun onTick(event: PlayerTickEvent) {
+        val player = event.player
+
+        if (player.entityMeta.isSwimming || player.pose == EntityPose.SWIMMING) {
+            return
+        }
+
+        if (!isInVent(player)) {
+            return
+        }
+
+        ventedPlayers.remove(player.uuid)
+        refreshSpeed(player)
+    }
+
+    @EventHandler
+    fun onDisconnect(event: PlayerDisconnectEvent) {
+        ventedPlayers.remove(event.player.uuid)
     }
 
     private fun findVent(player: Player): BlockVec? {
@@ -102,13 +144,24 @@ object VentMechanic : GeckoMapMechanic, MinestomListener {
 
         val vent = BlockVec(pos.blockX() + stepX, pos.blockY(), pos.blockZ() + stepZ)
 
-        return if (instance.getBlock(vent).compare(ventBlock)) vent else null
+        if (!instance.getBlock(vent).compare(ventBlock)) {
+            return null
+        }
+
+        if (!instance.getBlock(vent.sub(0, 1, 0)).compare(ventBaseBlock)) {
+            return null
+        }
+
+        return vent
     }
 
     private fun enterVent(player: Player) {
         val instance = player.instance ?: return
         val head = player.position.asBlockVec().add(0, 1, 0)
         val headBlock = instance.getBlock(head)
+
+        ventedPlayers.add(player.uuid)
+        refreshSpeed(player)
 
         player.entityMeta.isSwimming = true
         player.sendPacket(BlockChangePacket(head, Block.BARRIER))
@@ -123,6 +176,10 @@ object VentMechanic : GeckoMapMechanic, MinestomListener {
             player.entityMeta.isSwimming = false
             player.sendPacket(BlockChangePacket(head, headBlock))
         }
+    }
+
+    private fun refreshSpeed(player: Player) {
+        GeckoGameManager.findGame(player.uuid)?.findGamePlayer(player.uuid)?.applySpeed()
     }
 
     private fun facing(player: Player): Vec {

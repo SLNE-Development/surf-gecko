@@ -18,6 +18,10 @@ data class GeckoGameSettings(
     val respawnHidersAsSeekers: Boolean = true,
     val waterDamage: Boolean = true,
 
+    val seekerSpeedFactor: Double = 1.2,
+    val hiderSpeedFactor: Double = 1.0,
+    val ventSpeedFactor: Double = 1.5,
+
     val forcedSeekers: Set<UUID> = mutableSetOf(),
     val forcedHiders: Set<UUID> = mutableSetOf()
 ) {

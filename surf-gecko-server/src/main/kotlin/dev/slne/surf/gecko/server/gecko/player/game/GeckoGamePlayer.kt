@@ -2,7 +2,9 @@ package dev.slne.surf.gecko.server.gecko.player.game
 
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.core.messages.adventure.showTitle
+import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.map.GeckoMap
+import dev.slne.surf.gecko.server.gecko.map.mechanic.VentMechanic
 import dev.slne.surf.gecko.server.gecko.player.listener.GeckoPlayerListener
 import dev.slne.surf.gecko.server.gecko.shop.ShopItemListener
 import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
@@ -15,6 +17,7 @@ import net.minestom.server.MinecraftServer
 import net.minestom.server.component.DataComponents
 import net.minestom.server.entity.EquipmentSlot
 import net.minestom.server.entity.GameMode
+import net.minestom.server.entity.attribute.Attribute
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 import net.minestom.server.item.component.EnchantmentList
@@ -93,6 +96,22 @@ data class GeckoGamePlayer(
                 geckoSecondary(role.description)
             }
         }
+    }
+
+    fun applySpeed() {
+        val player = playerOrNull ?: return
+        val settings = GeckoGameManager.findGame(playerUuid)?.settings ?: return
+
+        val roleFactor = when (role) {
+            GeckoGameRole.SEEKER -> settings.seekerSpeedFactor
+            GeckoGameRole.HIDER -> settings.hiderSpeedFactor
+            GeckoGameRole.SPECTATOR -> 1.0
+        }
+        val ventFactor =
+            if (VentMechanic.isInVent(playerUuid)) settings.ventSpeedFactor else 1.0
+
+        player.getAttribute(Attribute.MOVEMENT_SPEED).baseValue =
+            Attribute.MOVEMENT_SPEED.defaultValue() * roleFactor * ventFactor
     }
 
     fun updateSocialGroup() {
