@@ -4,6 +4,7 @@ import dev.slne.surf.api.core.messages.adventure.key
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.display.scoreboard.GeckoScoreboardManager
 import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
+import dev.slne.surf.gecko.server.gecko.util.resetGeckoSpeed
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.GameMode
@@ -43,6 +44,7 @@ object GeckoLobby {
         player.isInvulnerable = false
         player.inventory.clear()
         player.heal()
+        player.resetGeckoSpeed()
         player.gameMode = GameMode.SURVIVAL
 
         if (contains(player)) {

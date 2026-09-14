@@ -9,17 +9,16 @@ import dev.slne.surf.gecko.server.gecko.player.listener.GeckoPlayerListener
 import dev.slne.surf.gecko.server.gecko.shop.ShopItemListener
 import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
 import dev.slne.surf.gecko.server.gecko.util.appendPrefix
+import dev.slne.surf.gecko.server.gecko.util.applyMovementSpeedFactor
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import dev.slne.surf.gecko.server.gecko.util.geckoSecondary
+import dev.slne.surf.gecko.server.gecko.util.resetGeckoSpeed
 import dev.slne.surf.gecko.server.util.withTag
-import glm_.func.common.clamp
 import net.kyori.adventure.text.format.TextColor
 import net.minestom.server.MinecraftServer
 import net.minestom.server.component.DataComponents
 import net.minestom.server.entity.EquipmentSlot
 import net.minestom.server.entity.GameMode
-import net.minestom.server.entity.Player
-import net.minestom.server.entity.attribute.Attribute
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 import net.minestom.server.item.component.EnchantmentList
@@ -104,29 +103,19 @@ data class GeckoGamePlayer(
         val player = playerOrNull ?: return
         val settings = GeckoGameManager.findGame(playerUuid)?.settings ?: return
 
-        val roleFactor = when (role) {
+        val speedFactor = if (VentMechanic.isInVent(playerUuid)) {
+            settings.ventSpeedFactor
+        } else when (role) {
             GeckoGameRole.SEEKER -> settings.seekerSpeedFactor
             GeckoGameRole.HIDER -> settings.hiderSpeedFactor
             GeckoGameRole.SPECTATOR -> 1.0
         }
-        val ventFactor =
-            if (VentMechanic.isInVent(playerUuid)) settings.ventSpeedFactor else 1.0
 
-        val speedFactor =
-            (if (VentMechanic.isInVent(playerUuid)) ventFactor else roleFactor).clamp(0.1, 1.0)
-
-        player.getAttribute(Attribute.MOVEMENT_SPEED).baseValue =
-            Attribute.MOVEMENT_SPEED.defaultValue() * speedFactor
-
-        player.fieldViewModifier = speedFactor.toFloat()
+        player.applyMovementSpeedFactor(speedFactor)
     }
 
     fun resetSpeed() {
-        val player = playerOrNull ?: return
-
-        VentMechanic.clearVentState(player)
-        player.getAttribute(Attribute.MOVEMENT_SPEED).baseValue =
-            Attribute.MOVEMENT_SPEED.defaultValue()
+        playerOrNull?.resetGeckoSpeed()
     }
 
     fun updateSocialGroup() {
@@ -170,12 +159,6 @@ data class GeckoGamePlayer(
         GeckoGameRole.SEEKER -> player.teleport(map.mapLocations.seekerSpawn)
         GeckoGameRole.HIDER -> player.teleport(map.mapLocations.spawn)
         GeckoGameRole.SPECTATOR -> player.teleport(map.mapLocations.spawn)
-    }
-
-    private fun setSpeed(player: Player, modifier: Double) {
-        val speed = Attribute.MOVEMENT_SPEED.defaultValue() * modifier
-
-        player.getAttribute(Attribute.MOVEMENT_SPEED).baseValue = speed
     }
 
     companion object {
