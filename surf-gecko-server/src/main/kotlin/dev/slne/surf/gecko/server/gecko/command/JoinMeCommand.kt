@@ -36,7 +36,7 @@ fun joinMeCommand() = commandTree("joinme") {
                 buildText {
                     appendPrefix()
                     append(player.displayName ?: Component.text(player.username))
-                    append(geckoHighlight(" lädt dich ein, dem Spiel beizutreten!"))
+                    geckoHighlight(" lädt dich ein, dem Spiel beizutreten!")
 
                     appendNewline()
                     appendPrefix()
