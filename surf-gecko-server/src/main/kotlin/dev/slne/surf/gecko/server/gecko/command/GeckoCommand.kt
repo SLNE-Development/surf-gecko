@@ -17,8 +17,15 @@ import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import dev.slne.surf.gecko.server.gecko.util.geckoSecondary
 import dev.slne.surf.gecko.server.permission.PermissionList
 import kotlinx.coroutines.launch
+import net.kyori.adventure.nbt.BinaryTag
+import net.kyori.adventure.nbt.CompoundBinaryTag
+import net.kyori.adventure.nbt.TagStringIO
 import net.minestom.server.MinecraftServer
+import net.minestom.server.codec.Transcoder
+import net.minestom.server.component.DataComponent
+import net.minestom.server.entity.Player
 import net.minestom.server.entity.attribute.Attribute
+import net.minestom.server.item.ItemStack
 
 fun geckoCommand() = commandTree("gecko") {
     withPermission(PermissionList.COMMAND_GECKO)
@@ -65,6 +72,14 @@ fun geckoCommand() = commandTree("gecko") {
                 appendPrefix()
                 geckoPrimary("Alle Spieler wurden der Warteschlange hinzugefügt.")
             }
+        }
+    }
+
+    literalArgument("dumpitem") {
+        playerExecutor { player, _ -> dumpItem(player, all = false) }
+
+        literalArgument("all") {
+            playerExecutor { player, _ -> dumpItem(player, all = true) }
         }
     }
 
@@ -167,3 +182,48 @@ fun geckoCommand() = commandTree("gecko") {
         }
     }
 }
+
+private fun dumpItem(player: Player, all: Boolean) {
+    val item = player.itemInMainHand
+
+    if (item.isAir) {
+        player.sendText {
+            appendPrefix()
+            geckoPrimary("Du hältst kein Item in der Hand.")
+        }
+        return
+    }
+
+    val components: CompoundBinaryTag = if (all) {
+        val builder = CompoundBinaryTag.builder()
+        for (entry in item.components().entrySet()) {
+            val value = entry.value() ?: continue
+            builder.put(
+                entry.component().key().asString(),
+                encodeComponent(entry.component(), value)
+            )
+        }
+        builder.build()
+    } else {
+        (ItemStack.CODEC.encode(Transcoder.NBT, item).orElseThrow() as CompoundBinaryTag)
+            .getCompound("components")
+    }
+
+    val id = item.material().key().asString()
+    val argument = if (components.size() == 0) {
+        id
+    } else {
+        val body = TagStringIO.tagStringIO().asString(components)
+        "$id[${body.substring(1, body.length - 1)}]"
+    }
+
+    player.sendText {
+        appendPrefix()
+        geckoPrimary("Das Item: ")
+        geckoSecondary(argument)
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+private fun encodeComponent(component: DataComponent<*>, value: Any): BinaryTag =
+    (component as DataComponent<Any>).encode(Transcoder.NBT, value).orElseThrow()

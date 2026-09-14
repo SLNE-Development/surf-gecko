@@ -18,7 +18,7 @@ import net.minestom.server.item.Material
 
 object MiscLightningShopItem : ShopItem {
     override val id = "misc_lightning"
-    override val price = 100
+    override val price = 5
     override val displayName = "Blitz"
     override val description = "Lasse deine Gegner mit einen Blitz treffen!"
     override val maps = null
