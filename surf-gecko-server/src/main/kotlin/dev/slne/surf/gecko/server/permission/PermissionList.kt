@@ -15,6 +15,8 @@ object PermissionList {
     const val COMMAND_SKIP = "$BASE_GAME.skip.command"
     const val COMMAND_LOBBY = "$BASE_GAME.lobby.command"
 
+    const val COMMAND_PUNISH = "$BASE_GAME.punish.command"
+
     const val DELETE_MESSAGE = "$BASE.delete-messages"
     const val RISEUP = "$BASE.riseup"
     const val ELYTRA_BOOST = "$BASE.elytra-boost"
