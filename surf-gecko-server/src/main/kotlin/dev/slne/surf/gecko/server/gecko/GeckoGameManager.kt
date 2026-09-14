@@ -157,6 +157,10 @@ object GeckoGameManager {
         GeckoGameRepository.updateGameEndReason(game, reason)
     }
 
+    fun findGame(gameId: ULong) = synchronized(lock) {
+        games.firstOrNull { it.internalId == gameId }
+    }
+
     fun findGame(playerUuid: UUID): GeckoGame? = synchronized(lock) {
         games.firstOrNull { game ->
             game.lobbyPlayers.any { it.playerUuid == playerUuid } ||

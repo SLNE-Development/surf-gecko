@@ -7,6 +7,7 @@ import dev.slne.surf.gecko.server.console.GeckoConsole
 import dev.slne.surf.gecko.server.gecko.GeckoInstance
 import dev.slne.surf.gecko.server.lifecycle.ServerLifecycle
 import dev.slne.surf.gecko.server.plugin.MinestomPluginManager
+import dev.slne.surf.gecko.server.redis.RedisService
 import kotlinx.coroutines.runBlocking
 import net.minestom.server.MinecraftServer
 import net.minestom.server.MinecraftServer.LOGGER
@@ -53,6 +54,8 @@ class GeckoServer @Inject constructor(
             minecraftServer.start(config.address.host, config.address.port)
 
             startConsole()
+
+            RedisService.connect()
 
             GeckoInstance.enable()
 
@@ -145,6 +148,8 @@ class GeckoServer @Inject constructor(
             LOGGER.error("Failed to stop the gecko games.", currentFailure)
             failure = currentFailure
         }
+
+        RedisService.disconnect()
 
         if (MinecraftServer.isStarted() && !MinecraftServer.isStopping()) {
             try {

@@ -23,12 +23,14 @@ repositories {
 
 dependencies {
     implementation(projects.surfGeckoCommandApi)
+    implementation("dev.slne.surf.gecko:surf-gecko-common:1.0.0-SNAPSHOT")
 
     compileOnly(libs.surf.api.minestom)
     compileOnly(libs.minestom)
     compileOnly(libs.minestom.lobby.api)
     compileOnly(libs.surf.bitmap.provider.common)
     compileOnly(libs.surf.playtime.api.common)
+    compileOnly(libs.surf.core.api.common)
     compileOnly(libs.guice)
     compileOnly(libs.coroutines.core)
     compileOnly(libs.bundles.log4j)
@@ -40,6 +42,9 @@ dependencies {
     compileOnly(libs.polar)
     compileOnly(libs.brigadier)
     compileOnly(libs.surf.database.r2dbc)
+    compileOnly(libs.surf.redis.api) {
+        artifact { classifier = "all" }
+    }
 
     runtimeDownload(libs.minestom)
     runtimeDownload(libs.minestom.lobby.api)

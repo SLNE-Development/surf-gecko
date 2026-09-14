@@ -27,6 +27,8 @@ rootProject.name = "surf-gecko"
 include("surf-gecko-command-api")
 include("surf-gecko-server")
 
+includeBuild("surf-gecko-common")
+
 val luckPermsDir = file("vendor/LuckPerms")
 if (!luckPermsDir.resolve("settings.gradle").isFile) {
     error(

@@ -10,6 +10,4 @@ plugins {
     id("dev.slne.surf.api.gradle.settings") version "+"
 }
 
-rootProject.name = "surf-gecko-map-creator"
-
-includeBuild("../surf-gecko-common")
+rootProject.name = "surf-gecko-common"

@@ -16,6 +16,7 @@ object PermissionList {
     const val COMMAND_LOBBY = "$BASE_GAME.lobby.command"
 
     const val COMMAND_PUNISH = "$BASE_GAME.punish.command"
+    const val COMMAND_JOINME = "$BASE_GAME.joinme.command"
 
     const val DELETE_MESSAGE = "$BASE.delete-messages"
     const val RISEUP = "$BASE.riseup"

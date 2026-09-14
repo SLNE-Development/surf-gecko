@@ -7,6 +7,7 @@ import dev.slne.surf.gecko.server.database.GeckoDatabaseManager
 import dev.slne.surf.gecko.server.event.MinestomListenerRegistry
 import dev.slne.surf.gecko.server.event.register
 import dev.slne.surf.gecko.server.gecko.command.geckoCommand
+import dev.slne.surf.gecko.server.gecko.command.joinMeCommand
 import dev.slne.surf.gecko.server.gecko.command.lobbyCommand
 import dev.slne.surf.gecko.server.gecko.command.skipCommand
 import dev.slne.surf.gecko.server.gecko.display.tablist.GeckoGameTablistManager
@@ -47,6 +48,7 @@ object GeckoInstance {
 
         CommandAPI.unregister("lobby")
         lobbyCommand()
+        joinMeCommand()
 
         geckoLogger.info("Enabled GeckoInstance.")
     }

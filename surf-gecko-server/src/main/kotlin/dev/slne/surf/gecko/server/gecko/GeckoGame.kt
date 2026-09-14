@@ -8,6 +8,7 @@ import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.core.messages.adventure.showTitle
 import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
 import dev.slne.surf.api.core.util.runAtFixedRate
+import dev.slne.surf.gecko.common.game.GeckoGameInfo
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.gecko.antiafk.GeckoAntiAfkWatcher
 import dev.slne.surf.gecko.server.gecko.display.scoreboard.GeckoScoreboardManager
@@ -609,6 +610,14 @@ class GeckoGame(
     }
 
     fun sendText(builder: SurfComponentBuilder.() -> Unit) = forEachPlayer { it.sendText(builder) }
+
+    val gameInfo
+        get() = GeckoGameInfo(
+            internalId,
+            playerCount,
+            settings.maxPlayers,
+            settings.map.mapDisplayName
+        )
 
     private companion object {
         val SEARCH_COUNTDOWN_SUBTITLE = buildText {

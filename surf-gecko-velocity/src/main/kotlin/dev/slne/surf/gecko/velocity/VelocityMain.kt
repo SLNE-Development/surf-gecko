@@ -29,12 +29,12 @@ class VelocityMain @Inject constructor(
 
     @Subscribe
     fun onProxyInitialize(event: ProxyInitializeEvent) {
-
+        VelocityRedisService.connect()
     }
 
     @Subscribe
     fun onProxyShutdown(event: ProxyShutdownEvent) {
-
+        VelocityRedisService.disconnect()
     }
 
     companion object {

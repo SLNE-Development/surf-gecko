@@ -11,3 +11,5 @@ plugins {
 }
 
 rootProject.name = "surf-gecko-velocity"
+
+includeBuild("../surf-gecko-common")

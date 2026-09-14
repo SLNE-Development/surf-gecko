@@ -26,7 +26,11 @@ fun geckoCommand() = commandTree("gecko") {
         anyExecutor { sender, _ ->
             sender.sendText {
                 appendPrefix()
-                geckoPrimary("GeckoGames: ${GeckoGameManager.getGames().size}")
+                geckoPrimary(
+                    "GeckoGames: ${
+                        GeckoGameManager.getGames().map { it.gameInfo.toString() }
+                    }"
+                )
             }
         }
     }

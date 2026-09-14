@@ -12,3 +12,7 @@ surfPaperPluginApi {
 
     authors.add("red")
 }
+
+dependencies {
+    implementation("dev.slne.surf.gecko:surf-gecko-common:1.0.0-SNAPSHOT")
+}
