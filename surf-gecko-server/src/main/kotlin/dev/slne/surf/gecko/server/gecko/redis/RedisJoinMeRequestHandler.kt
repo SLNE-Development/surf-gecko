@@ -67,27 +67,32 @@ object RedisJoinMeRequestHandler {
                     return@withContext
                 }
 
-                if (!surfPlayer.sendAwaiting(SurfServer.current()).isSuccessful()) {
-                    context.respond(
-                        AcceptJoinMeRedisResponse(
-                            gameId,
-                            AcceptJoinMeRedisResponse.Result.FAILED_TO_MOVE
-                        )
-                    )
-                    return@withContext
-                }
-
-                val player =
+                var player =
                     MinecraftServer.getConnectionManager().getOnlinePlayerByUuid(surfPlayer.uuid)
 
                 if (player == null) {
-                    context.respond(
-                        AcceptJoinMeRedisResponse(
-                            gameId,
-                            AcceptJoinMeRedisResponse.Result.PLAYER_NOT_FOUND
+                    if (!surfPlayer.sendAwaiting(SurfServer.current()).isSuccessful()) {
+                        context.respond(
+                            AcceptJoinMeRedisResponse(
+                                gameId,
+                                AcceptJoinMeRedisResponse.Result.FAILED_TO_MOVE
+                            )
                         )
-                    )
-                    return@withContext
+                        return@withContext
+                    }
+
+                    player = MinecraftServer.getConnectionManager()
+                        .getOnlinePlayerByUuid(surfPlayer.uuid)
+
+                    if (player == null) {
+                        context.respond(
+                            AcceptJoinMeRedisResponse(
+                                gameId,
+                                AcceptJoinMeRedisResponse.Result.PLAYER_NOT_FOUND
+                            )
+                        )
+                        return@withContext
+                    }
                 }
 
                 if (GeckoGameManager.joinGame(player, game) == null) {

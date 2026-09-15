@@ -8,7 +8,7 @@ import kotlin.math.abs
 import kotlin.math.floor
 
 private const val MAX_DISTANCE = 64.0
-private const val MIN_DISTANCE = 2.0
+private const val MIN_DISTANCE = 4.0
 private const val MAX_DISTANCE_SQUARED = MAX_DISTANCE * MAX_DISTANCE
 private const val MIN_DISTANCE_SQUARED = MIN_DISTANCE * MIN_DISTANCE
 private const val FEET_OFFSET = 0.1

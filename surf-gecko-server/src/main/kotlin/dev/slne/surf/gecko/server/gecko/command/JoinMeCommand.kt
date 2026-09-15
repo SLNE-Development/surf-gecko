@@ -4,14 +4,19 @@ import dev.slne.minestom.lobby.api.command.commandapi.dsl.commandTree
 import dev.slne.minestom.lobby.api.command.commandapi.dsl.playerExecutor
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.bitmap.common.head.composeHead
+import dev.slne.surf.bitmap.common.head.renderHead
 import dev.slne.surf.core.api.common.server.SurfServer
 import dev.slne.surf.gecko.common.joinme.PublishJoinMeRedisEvent
+import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.util.appendPrefix
 import dev.slne.surf.gecko.server.gecko.util.geckoHighlight
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
+import dev.slne.surf.gecko.server.gecko.util.geckoSecondary
 import dev.slne.surf.gecko.server.permission.PermissionList
 import dev.slne.surf.gecko.server.redis.redisApi
+import kotlinx.coroutines.launch
 import net.kyori.adventure.text.Component
 
 fun joinMeCommand() = commandTree("joinme") {
@@ -28,26 +33,56 @@ fun joinMeCommand() = commandTree("joinme") {
             return@playerExecutor
         }
 
-        redisApi.publishEvent(
-            PublishJoinMeRedisEvent(
-                SurfServer.current(),
-                player.displayName ?: Component.text(player.username),
-                game.internalId,
-                buildText {
-                    appendPrefix()
-                    append(player.displayName ?: Component.text(player.username))
-                    geckoHighlight(" lädt dich ein, dem Spiel beizutreten!")
+        geckoAsyncScope.launch {
+            val head = composeHead(
+                renderHead(player.skin?.textures ?: "", 1), listOf(
+                    Component.empty(),
+                    Component.empty(),
+                    buildText {
+                        appendSpace()
+                        appendSpace()
+                        appendSpace()
+                        append(player.displayName ?: Component.text(player.username))
+                        spacer(" spielt")
+                    },
+                    buildText {
+                        appendSpace()
+                        appendSpace()
+                        appendSpace()
+                        geckoPrimary("Hide 'n Seek")
+                        geckoSecondary(" auf ")
+                        geckoHighlight(game.settings.map.mapDisplayName)
+                    },
+                    buildText {
+                        appendSpace()
+                        appendSpace()
+                        appendSpace()
+                        white("👥 ")
+                        geckoHighlight("${game.players.size}/${game.settings.maxPlayers}")
+                        appendSpace()
+                        white("\uD83D\uDCCD")
+                        appendSpace()
+                        geckoHighlight(SurfServer.current().displayName)
+                    },
+                    Component.empty(),
+                    Component.empty(),
+                    Component.empty(),
+                )
+            )
 
-                    appendNewline()
-                    appendPrefix()
-                    geckoPrimary("Hide 'n Seek auf ")
-                    geckoHighlight(game.settings.map.mapDisplayName)
-                }
-            ))
+            redisApi.publishEvent(
+                PublishJoinMeRedisEvent(
+                    SurfServer.current(),
+                    player.displayName ?: Component.text(player.username),
+                    game.internalId,
+                    head
+                )
+            )
 
-        player.sendText {
-            appendPrefix()
-            geckoPrimary("Das Joinme wurde gesendet.")
+            player.sendText {
+                appendPrefix()
+                geckoPrimary("Das Joinme wurde gesendet.")
+            }
         }
     }
 }
