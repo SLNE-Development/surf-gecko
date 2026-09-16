@@ -3,6 +3,7 @@ package dev.slne.surf.gecko.server.antiesp
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.coroutine.geckoScope
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap
 import it.unimi.dsi.fastutil.ints.IntArrayList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -150,9 +151,33 @@ private fun Player.seesThroughWalls() =
 private class PlayerCullState(private val player: Player) {
     @Volatile
     private var hidden = NOT_HIDDEN
+    private var streaks = Int2IntOpenHashMap()
     private var installed = false
 
-    fun update(hiddenIds: IntArray): Boolean {
+    fun update(candidates: IntArray): Boolean {
+        if (candidates.isEmpty()) {
+            streaks.clear()
+            return replace(NOT_HIDDEN)
+        }
+
+        val next = Int2IntOpenHashMap(candidates.size)
+        val confirmed = IntArrayList(candidates.size)
+
+        for (entityId in candidates) {
+            val streak = streaks.get(entityId) + 1
+            next.put(entityId, streak)
+
+            if (streak > 2) {
+                confirmed.add(entityId)
+            }
+        }
+
+        streaks = next
+
+        return replace(if (confirmed.isEmpty()) NOT_HIDDEN else confirmed.toIntArray())
+    }
+
+    private fun replace(hiddenIds: IntArray): Boolean {
         if (hiddenIds.contentEquals(hidden)) {
             return false
         }

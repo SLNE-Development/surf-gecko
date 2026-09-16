@@ -1,5 +1,6 @@
 package dev.slne.surf.gecko.server.antiesp
 
+import net.minestom.server.coordinate.Point
 import net.minestom.server.entity.Player
 import net.minestom.server.instance.Chunk
 import net.minestom.server.instance.Instance
@@ -8,7 +9,7 @@ import kotlin.math.abs
 import kotlin.math.floor
 
 private const val MAX_DISTANCE = 64.0
-private const val MIN_DISTANCE = 4.0
+private const val MIN_DISTANCE = 6.0
 private const val MAX_DISTANCE_SQUARED = MAX_DISTANCE * MAX_DISTANCE
 private const val MIN_DISTANCE_SQUARED = MIN_DISTANCE * MIN_DISTANCE
 private const val FEET_OFFSET = 0.1
@@ -51,13 +52,22 @@ internal class OcclusionRaycaster(private val instance: Instance) : AutoCloseabl
 
         val box = target.boundingBox
         val offset = box.width() / 2 - CORNER_INSET
-        val cornerY = to.y() + box.height() * 0.5
 
-        return isClear(eyeX, eyeY, eyeZ, to.x() - offset, cornerY, to.z() - offset) ||
-                isClear(eyeX, eyeY, eyeZ, to.x() - offset, cornerY, to.z() + offset) ||
-                isClear(eyeX, eyeY, eyeZ, to.x() + offset, cornerY, to.z() - offset) ||
-                isClear(eyeX, eyeY, eyeZ, to.x() + offset, cornerY, to.z() + offset)
+        return hasClearCorner(eyeX, eyeY, eyeZ, to, to.y() + target.eyeHeight, offset) ||
+                hasClearCorner(eyeX, eyeY, eyeZ, to, to.y() + box.height() * 0.5, offset)
     }
+
+    private fun hasClearCorner(
+        originX: Double,
+        originY: Double,
+        originZ: Double,
+        target: Point,
+        targetY: Double,
+        offset: Double,
+    ) = isClear(originX, originY, originZ, target.x() - offset, targetY, target.z() - offset) ||
+            isClear(originX, originY, originZ, target.x() - offset, targetY, target.z() + offset) ||
+            isClear(originX, originY, originZ, target.x() + offset, targetY, target.z() - offset) ||
+            isClear(originX, originY, originZ, target.x() + offset, targetY, target.z() + offset)
 
     override fun close() = releaseChunk()
 
@@ -121,7 +131,7 @@ internal class OcclusionRaycaster(private val instance: Instance) : AutoCloseabl
     }
 
     private fun occludes(x: Int, y: Int, z: Int): Boolean {
-        if (y < minY || y >= maxY) return false
+        if (y !in minY..<maxY) return false
 
         val targetChunkX = x shr 4
         val targetChunkZ = z shr 4
