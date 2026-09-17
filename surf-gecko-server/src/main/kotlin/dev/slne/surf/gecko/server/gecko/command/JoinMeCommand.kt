@@ -2,6 +2,7 @@ package dev.slne.surf.gecko.server.gecko.command
 
 import dev.slne.minestom.lobby.api.command.commandapi.dsl.commandTree
 import dev.slne.minestom.lobby.api.command.commandapi.dsl.playerExecutor
+import dev.slne.surf.api.core.font.toSmallCaps
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.bitmap.common.head.composeHead
@@ -41,12 +42,10 @@ fun joinMeCommand() = commandTree("joinme") {
                     buildText {
                         appendSpace()
                         appendSpace()
-                        appendSpace()
                         append(player.displayName ?: Component.text(player.username))
                         spacer(" spielt")
                     },
                     buildText {
-                        appendSpace()
                         appendSpace()
                         appendSpace()
                         geckoPrimary("Hide 'n Seek")
@@ -56,15 +55,18 @@ fun joinMeCommand() = commandTree("joinme") {
                     buildText {
                         appendSpace()
                         appendSpace()
-                        appendSpace()
                         white("👥 ")
-                        geckoHighlight("${game.players.size}/${game.settings.maxPlayers}")
+                        spacer("${game.players.size}/${game.settings.maxPlayers}")
                         appendSpace()
                         white("\uD83D\uDCCD")
                         appendSpace()
-                        geckoHighlight(SurfServer.current().displayName)
+                        spacer(SurfServer.current().displayName)
                     },
-                    Component.empty(),
+                    buildText {
+                        appendSpace()
+                        appendSpace()
+                        geckoSecondary("» Klicke hier, um beizutreten!".toSmallCaps())
+                    },
                     Component.empty(),
                     Component.empty(),
                 )

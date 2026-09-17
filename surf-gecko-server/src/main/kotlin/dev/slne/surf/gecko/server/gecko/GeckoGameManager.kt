@@ -107,7 +107,12 @@ object GeckoGameManager {
         val lobbyPlayer = GeckoLobbyPlayer(player.uuid)
 
         game.lobbyPlayers.add(lobbyPlayer)
-        player.setInstance(game.instance, game.settings.map.mapLocations.lobbySpawn)
+
+        if(player.instance != game.instance) {
+            player.setInstance(game.instance, game.settings.map.mapLocations.lobbySpawn)
+        }
+
+
         player.gameMode = GameMode.ADVENTURE
 
         SocialGroupManager.update(lobbyPlayer)
