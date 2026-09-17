@@ -5,6 +5,7 @@ import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.database.repository.GeckoGameRepository
 import dev.slne.surf.gecko.server.database.repository.GeckoGameStatsRepository
 import dev.slne.surf.gecko.server.gecko.display.scoreboard.GeckoScoreboardManager
+import dev.slne.surf.gecko.server.gecko.hotbar.GeckoHotbarItems
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.map.GeckoMapManager
 import dev.slne.surf.gecko.server.gecko.player.lobby.GeckoLobbyPlayer
@@ -114,6 +115,9 @@ object GeckoGameManager {
 
 
         player.gameMode = GameMode.ADVENTURE
+        player.inventory.clear()
+
+        GeckoHotbarItems.giveGameLobbyItems(player)
 
         SocialGroupManager.update(lobbyPlayer)
         return game

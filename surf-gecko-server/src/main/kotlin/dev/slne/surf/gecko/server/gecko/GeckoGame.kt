@@ -13,6 +13,7 @@ import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.gecko.antiafk.GeckoAntiAfkWatcher
 import dev.slne.surf.gecko.server.gecko.display.scoreboard.GeckoScoreboardManager
 import dev.slne.surf.gecko.server.gecko.heartbeat.GeckoHeartbeat
+import dev.slne.surf.gecko.server.gecko.hotbar.GeckoHotbarItems
 import dev.slne.surf.gecko.server.gecko.orbs.GeckoOrbSpawner
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
@@ -128,6 +129,17 @@ class GeckoGame(
         endingTimerSeconds = 10
 
         SocialGroupManager.showAll(this)
+
+        forEachGamePlayer {
+            if (it.role == GeckoGameRole.SPECTATOR) {
+                it.endSpectating(settings.map)
+            }
+        }
+
+        forEachPlayer {
+            it.inventory.clear()
+            GeckoHotbarItems.giveEndingItems(it)
+        }
 
         sendText {
             appendNewline()

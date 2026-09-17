@@ -145,6 +145,14 @@ data class GeckoGamePlayer(
         playerOrNull?.isInvulnerable = false
     }
 
+    fun endSpectating(map: GeckoMap) {
+        val player = playerOrNull ?: return
+
+        player.gameMode = GameMode.ADVENTURE
+        player.heal()
+        player.teleport(map.mapLocations.spawn)
+    }
+
     fun respawnAsSeeker(map: GeckoMap) {
         player.isInvulnerable = false
         player.heal()
