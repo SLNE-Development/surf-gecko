@@ -11,10 +11,7 @@ import dev.slne.surf.core.api.common.server.SurfServer
 import dev.slne.surf.gecko.common.joinme.PublishJoinMeRedisEvent
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
-import dev.slne.surf.gecko.server.gecko.util.appendPrefix
-import dev.slne.surf.gecko.server.gecko.util.geckoHighlight
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
-import dev.slne.surf.gecko.server.gecko.util.geckoSecondary
+import dev.slne.surf.gecko.server.gecko.util.*
 import dev.slne.surf.gecko.server.permission.PermissionList
 import dev.slne.surf.gecko.server.redis.redisApi
 import kotlinx.coroutines.launch
@@ -43,7 +40,7 @@ fun joinMeCommand() = commandTree("joinme") {
                         appendSpace()
                         appendSpace()
                         append(player.displayName ?: Component.text(player.username))
-                        spacer(" spielt")
+                        geckoUseless(" spielt")
                     },
                     buildText {
                         appendSpace()
