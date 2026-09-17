@@ -2,10 +2,9 @@ package dev.slne.surf.gecko.server.chat.signature
 
 import net.kyori.adventure.chat.SignedMessage
 import net.minestom.server.crypto.MessageSignature
-import java.util.Base64
+import java.util.*
 
 fun MessageSignature.checksum(): Int = signature().contentHashCode()
-
 fun MessageSignature.adventure(): SignedMessage.Signature = SignedMessage.signature(signature())
 
 fun MessageSignature.verify(validator: SignatureValidator, updater: SignatureUpdater): Boolean =

@@ -10,13 +10,6 @@ import dev.slne.surf.gecko.server.lifecycle.GeckoService
 import net.minestom.server.event.Event
 import net.minestom.server.event.EventNode
 
-/**
- * Installs the Minestom platform the command API compiles onto.
- *
- * This has to run before any command is registered - the API rejects a registration made while no
- * platform is installed - so it sits ahead of [GeckoCommandService] in the lifecycle. The port
- * itself carries no DI or event-registrar interface, hence this thin wrapper.
- */
 @Singleton
 class GeckoCommandApiService @Inject constructor(
     ownership: MinestomCommandOwnership,

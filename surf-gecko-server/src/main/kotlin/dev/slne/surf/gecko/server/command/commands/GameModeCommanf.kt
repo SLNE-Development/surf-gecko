@@ -21,7 +21,7 @@ fun gameModeCommand() = commandTree("gamemode") {
             player.sendText {
                 appendSuccessPrefix()
                 success("Dein Spielmodus wurde zu ")
-                variableValue(gamemode.name)
+                variableValue(gamemode.name.lowercase().replaceFirstChar { it.uppercase() })
                 success(" geändert.")
             }
         }
@@ -38,7 +38,7 @@ fun gameModeCommand() = commandTree("gamemode") {
                     success("Der Spielmodus von ")
                     variableValue(targets.joinToString(", ") { it.username })
                     success(" wurde zu ")
-                    variableValue(gamemode.name)
+                    variableValue(gamemode.name.lowercase().replaceFirstChar { it.uppercase() })
                     success(" geändert.")
                 }
             }

@@ -8,11 +8,6 @@ import dev.slne.surf.gecko.server.lifecycle.GeckoService
 import net.minestom.server.MinecraftServer
 import net.minestom.server.utils.callback.CommandCallback
 
-/**
- * Registers the server's own commands plus every command an extension declared.
- *
- * Runs after [GeckoCommandApiService] has installed the platform.
- */
 @Singleton
 class GeckoCommandService @Inject constructor(
     private val registrars: Set<@JvmSuppressWildcards CommandRegistrar>,

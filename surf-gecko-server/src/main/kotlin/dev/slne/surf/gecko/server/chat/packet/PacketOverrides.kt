@@ -9,7 +9,6 @@ import net.minestom.server.network.packet.server.ServerPacket
 
 @Suppress("UnstableApiUsage")
 object PacketOverrides {
-
     private val ids = object : ClassValue<Int?>() {
         override fun computeValue(type: Class<*>): Int? {
             return PacketVanilla.SERVER_PACKET_PARSER.play().packetInfo(type).id()

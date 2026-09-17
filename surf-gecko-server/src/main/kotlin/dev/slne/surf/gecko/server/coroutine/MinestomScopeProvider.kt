@@ -3,8 +3,7 @@ package dev.slne.surf.gecko.server.coroutine
 import kotlinx.coroutines.*
 import net.minestom.server.MinecraftServer
 
-internal object MinestomScopeProvider {
-
+object MinestomScopeProvider {
     val scope: CoroutineScope
     val asyncScope: CoroutineScope
     val blockingScope: CoroutineScope

@@ -14,7 +14,6 @@ object SkylightSuppression {
 
     @Suppress("UnstableApiUsage")
     object DisabledSkyLight : Light {
-
         override fun requiresUpdate() = false
         override fun requiresSend() = false
         override fun array(): ByteArray = LightCompute.UNSET_CONTENT

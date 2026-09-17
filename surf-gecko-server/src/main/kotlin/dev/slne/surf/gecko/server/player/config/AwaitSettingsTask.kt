@@ -10,17 +10,13 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 object AwaitSettingsTask : ConfigurationTask {
-
     private val LOGGER = ComponentLogger.logger()
-
-    private const val SETTINGS_TIMEOUT_SECONDS = 2L
-
     private val received = ConcurrentHashMap<UUID, CompletableFuture<Unit>>()
 
     override fun run(context: ConfigurationContext) {
         try {
             settingsFuture(context.player.uuid)
-                .get(SETTINGS_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .get(2L, TimeUnit.SECONDS)
         } catch (_: TimeoutException) {
             LOGGER.warn(
                 "Player {} did not send their settings, continuing with the defaults",

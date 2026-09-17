@@ -4,7 +4,6 @@ import net.minestom.server.network.packet.server.configuration.ResetChatPacket
 import net.minestom.server.network.packet.server.configuration.UpdateEnabledFeaturesPacket
 
 object EnabledFeaturesTask : ConfigurationTask {
-
     override fun run(context: ConfigurationContext) {
         val event = context.event
 

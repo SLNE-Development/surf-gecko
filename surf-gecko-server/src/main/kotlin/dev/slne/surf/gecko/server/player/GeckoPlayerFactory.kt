@@ -9,7 +9,6 @@ class GeckoPlayerFactory(
     private val luckPermsService: LuckPermsService,
     private val chatConfig: Config.ChatConfig,
 ) {
-
     fun create(
         playerConnection: PlayerConnection,
         gameProfile: GameProfile,

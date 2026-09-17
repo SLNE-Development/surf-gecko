@@ -3,15 +3,7 @@ package dev.slne.surf.gecko.server.chat
 import dev.slne.surf.gecko.command.platform.SignedCommandArguments
 import dev.slne.surf.gecko.command.platform.signableCommandArguments
 import dev.slne.surf.gecko.command.platform.signaturesCoverArguments
-import dev.slne.surf.gecko.server.chat.signature.EXPIRED_PROFILE_PUBLIC_KEY
-import dev.slne.surf.gecko.server.chat.signature.LastSeenMessages
-import dev.slne.surf.gecko.server.chat.signature.LastSeenMessagesValidator
-import dev.slne.surf.gecko.server.chat.signature.MessageSignatureCache
-import dev.slne.surf.gecko.server.chat.signature.PlayerChatMessage
-import dev.slne.surf.gecko.server.chat.signature.ProfilePublicKeyValidationException
-import dev.slne.surf.gecko.server.chat.signature.RemoteChatSession
-import dev.slne.surf.gecko.server.chat.signature.SignedMessageBody
-import dev.slne.surf.gecko.server.chat.signature.SignedMessageChain
+import dev.slne.surf.gecko.server.chat.signature.*
 import dev.slne.surf.gecko.server.config.Config
 import dev.slne.surf.gecko.server.coroutine.geckoBlockingScope
 import dev.slne.surf.gecko.server.util.TickThrottler
@@ -87,7 +79,10 @@ class PlayerChatHandler(
         chatMessageChain.close()
     }
 
-    fun handleChat(packet: ClientChatMessagePacket, onMessage: suspend (PlayerChatMessage) -> Unit) {
+    fun handleChat(
+        packet: ClientChatMessagePacket,
+        onMessage: suspend (PlayerChatMessage) -> Unit
+    ) {
         if (MinecraftServer.isStopping()) return
 
         val lastSeen = unpackAndApplyLastSeen(LastSeenMessages.Update.fromPacket(packet)) ?: return
@@ -108,7 +103,9 @@ class PlayerChatHandler(
         packet: ClientSignedCommandChatPacket,
         onCommand: (String) -> Unit
     ) {
-        if (MinecraftServer.isStopping()) return
+        if (MinecraftServer.isStopping()) {
+            return
+        }
 
         val lastSeen = unpackAndApplyLastSeen(LastSeenMessages.Update.fromPacket(packet)) ?: return
 

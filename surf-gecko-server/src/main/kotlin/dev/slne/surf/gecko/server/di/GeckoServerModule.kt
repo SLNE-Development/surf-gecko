@@ -30,16 +30,11 @@ import net.minestom.server.MinecraftServer
 import net.minestom.server.event.GlobalEventHandler
 import net.minestom.server.instance.InstanceManager
 
-/**
- * The bindings the server itself owns - everything an extension may inject that does not come out
- * of its own module.
- */
 class GeckoServerModule(
     private val config: Config,
     private val minecraftServer: MinecraftServer,
     private val pluginCatalog: PluginCatalog,
 ) : AbstractModule() {
-
     override fun configure() {
         bind(Config::class.java).toInstance(config)
         bind(PluginCatalog::class.java).toInstance(pluginCatalog)

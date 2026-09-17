@@ -2,14 +2,13 @@ package dev.slne.surf.gecko.server.chat.signature
 
 import net.minestom.server.crypto.ChatSession
 import net.minestom.server.crypto.PlayerPublicKey
-import java.util.UUID
+import java.util.*
 import net.minestom.server.crypto.SignatureValidator as ServiceSignatureValidator
 
 data class RemoteChatSession(
     val sessionId: UUID,
     val profilePublicKey: PlayerPublicKey
 ) {
-
     companion object {
         fun validate(
             data: ChatSession,
@@ -17,7 +16,8 @@ data class RemoteChatSession(
             serviceSignatureValidator: ServiceSignatureValidator
         ) = RemoteChatSession(
             sessionId = data.sessionId(),
-            profilePublicKey = data.publicKey().createValidated(serviceSignatureValidator, profileId)
+            profilePublicKey = data.publicKey()
+                .createValidated(serviceSignatureValidator, profileId)
         )
     }
 

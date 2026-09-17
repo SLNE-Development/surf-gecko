@@ -13,8 +13,7 @@ class GeckoEventService @Inject constructor(
     private val globalEventHandler: GlobalEventHandler,
     private val registrars: Set<@JvmSuppressWildcards EventRegistrar>,
 ) : GeckoService {
-
-    private val node: EventNode<Event> = EventNode.all(NODE_NAME)
+    private val node: EventNode<Event> = EventNode.all("surf-gecko-event-service")
 
     override suspend fun start() {
         for (registrar in registrars) {
@@ -26,9 +25,5 @@ class GeckoEventService @Inject constructor(
 
     override suspend fun stop() {
         globalEventHandler.removeChild(node)
-    }
-
-    private companion object {
-        const val NODE_NAME = "surf-gecko:core"
     }
 }

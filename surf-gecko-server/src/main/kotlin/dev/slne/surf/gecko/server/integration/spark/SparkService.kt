@@ -10,17 +10,15 @@ import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
 import kotlin.io.path.Path
 
-/** Runs spark, gated on the same LuckPerms permissions the rest of the server uses. */
 @Singleton
 class SparkService @Inject constructor(
     private val luckPerms: LuckPermsService,
     private val config: Config.SparkConfig,
 ) : GeckoService {
-
     private var plugin: MinestomSparkPlugin? = null
 
     override suspend fun start() {
-        val spark = MinestomSparkPlugin(DATA_DIRECTORY) { sender, permission ->
+        val spark = MinestomSparkPlugin(Path("plugins/spark")) { sender, permission ->
             sender !is Player || luckPerms.hasPermission(sender.uuid, permission).asBoolean()
         }
 
@@ -29,17 +27,12 @@ class SparkService @Inject constructor(
 
         if (config.profileOnStartup) {
             val commandManager = MinecraftServer.getCommandManager()
-            commandManager.execute(commandManager.consoleSender, PROFILER_START_COMMAND)
+            commandManager.execute(commandManager.consoleSender, "spark profiler start --thread *")
         }
     }
 
     override suspend fun stop() {
         plugin?.disable()
         plugin = null
-    }
-
-    private companion object {
-        val DATA_DIRECTORY = Path("plugins/spark")
-        const val PROFILER_START_COMMAND = "spark profiler start --thread *"
     }
 }
