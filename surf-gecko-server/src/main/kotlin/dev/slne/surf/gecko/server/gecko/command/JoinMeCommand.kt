@@ -75,7 +75,11 @@ fun joinMeCommand() = commandTree("joinme") {
                     SurfServer.current(),
                     player.displayName ?: Component.text(player.username),
                     game.internalId,
-                    head
+                    buildText {
+                        appendNewline()
+                        append(head)
+                        appendNewline()
+                    }
                 )
             )
 
