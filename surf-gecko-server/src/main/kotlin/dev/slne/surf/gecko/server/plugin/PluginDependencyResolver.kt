@@ -1,15 +1,8 @@
 package dev.slne.surf.gecko.server.plugin
 
 import dev.slne.minestom.lobby.api.plugin.MinestomPlugin
-import java.util.PriorityQueue
+import java.util.*
 
-/**
- * Orders the discovered extensions so every `dependsOn` is started before its dependent.
- *
- * A plain topological sort over `MinestomPluginMeta`; ties are broken by id so the same set of
- * extensions always starts in the same order. A missing dependency or a cycle fails the boot
- * rather than starting an extension whose prerequisite never ran.
- */
 object PluginDependencyResolver {
 
     fun resolve(plugins: Collection<MinestomPlugin>): List<MinestomPlugin> {

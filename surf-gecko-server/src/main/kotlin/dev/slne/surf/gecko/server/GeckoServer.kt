@@ -56,7 +56,6 @@ class GeckoServer @Inject constructor(
             startConsole()
 
             RedisService.connect()
-
             GeckoInstance.enable()
 
             val startupDuration =

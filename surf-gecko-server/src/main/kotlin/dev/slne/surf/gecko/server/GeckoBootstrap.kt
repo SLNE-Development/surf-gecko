@@ -23,9 +23,6 @@ import kotlin.io.path.createDirectories
 val bootstrapLogger: ComponentLogger = ComponentLogger.logger("GeckoBootstrap")
 
 object GeckoBootstrap {
-    private val CONFIG_PATH = Path("config.yml")
-    private val PLUGINS_PATH = Path("plugins")
-
     lateinit var injector: Injector
 
     fun boot() {
@@ -33,15 +30,14 @@ object GeckoBootstrap {
 
         bootstrapLogger.info("Booting server...")
 
-        val config = ConfigLoader(CONFIG_PATH).load()
+        val config = ConfigLoader(Path("config.yml")).load()
         val minecraftServer = initMinecraftServer(config)
 
         config.applyTickDispatcherThreads()
         applyKeepAliveDelay()
         EntityTickFilter.configure(EntityTypeKeys.ARMOR_STAND.key())
 
-        val pluginCatalog = discoverPlugins()
-        val injector = createInjector(config, minecraftServer, pluginCatalog)
+        val injector = createInjector(config, minecraftServer, discoverPlugins())
         GeckoBootstrap.injector = injector
 
         runBlocking {
@@ -95,7 +91,7 @@ object GeckoBootstrap {
     }
 
     private fun createDataDirectory(plugin: MinestomPlugin): Path =
-        PLUGINS_PATH.resolve(plugin.meta.id).createDirectories()
+        Path("plugins").resolve(plugin.meta.id).createDirectories()
 
     private const val DISPATCHER_THREADS_PROPERTY = "minestom.dispatcher-threads"
     private const val KEEP_ALIVE_DELAY_PROPERTY = "minestom.keep-alive-delay"

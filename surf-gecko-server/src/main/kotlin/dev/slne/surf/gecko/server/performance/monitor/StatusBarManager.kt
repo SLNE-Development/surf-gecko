@@ -12,11 +12,10 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
-import java.util.Locale
+import java.util.*
 import kotlin.time.Duration.Companion.seconds
 
 object StatusBarManager {
-    private val UPDATE_INTERVAL = 1.seconds
     private const val BYTES_PER_MEGABYTE = 1024.0 * 1024.0
 
     private val statusBossBar = bossBar {
@@ -28,7 +27,7 @@ object StatusBarManager {
     private var job: Job? = null
 
     fun init() {
-        job = geckoAsyncScope.runAtFixedRate(UPDATE_INTERVAL) {
+        job = geckoAsyncScope.runAtFixedRate(1.seconds) {
             SystemStatistics.sample()
             update()
         }

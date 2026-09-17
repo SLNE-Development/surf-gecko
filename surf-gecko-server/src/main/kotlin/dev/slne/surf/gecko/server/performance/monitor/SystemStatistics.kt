@@ -1,11 +1,12 @@
 package dev.slne.surf.gecko.server.performance.monitor
 
+import com.sun.management.OperatingSystemMXBean
 import java.lang.management.ManagementFactory
 
 object SystemStatistics {
     private val runtime: Runtime = Runtime.getRuntime()
     private val operatingSystem = ManagementFactory.getOperatingSystemMXBean()
-            as? com.sun.management.OperatingSystemMXBean
+            as? OperatingSystemMXBean
 
     private var lastCpuTime = -1L
     private var lastSampleAt = 0L

@@ -9,13 +9,6 @@ import dev.slne.minestom.lobby.api.plugin.MinestomPlugin
 import dev.slne.minestom.lobby.api.plugin.annotation.DataDirectory
 import java.nio.file.Path
 
-/**
- * Binds one extension into the server injector.
- *
- * The extension's own module is installed privately, so two extensions binding the same type
- * cannot collide; only the entrypoint and the registrars it declared are exposed. `@DataDirectory`
- * is private per extension too - each one sees its own `plugins/<id>` directory.
- */
 class PluginModule(
     private val plugin: MinestomPlugin,
     private val dataDirectory: Path,

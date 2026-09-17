@@ -6,24 +6,12 @@ import net.minestom.server.entity.Entity
 import java.util.function.Consumer
 
 object EntityViewerLookup {
-
-    /**
-     * Relative cost of one tracked-entity check (set-iteration step, id-to-entry map lookup,
-     * position read, two coordinate comparisons) against one chunk-bucket lookup (chunk-index
-     * computation, hash-map probe). ViewerLookupBenchmark measured the crossover near 1400
-     * candidates against 4225 bucket probes, so 3 keeps the direct scan to cases where it wins.
-     */
     private const val DIRECT_SCAN_COST_FACTOR = 3L
 
-    /** Resolves the tracker-recorded position of an entity, or null if it is not tracked. */
     fun interface EntityPositionResolver {
         fun resolve(entity: Entity): Point?
     }
 
-    /**
-     * Decides whether scanning all tracked candidates beats probing every chunk bucket in a
-     * square range of [chunkRange].
-     */
     @JvmStatic
     fun useDirectScan(candidateCount: Int, chunkRange: Int): Boolean {
         if (chunkRange <= 0) return false
@@ -31,11 +19,6 @@ object EntityViewerLookup {
         return candidateCount * DIRECT_SCAN_COST_FACTOR < side * side
     }
 
-    /**
-     * Visits every candidate whose resolved position lies within the square chunk range around
-     * `(centerChunkX, centerChunkZ)`, using the same inclusive bounds as
-     * [ChunkRange.chunksInRange].
-     */
     @Suppress("ConvertTwoComparisonsToRangeCheck")
     @JvmStatic
     fun <T : Entity> directScan(
@@ -64,10 +47,6 @@ object EntityViewerLookup {
         }
     }
 
-    /**
-     * Visits the same chunk set as [ChunkRange.chunksInRange] in plain row-major order, without
-     * the spiral's sqrt/div/mod arithmetic. Only for order-independent lookups.
-     */
     @JvmStatic
     fun chunksInRangeRectangular(
         chunkX: Int,

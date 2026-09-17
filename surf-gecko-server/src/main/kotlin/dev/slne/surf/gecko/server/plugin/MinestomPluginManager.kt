@@ -7,13 +7,6 @@ import dev.slne.minestom.lobby.api.plugin.MinestomPlugin
 import dev.slne.minestom.lobby.api.plugin.MinestomPluginEntrypoint
 import net.minestom.server.MinecraftServer.LOGGER
 
-/**
- * Runs the extensions' `start` / `afterStart` / `stop` lifecycle.
- *
- * Every extension is started in [PluginCatalog] order; `afterStart` only runs once all of them
- * are up, so an extension may reach for another's service there. A failure during startup rolls
- * the already-started extensions back before it is rethrown, and shutdown runs in reverse order.
- */
 @Singleton
 class MinestomPluginManager @Inject constructor(
     private val injector: Injector,
