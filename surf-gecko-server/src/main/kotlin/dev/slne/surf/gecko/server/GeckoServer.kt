@@ -62,12 +62,12 @@ class GeckoServer @Inject constructor(
                 (System.nanoTime() - startupStartedAt).nanoseconds.inWholeMilliseconds.milliseconds
 
             LOGGER.info(
-                "Surf gecko is ready in {}.",
+                "surf-gecko is ready in {}.",
                 startupDuration,
             )
         } catch (startupFailure: Throwable) {
             LOGGER.error(
-                "Failed to start Surf gecko server.",
+                "Failed to start surf-gecko server.",
                 startupFailure,
             )
 
