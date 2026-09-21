@@ -2,10 +2,8 @@ package dev.slne.surf.gecko.server.gecko
 
 import dev.slne.surf.api.core.font.toSmallCaps
 import dev.slne.surf.api.core.messages.Colors
-import dev.slne.surf.api.core.messages.adventure.bossBar
-import dev.slne.surf.api.core.messages.adventure.buildText
-import dev.slne.surf.api.core.messages.adventure.sendText
-import dev.slne.surf.api.core.messages.adventure.showTitle
+import dev.slne.surf.api.core.messages.CommonComponents
+import dev.slne.surf.api.core.messages.adventure.*
 import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.common.game.GeckoGameInfo
@@ -36,11 +34,16 @@ import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
+import net.kyori.adventure.text.`object`.ObjectContents
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
 import net.minestom.server.instance.Instance
+import java.time.Duration
+import java.time.OffsetDateTime
 import java.util.*
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toKotlinDuration
 
 class GeckoGame(
     val internalId: ULong,
@@ -85,6 +88,10 @@ class GeckoGame(
         name {
             append(countdownBossBar3)
         }
+        color = BossBar.Color.PINK
+    }
+
+    private val gameInfoBossBar = bossBar {
         color = BossBar.Color.PINK
     }
 
@@ -134,6 +141,7 @@ class GeckoGame(
         waterDamager.stop()
         antiAfkWatcher.stop()
         periodicBeamManager.stop()
+        stopGameInfoBar()
         endingTimerSeconds = 10
 
         SocialGroupManager.showAll(this)
@@ -442,7 +450,6 @@ class GeckoGame(
             gamePlayers.add(GeckoGamePlayer(it.playerUuid, role))
         }
         lobbyPlayers.clear()
-
         statsTracker.beginRound(gamePlayers)
 
         coroutineScope {
@@ -472,6 +479,49 @@ class GeckoGame(
         if (settings.waterDamage) {
             waterDamager.start()
         }
+
+        startGameInfoBar()
+    }
+
+    private lateinit var gameInfoBarJob: Job
+    private fun startGameInfoBar() {
+        players.forEach {
+            gameInfoBossBar.addViewer(it)
+        }
+
+        gameInfoBarJob = geckoAsyncScope.runAtFixedRate(500.milliseconds) {
+            gameInfoBossBar.name(buildText {
+                geckoHighlight(settings.map.mapDisplayName)
+                repeat(10) {
+                    appendSpace()
+                }
+                append(
+                    Component.`object`(
+                        ObjectContents.sprite(
+                            key("minecraft", "items"),
+                            key("minecraft", "item/beacon")
+                        )
+                    )
+                )
+                append(
+                    CommonComponents.formatTime(
+                        Duration.between(
+                            periodicBeamManager.nextBeam,
+                            OffsetDateTime.now()
+                        ).toKotlinDuration(),
+                        showSeconds = true,
+                        shortForms = false,
+                        timeColor = Colors.WHITE
+                    )
+                )
+            })
+        }
+    }
+
+    fun stopGameInfoBar() {
+        if (this::gameInfoBarJob.isInitialized) {
+            gameInfoBarJob.cancel()
+        }
     }
 
     private var waitingBossBarIndex = 0
@@ -491,7 +541,7 @@ class GeckoGame(
         }
 
         bossBar.name(text)
-        players.filterNotNull().forEach { player ->
+        players.forEach { player ->
             player.showBossBar(bossBar)
         }
     }

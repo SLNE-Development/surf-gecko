@@ -9,6 +9,5 @@ object GeckoDisplayManager {
         color = BossBar.Color.PINK
     }
 
-
     fun showBossBar(player: Player) = player.showBossBar(placeholderBossBar)
 }

@@ -142,6 +142,7 @@ object GeckoGameManager {
         game.stopWaterDamager()
         game.stopAntiAfkWatcher()
         game.stopPeriodicBeamManager()
+        game.stopGameInfoBar()
         game.gamePlayers.forEach {
             it.clearRespawnState()
             it.resetSpeed()
