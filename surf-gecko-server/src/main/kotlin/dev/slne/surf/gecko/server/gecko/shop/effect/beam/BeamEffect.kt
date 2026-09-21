@@ -6,7 +6,7 @@ import net.minestom.server.coordinate.Point
 import net.minestom.server.entity.Player
 
 class BeamEffect(
-    private val viewers: List<Player>,
+    private val viewers: Set<Player>,
     origins: Collection<Point>,
     beam: ParticleBeam
 ) : GeckoEffect(8.ticks) {

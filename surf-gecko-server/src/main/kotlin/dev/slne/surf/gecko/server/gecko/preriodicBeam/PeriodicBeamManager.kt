@@ -43,7 +43,11 @@ class PeriodicBeamManager(val game: GeckoGame) {
 
                 val beam = ParticleBeam(Colors.ERROR, height = 50.0)
                 val beamEffect =
-                    BeamEffect(game.seekers.asPlayers, beamedPlayers.map { it.position }, beam)
+                    BeamEffect(
+                        (game.seekers.asPlayers + beamedPlayers).toSet(),
+                        beamedPlayers.map { it.position },
+                        beam
+                    )
 
                 beamEffect.playFor(duration.toKotlinDuration())
             }

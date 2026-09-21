@@ -47,7 +47,7 @@ object SeekerLaserShopItem : ShopItem {
             return true
         }
 
-        val seekers = game.activeSeekers()
+        val seekers = game.activeSeekers().toSet()
 
         seekers.forEach { it.playSound(GeckoSounds.SHOP_LASER, Sound.Emitter.self()) }
 
