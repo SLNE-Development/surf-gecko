@@ -493,6 +493,9 @@ class GeckoGame(
         gameInfoBarJob = geckoAsyncScope.runAtFixedRate(500.milliseconds) {
             gameInfoBossBar.name(buildText {
                 geckoHighlight(settings.map.mapDisplayName)
+
+                val nextBeam = periodicBeamManager.nextBeam ?: return@buildText
+
                 appendSpace()
                 append(
                     Component.`object`(
@@ -502,12 +505,12 @@ class GeckoGame(
                         )
                     )
                 )
+                appendSpace()
                 append(
                     CommonComponents.formatTime(
-                        Duration.between(
-                            periodicBeamManager.nextBeam,
-                            OffsetDateTime.now()
-                        ).toKotlinDuration(),
+                        Duration.between(OffsetDateTime.now(), nextBeam)
+                            .coerceAtLeast(Duration.ZERO)
+                            .toKotlinDuration(),
                         showSeconds = true,
                         shortForms = false,
                         timeColor = Colors.WHITE
@@ -521,6 +524,8 @@ class GeckoGame(
         if (this::gameInfoBarJob.isInitialized) {
             gameInfoBarJob.cancel()
         }
+
+        forEachPlayer { gameInfoBossBar.removeViewer(it) }
     }
 
     private var waitingBossBarIndex = 0

@@ -1,5 +1,6 @@
 package dev.slne.surf.gecko.server.gecko.shop.items.seeker
 
+import dev.slne.surf.api.core.messages.Colors
 import dev.slne.surf.gecko.server.coroutine.geckoScope
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
@@ -9,7 +10,6 @@ import dev.slne.surf.gecko.server.gecko.shop.activeSeekers
 import dev.slne.surf.gecko.server.gecko.shop.effect.beam.BeamEffect
 import dev.slne.surf.gecko.server.gecko.shop.effect.beam.ParticleBeam
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
-import dev.slne.surf.gecko.server.gecko.util.GECKO_HIGHLIGHT
 import dev.slne.surf.gecko.server.util.withTag
 import kotlinx.coroutines.launch
 import net.kyori.adventure.sound.Sound
@@ -28,7 +28,7 @@ object SeekerLaserShopItem : ShopItem {
     override val roles = listOf(GeckoGameRole.SEEKER)
 
     private val itemBase = ItemStack.of(Material.BEACON)
-    private val beam = ParticleBeam(GECKO_HIGHLIGHT, height = 24.0)
+    private val beam = ParticleBeam(Colors.ERROR, height = 50.0)
 
     override val displayItem: ItemStack = itemBase
     override val inventoryItem: ItemStack = itemBase.builder().withTag(ShopItem.ID_TAG, id).build()
