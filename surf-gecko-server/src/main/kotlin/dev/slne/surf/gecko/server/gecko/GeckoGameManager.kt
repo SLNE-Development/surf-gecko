@@ -109,7 +109,7 @@ object GeckoGameManager {
 
         game.lobbyPlayers.add(lobbyPlayer)
 
-        if(player.instance != game.instance) {
+        if (player.instance != game.instance) {
             player.setInstance(game.instance, game.settings.map.mapLocations.lobbySpawn)
         }
 
@@ -141,20 +141,21 @@ object GeckoGameManager {
         game.stopOrbSpawner()
         game.stopWaterDamager()
         game.stopAntiAfkWatcher()
+        game.stopPeriodicBeamManager()
         game.gamePlayers.forEach {
             it.clearRespawnState()
             it.resetSpeed()
         }
 
         GeckoScoreboardManager.removeSidebar(game)
-        game.players.filterNotNull().forEach { game.hideBossBar(it) }
+        game.players.forEach { game.hideBossBar(it) }
 
         synchronized(lock) { games.remove(game) }
 
         if (reason.canMovePlayers()) {
             val players = game.players
 
-            players.filterNotNull().forEach {
+            players.forEach {
                 GeckoLobby.join(it)
             }
         }

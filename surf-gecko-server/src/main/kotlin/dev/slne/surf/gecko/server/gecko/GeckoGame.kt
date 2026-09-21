@@ -19,6 +19,7 @@ import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoPlayerRoleSelector
 import dev.slne.surf.gecko.server.gecko.player.lobby.GeckoLobbyPlayer
+import dev.slne.surf.gecko.server.gecko.preriodicBeam.PeriodicBeamManager
 import dev.slne.surf.gecko.server.gecko.punishment.GeckoGamePunisher
 import dev.slne.surf.gecko.server.gecko.settings.GeckoGameSettings
 import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
@@ -61,9 +62,14 @@ class GeckoGame(
     private val orbSpawner = GeckoOrbSpawner(this)
     private val waterDamager = GeckoWaterDamager(this)
     private val antiAfkWatcher = GeckoAntiAfkWatcher(this)
+    private val periodicBeamManager = PeriodicBeamManager(this)
 
     val lobbyPlayers = mutableSetOf<GeckoLobbyPlayer>()
     val gamePlayers = mutableSetOf<GeckoGamePlayer>()
+
+    val seekers get() = gamePlayers.filter { it.role == GeckoGameRole.SEEKER }
+    val hiders get() = gamePlayers.filter { it.role == GeckoGameRole.HIDER }
+    val spectators get() = gamePlayers.filter { it.role == GeckoGameRole.SPECTATOR }
 
     val statsTracker = GeckoGameStatsTracker()
 
@@ -101,7 +107,7 @@ class GeckoGame(
     val players
         get() = (lobbyPlayers.map { it.playerUuid } + gamePlayers.map { it.playerUuid })
             .distinct()
-            .map { MinecraftServer.getConnectionManager().getOnlinePlayerByUuid(it) }
+            .mapNotNull { MinecraftServer.getConnectionManager().getOnlinePlayerByUuid(it) }
 
     fun findGamePlayer(playerUuid: UUID) = gamePlayers.firstOrNull { it.playerUuid == playerUuid }
 
@@ -111,6 +117,7 @@ class GeckoGame(
     fun stopOrbSpawner() = orbSpawner.stop()
     fun stopWaterDamager() = waterDamager.stop()
     fun stopAntiAfkWatcher() = antiAfkWatcher.stop()
+    fun stopPeriodicBeamManager() = periodicBeamManager.stop()
 
     fun isTeamDamage(attacker: GeckoGamePlayer, victim: GeckoGamePlayer) =
         attacker.role == victim.role
@@ -126,6 +133,7 @@ class GeckoGame(
         orbSpawner.stop()
         waterDamager.stop()
         antiAfkWatcher.stop()
+        periodicBeamManager.stop()
         endingTimerSeconds = 10
 
         SocialGroupManager.showAll(this)
@@ -459,6 +467,7 @@ class GeckoGame(
         heartbeat.start()
         orbSpawner.start()
         antiAfkWatcher.start()
+        periodicBeamManager.start()
 
         if (settings.waterDamage) {
             waterDamager.start()
