@@ -351,6 +351,7 @@ class GeckoGame(
             gamePlayers.removeAll { it.playerUuid == gamePlayer.playerUuid }
             gamePlayer.clearRespawnState()
             gamePlayer.resetSpeed()
+            gameInfoBossBar.removeViewer(player)
 
             if (gamePlayer.role != GeckoGameRole.SPECTATOR) {
                 GeckoGamePunisher.punish(player, "Verlassen des Spiels während der Runde")
@@ -492,14 +493,12 @@ class GeckoGame(
         gameInfoBarJob = geckoAsyncScope.runAtFixedRate(500.milliseconds) {
             gameInfoBossBar.name(buildText {
                 geckoHighlight(settings.map.mapDisplayName)
-                repeat(10) {
-                    appendSpace()
-                }
+                appendSpace()
                 append(
                     Component.`object`(
                         ObjectContents.sprite(
-                            key("minecraft", "items"),
-                            key("minecraft", "item/beacon")
+                            key("minecraft", "gui"),
+                            key("minecraft", "mob_effect/glowing")
                         )
                     )
                 )
