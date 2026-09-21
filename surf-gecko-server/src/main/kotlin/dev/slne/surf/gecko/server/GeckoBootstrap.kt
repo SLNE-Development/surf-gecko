@@ -31,10 +31,13 @@ object GeckoBootstrap {
         bootstrapLogger.info("Booting server...")
 
         val config = ConfigLoader(Path("config.yml")).load()
-        val minecraftServer = initMinecraftServer(config)
 
         config.applyTickDispatcherThreads()
+        config.applyChunkViewDistance()
         applyKeepAliveDelay()
+
+        val minecraftServer = initMinecraftServer(config)
+
         EntityTickFilter.configure(EntityTypeKeys.ARMOR_STAND.key())
 
         val injector = createInjector(config, minecraftServer, discoverPlugins())
@@ -129,5 +132,19 @@ object GeckoBootstrap {
 
         System.setProperty(DISPATCHER_THREADS_PROPERTY, threads.toString())
         bootstrapLogger.info("Using {} tick dispatcher thread(s).", threads)
+    }
+
+    private fun Config.applyChunkViewDistance() {
+        val existing = System.getProperty("minestom.chunk-view-distance")
+        if (existing != null) {
+            bootstrapLogger.info(
+                "Chunk view distance pinned via -Dminestom.chunk-view-distance={}; keeping it.",
+                existing
+            )
+            return
+        }
+
+        System.setProperty("minestom.chunk-view-distance", performance.viewDistance.toString())
+        bootstrapLogger.info("Using a chunk view distance of {} chunks.", performance.viewDistance)
     }
 }

@@ -103,6 +103,17 @@ data class Config(
         )
         val tickThreads: Int = 1,
 
+        @Setting("view-distance")
+        @Comment(
+            """
+            Chunk view distance in chunks. This is what the server tells the client on
+            join, so raising it here (instead of only on the instance) is what actually
+            makes far chunks render. Players still see at most their own render distance.
+            An explicit -Dminestom.chunk-view-distance=<n> JVM flag overrides this.
+            """
+        )
+        val viewDistance: Int = 8,
+
         @Setting("spark")
         val spark: SparkConfig = SparkConfig(),
     )
