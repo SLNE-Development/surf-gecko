@@ -2,6 +2,7 @@ package dev.slne.surf.gecko.server.gecko.player.game
 
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.core.messages.adventure.showTitle
+import dev.slne.surf.api.core.messages.adventure.text
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.map.GeckoMap
 import dev.slne.surf.gecko.server.gecko.map.mechanic.impl.VentMechanic
@@ -174,6 +175,7 @@ data class GeckoGamePlayer(
                     DataComponents.TOOLTIP_DISPLAY,
                     TooltipDisplay(false, setOf(DataComponents.ENCHANTMENTS))
                 )
+                .set(DataComponents.ITEM_NAME, text("Sucher Helm", SEEKER_COLOR))
                 .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
                 .build()
 
@@ -184,6 +186,7 @@ data class GeckoGamePlayer(
                     DataComponents.TOOLTIP_DISPLAY,
                     TooltipDisplay(false, setOf(DataComponents.ENCHANTMENTS))
                 )
+                .set(DataComponents.ITEM_NAME, text("Sucher Brustschutz", SEEKER_COLOR))
                 .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
                 .build()
 
@@ -194,6 +197,7 @@ data class GeckoGamePlayer(
                     DataComponents.TOOLTIP_DISPLAY,
                     TooltipDisplay(false, setOf(DataComponents.ENCHANTMENTS))
                 )
+                .set(DataComponents.ITEM_NAME, text("Sucher Hose", SEEKER_COLOR))
                 .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
                 .build()
 
@@ -204,6 +208,7 @@ data class GeckoGamePlayer(
                     DataComponents.TOOLTIP_DISPLAY,
                     TooltipDisplay(false, setOf(DataComponents.ENCHANTMENTS))
                 )
+                .set(DataComponents.ITEM_NAME, text("Sucher Stiefel", SEEKER_COLOR))
                 .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
                 .build()
 
@@ -212,6 +217,7 @@ data class GeckoGamePlayer(
                 DataComponents.TOOLTIP_DISPLAY,
                 TooltipDisplay(false, setOf(DataComponents.ENCHANTMENTS))
             )
+            .set(DataComponents.ITEM_NAME, text("Sucher Schwert", SEEKER_COLOR))
             .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
             .build()
         private val SEEKER_BOW = ItemStack.of(Material.BOW).builder()
@@ -220,6 +226,7 @@ data class GeckoGamePlayer(
                 DataComponents.TOOLTIP_DISPLAY,
                 TooltipDisplay(false, setOf(DataComponents.ENCHANTMENTS))
             )
+            .set(DataComponents.ITEM_NAME, text("Sucher Bogen", SEEKER_COLOR))
             .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
             .build()
     }
