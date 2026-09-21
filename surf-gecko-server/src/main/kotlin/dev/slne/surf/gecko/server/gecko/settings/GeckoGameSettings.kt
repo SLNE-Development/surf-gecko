@@ -27,7 +27,7 @@ data class GeckoGameSettings(
     val ventSpeedFactor: Double = 1.2,
 
     val beamIntervall: Duration? = 2.minutes.toJavaDuration(),
-    val beamDuration: Duration? = 3.seconds.toJavaDuration(),
+    val beamDuration: Duration? = 7.5.seconds.toJavaDuration(),
     val beamedPlayerPercentage: Double = 0.25,
 
     val forcedSeekers: Set<UUID> = mutableSetOf(),

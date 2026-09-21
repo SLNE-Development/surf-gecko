@@ -22,7 +22,7 @@ object GeckoMapManager {
             )
 
         map.defaultClock()?.pause()
-        map.viewDistance(12)
+        map.viewDistance(16)
 
         map
     }
