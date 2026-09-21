@@ -15,7 +15,7 @@ import kotlin.time.toKotlinDuration
 
 class PeriodicBeamManager(val game: GeckoGame) {
     private lateinit var job: Job
-    private var nextBeam = OffsetDateTime.now().plusYears(Long.MAX_VALUE)
+    var nextBeam: OffsetDateTime = OffsetDateTime.now().plusYears(Long.MAX_VALUE)
 
     private val settings = game.settings
     private val beamChance = settings.beamedPlayerPercentage
