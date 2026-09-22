@@ -157,7 +157,7 @@ object LeaderboardManager {
             }
 
             appendNewline()
-            geckoUseless("▬▬▬▬▬▬▬▬▬")
+            geckoUseless("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬")
             appendNewline()
             appendRow(place?.rank?.toString() ?: "-", "Du", place?.value ?: 0L, type.unit)
         }
