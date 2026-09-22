@@ -3,6 +3,6 @@ package dev.slne.surf.gecko.server.gecko.lobby.leaderbord
 import net.minestom.server.coordinate.Pos
 
 enum class LeaderboardType(val title: String, val position: Pos, val unit: String) {
-    WINS("Siege", Pos(-14.5, 146.0, 3.5, 160f, 0f), "Siege"),
-    GAMES_PLAYED("Gespielte Spiele", Pos(-19.5, 146.0, 4.5, 180f, 0f), "Spiele")
+    WINS("Siege", Pos(-14.5, 145.5, 3.5, 160f, 0f), "Siege"),
+    GAMES_PLAYED("Gespielte Spiele", Pos(-19.5, 145.5, 4.5, 180f, 0f), "Spiele")
 }

@@ -31,7 +31,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 object LeaderboardManager {
-    private const val TOP_SIZE = 10
+    private const val TOP_SIZE = 7
     private val minRefreshAge = 3.seconds
 
     private val snapshots = ConcurrentHashMap<LeaderboardType, LeaderboardSnapshot>()
