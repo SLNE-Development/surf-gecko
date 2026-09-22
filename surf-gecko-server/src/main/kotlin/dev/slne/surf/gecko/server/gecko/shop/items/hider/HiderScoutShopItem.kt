@@ -7,6 +7,7 @@ import dev.slne.surf.gecko.server.gecko.shop.ShopItem
 import dev.slne.surf.gecko.server.gecko.shop.activeSeekers
 import dev.slne.surf.gecko.server.gecko.shop.effect.glow.GlowEffect
 import dev.slne.surf.gecko.server.gecko.shop.effect.playOnce
+import dev.slne.surf.gecko.server.gecko.shop.type.ShopItemType
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.util.appendPrefix
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
@@ -26,6 +27,7 @@ object HiderScoutShopItem : ShopItem {
     override val roles = listOf(GeckoGameRole.HIDER)
     override val item: ItemStack = ItemStack.of(Material.PAPER).builder()
         .set(DataComponents.ITEM_MODEL, "gecko:shop/scout").build()
+    override val types = listOf(ShopItemType.HIDER_TROLL)
 
     override fun onUse(player: Player): Boolean {
         val game = GeckoGameManager.findGame(player.uuid) ?: return false

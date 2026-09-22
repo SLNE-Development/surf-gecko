@@ -6,6 +6,7 @@ import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
 import dev.slne.surf.gecko.server.gecko.shop.effect.heart.HeartbeatEffect
 import dev.slne.surf.gecko.server.gecko.shop.effect.playOnce
+import dev.slne.surf.gecko.server.gecko.shop.type.ShopItemType
 import dev.slne.surf.gecko.server.gecko.util.appendPrefix
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import net.minestom.server.entity.Player
@@ -20,6 +21,7 @@ object SeekerHeartbeatKnifeShopItem : ShopItem {
     override val description = "Höre den Herzschlag der Verstecker in deiner Nähe"
     override val maps = null
     override val roles = listOf(GeckoGameRole.SEEKER)
+    override val types = listOf(ShopItemType.SEEKER_SEARCH)
 
     override val item: ItemStack = ItemStack.of(Material.RED_DYE)
 

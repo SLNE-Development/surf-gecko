@@ -4,6 +4,7 @@ import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
+import dev.slne.surf.gecko.server.gecko.shop.type.ShopItemType
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.util.appendPrefix
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
@@ -22,6 +23,7 @@ object HiderShieldShopItem : ShopItem {
     override val description = "Schützt dich 10 Sekunden lang vor Schaden"
     override val maps = null
     override val roles = listOf(GeckoGameRole.HIDER)
+    override val types = listOf(ShopItemType.HIDER_DEFENSE)
 
     override val item: ItemStack = ItemStack.of(Material.PAPER).builder()
         .set(DataComponents.ITEM_MODEL, "gecko:shop/shield").build()

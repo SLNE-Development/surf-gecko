@@ -17,6 +17,6 @@ class ParticleBeam(
     private val offsets = (0..(height / step).toInt()).map { it * step }
 
     fun packetsAt(origin: Point): List<SendablePacket> = offsets.map {
-        ParticlePacket(particle, true, true, origin.add(0.0, it, 0.0), Vec.ZERO, 0f, 1)
+        ParticlePacket(particle, true, true, origin.add(0.0, it, 0.0), Vec.ZERO, 0f, 3)
     }
 }

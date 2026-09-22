@@ -9,6 +9,7 @@ import dev.slne.surf.gecko.server.gecko.shop.activeHiders
 import dev.slne.surf.gecko.server.gecko.shop.activeSeekers
 import dev.slne.surf.gecko.server.gecko.shop.effect.beam.BeamEffect
 import dev.slne.surf.gecko.server.gecko.shop.effect.beam.ParticleBeam
+import dev.slne.surf.gecko.server.gecko.shop.type.ShopItemType
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import kotlinx.coroutines.launch
 import net.kyori.adventure.sound.Sound
@@ -25,6 +26,7 @@ object SeekerLaserShopItem : ShopItem {
         "Markiert allen Suchern 7,5 Sekunden lang den Standort jedes Versteckers"
     override val maps = null
     override val roles = listOf(GeckoGameRole.SEEKER)
+    override val types = listOf(ShopItemType.SEEKER_SEARCH)
     private val beam = ParticleBeam(Colors.ERROR, height = 50.0)
 
     override val item: ItemStack = ItemStack.of(Material.BEACON)

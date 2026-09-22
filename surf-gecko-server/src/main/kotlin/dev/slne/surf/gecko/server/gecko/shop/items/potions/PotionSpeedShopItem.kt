@@ -4,6 +4,7 @@ import dev.slne.surf.api.core.messages.adventure.key
 import dev.slne.surf.api.core.messages.adventure.playSound
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
+import dev.slne.surf.gecko.server.gecko.shop.type.ShopItemType
 import net.minestom.server.component.DataComponents
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
@@ -20,6 +21,7 @@ object PotionSpeedShopItem : ShopItem {
     override val price = 5
     override val displayName = "Geschwindigkeitstrank"
     override val description = "Werde für 5 Sekunden schneller"
+    override val types = listOf(ShopItemType.HIDER_POTION, ShopItemType.SEEKER_POTION)
     override val item: ItemStack = ItemStack.builder(Material.POTION)
         .set(
             DataComponents.POTION_CONTENTS, PotionContents(

@@ -6,6 +6,7 @@ import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
 import dev.slne.surf.gecko.server.gecko.shop.effect.grenade.GrenadeImpact
 import dev.slne.surf.gecko.server.gecko.shop.effect.grenade.ShopGrenade
+import dev.slne.surf.gecko.server.gecko.shop.type.ShopItemType
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -28,6 +29,7 @@ object SeekerWebGrenadeShopItem : ShopItem {
     override val description = "Fange die Sucher mit einem Netz"
     override val maps = null
     override val roles = listOf(GeckoGameRole.SEEKER)
+    override val types = listOf(ShopItemType.SEEKER_ATTACK)
 
     override val item: ItemStack = ItemStack.of(Material.COBWEB)
 

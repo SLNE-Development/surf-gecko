@@ -8,6 +8,7 @@ import dev.slne.surf.gecko.server.gecko.shop.activeHiders
 import dev.slne.surf.gecko.server.gecko.shop.effect.glow.GlowEffect
 import dev.slne.surf.gecko.server.gecko.shop.effect.playOnce
 import dev.slne.surf.gecko.server.gecko.shop.nearestTo
+import dev.slne.surf.gecko.server.gecko.shop.type.ShopItemType
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.util.appendPrefix
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
@@ -25,6 +26,7 @@ object SeekerSpyDeviceShopItem : ShopItem {
     override val description = "Markiert den nähesten Verstecker 30 Sekunden lang nur für dich"
     override val maps = null
     override val roles = listOf(GeckoGameRole.SEEKER)
+    override val types = listOf(ShopItemType.SEEKER_SEARCH)
 
     override val item: ItemStack = ItemStack.of(Material.PAPER).builder()
         .set(DataComponents.ITEM_MODEL, "gecko:shop/spy_device").build()

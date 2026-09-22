@@ -9,6 +9,7 @@ import dev.slne.surf.gecko.server.gecko.shop.ShopItem
 import dev.slne.surf.gecko.server.gecko.shop.activeSeekers
 import dev.slne.surf.gecko.server.gecko.shop.effect.grenade.GrenadeImpact
 import dev.slne.surf.gecko.server.gecko.shop.effect.grenade.ShopGrenade
+import dev.slne.surf.gecko.server.gecko.shop.type.ShopItemType
 import dev.slne.surf.gecko.server.gecko.shop.within
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.util.appendPrefix
@@ -37,6 +38,7 @@ object HiderSmokeBombShopItem : ShopItem {
     override val description = "Blende die Sucher"
     override val maps = null
     override val roles = listOf(GeckoGameRole.HIDER)
+    override val types = listOf(ShopItemType.HIDER_DEFENSE)
 
     override val item: ItemStack = ItemStack.of(Material.FIREWORK_STAR)
 

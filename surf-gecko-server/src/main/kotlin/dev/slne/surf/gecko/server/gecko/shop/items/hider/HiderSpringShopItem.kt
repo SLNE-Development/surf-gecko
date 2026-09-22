@@ -3,6 +3,7 @@ package dev.slne.surf.gecko.server.gecko.shop.items.hider
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
+import dev.slne.surf.gecko.server.gecko.shop.type.ShopItemType
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.component.DataComponents
@@ -19,6 +20,7 @@ object HiderSpringShopItem : ShopItem {
     override val description = "Katapultiert dich nach vorne und lässt dich sanft landen"
     override val maps = null
     override val roles = listOf(GeckoGameRole.HIDER)
+    override val types = listOf(ShopItemType.HIDER_DEFENSE)
 
     override val item: ItemStack = ItemStack.of(Material.PAPER).builder()
         .set(DataComponents.ITEM_MODEL, "gecko:shop/spring").build()

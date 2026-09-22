@@ -6,6 +6,7 @@ import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
 import dev.slne.surf.gecko.server.gecko.shop.activeHiders
 import dev.slne.surf.gecko.server.gecko.shop.activeSeekers
+import dev.slne.surf.gecko.server.gecko.shop.type.ShopItemType
 import net.minestom.server.component.DataComponents
 import net.minestom.server.entity.Entity
 import net.minestom.server.entity.EntityType
@@ -22,6 +23,7 @@ object MiscLightningShopItem : ShopItem {
     override val description = "Lasse deine Gegner mit einen Blitz treffen!"
     override val maps = null
     override val roles = listOf(GeckoGameRole.HIDER, GeckoGameRole.SEEKER)
+    override val types = listOf(ShopItemType.HIDER_TROLL, ShopItemType.SEEKER_ATTACK)
 
     override val item: ItemStack = ItemStack.of(Material.PAPER).builder()
         .set(DataComponents.ITEM_MODEL, "gecko:shop/lightning").build()

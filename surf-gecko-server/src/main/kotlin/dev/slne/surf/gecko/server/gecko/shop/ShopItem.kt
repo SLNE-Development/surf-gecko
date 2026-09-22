@@ -2,19 +2,12 @@ package dev.slne.surf.gecko.server.gecko.shop
 
 import dev.slne.surf.gecko.server.gecko.map.GeckoMap
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
-import dev.slne.surf.gecko.server.gecko.shop.items.hider.HiderEmergencyExitShopItem
-import dev.slne.surf.gecko.server.gecko.shop.items.hider.HiderScoutShopItem
-import dev.slne.surf.gecko.server.gecko.shop.items.hider.HiderShieldShopItem
-import dev.slne.surf.gecko.server.gecko.shop.items.hider.HiderSmokeBombShopItem
-import dev.slne.surf.gecko.server.gecko.shop.items.hider.HiderSpringShopItem
+import dev.slne.surf.gecko.server.gecko.shop.items.hider.*
 import dev.slne.surf.gecko.server.gecko.shop.items.misc.MiscLightningShopItem
 import dev.slne.surf.gecko.server.gecko.shop.items.potions.PotionInvisShopItem
 import dev.slne.surf.gecko.server.gecko.shop.items.potions.PotionSpeedShopItem
-import dev.slne.surf.gecko.server.gecko.shop.items.seeker.SeekerHeartbeatKnifeShopItem
-import dev.slne.surf.gecko.server.gecko.shop.items.seeker.SeekerLaserShopItem
-import dev.slne.surf.gecko.server.gecko.shop.items.seeker.SeekerWebGrenadeShopItem
-import dev.slne.surf.gecko.server.gecko.shop.items.seeker.SeekerSonarShopItem
-import dev.slne.surf.gecko.server.gecko.shop.items.seeker.SeekerSpyDeviceShopItem
+import dev.slne.surf.gecko.server.gecko.shop.items.seeker.*
+import dev.slne.surf.gecko.server.gecko.shop.type.ShopItemType
 import dev.slne.surf.gecko.server.util.withTag
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
@@ -31,6 +24,7 @@ interface ShopItem {
     val displayItem: ItemStack get() = item
     val maps: List<GeckoMap>?
     val roles: List<GeckoGameRole>
+    val types: List<ShopItemType>
 
     fun onUse(player: Player): Boolean
 
@@ -57,6 +51,7 @@ interface ShopItem {
             )
         }
 
+        fun byType(type: ShopItemType) = items.filter { }
         fun byRole(role: GeckoGameRole) = items.filter { it.roles.contains(role) }
         fun byId(id: String) = items.find { it.id == id }
     }
