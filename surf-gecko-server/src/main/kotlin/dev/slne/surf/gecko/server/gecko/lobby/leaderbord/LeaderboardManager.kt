@@ -1,7 +1,9 @@
 package dev.slne.surf.gecko.server.gecko.lobby.leaderbord
 
 import dev.slne.surf.api.core.font.toSmallCaps
+import dev.slne.surf.api.core.messages.Colors
 import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.text
 import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.MinestomDispatchers
@@ -11,8 +13,6 @@ import dev.slne.surf.gecko.server.database.repository.GeckoLeaderboardRepository
 import dev.slne.surf.gecko.server.database.repository.GeckoPlayerNameRepository
 import dev.slne.surf.gecko.server.event.register
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
-import dev.slne.surf.gecko.server.gecko.util.geckoHighlight
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import dev.slne.surf.gecko.server.gecko.util.geckoSecondary
 import dev.slne.surf.gecko.server.gecko.util.geckoUseless
 import kotlinx.coroutines.Job
@@ -21,6 +21,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
@@ -144,7 +145,8 @@ object LeaderboardManager {
         val place = snapshot.place(player.uuid)
 
         return buildText {
-            geckoHighlight(type.title.toSmallCaps(), TextDecoration.BOLD)
+            appendNewline()
+            text(type.title.toSmallCaps(), LEADERBOARD_COLOR, TextDecoration.BOLD)
             appendNewline()
 
             if (snapshot.top.isEmpty()) {
@@ -157,9 +159,15 @@ object LeaderboardManager {
             }
 
             appendNewline()
-            geckoUseless("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬")
             appendNewline()
-            appendRow(place?.rank?.toString() ?: "-", "Du", place?.value ?: 0L, type.unit)
+            geckoSecondary("Du ")
+            darkSpacer(" » ")
+            text(place?.value?.toString() ?: "-", LEADERBOARD_COLOR)
+            text(" ${type.unit}", LEADERBOARD_COLOR)
+            darkSpacer(" (")
+            append(coloredRank(place?.rank?.toString() ?: "-"))
+            darkSpacer(")")
+            appendNewline()
         }
     }
 
@@ -169,10 +177,20 @@ object LeaderboardManager {
         value: Long,
         unit: String
     ) {
-        geckoPrimary("#$rank")
-        spacer(" - ")
-        geckoSecondary(name)
+        append(coloredRank(rank))
+        spacer(" ")
+        white(name)
         darkSpacer(" » ")
-        geckoHighlight("$value $unit")
+        text("$value $unit", LEADERBOARD_COLOR)
     }
+
+    private fun coloredRank(rank: String) = when (rank) {
+        "1" -> text("#1", TextColor.fromHexString("#F1FA7F"))
+        "2" -> text("#2", TextColor.fromHexString("#868689"))
+        "3" -> text("#3", TextColor.fromHexString("#D5A528"))
+        "-" -> text("-", Colors.SPACER)
+        else -> text("#$rank", Colors.SPACER)
+    }
+
+    private val LEADERBOARD_COLOR = TextColor.fromHexString("#71FB7E")
 }
