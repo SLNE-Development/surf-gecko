@@ -152,22 +152,27 @@ object LeaderboardManager {
             } else {
                 snapshot.top.forEach { entry ->
                     appendNewline()
-                    appendRow(entry.rank.toString(), entry.name, entry.value)
+                    appendRow(entry.rank.toString(), entry.name, entry.value, type.unit)
                 }
             }
 
             appendNewline()
             geckoUseless("▬▬▬▬▬▬▬▬▬")
             appendNewline()
-            appendRow(place?.rank?.toString() ?: "-", "Du", place?.value ?: 0L)
+            appendRow(place?.rank?.toString() ?: "-", "Du", place?.value ?: 0L, type.unit)
         }
     }
 
-    private fun SurfComponentBuilder.appendRow(rank: String, name: String, value: Long) {
+    private fun SurfComponentBuilder.appendRow(
+        rank: String,
+        name: String,
+        value: Long,
+        unit: String
+    ) {
         geckoPrimary("#$rank")
         spacer(" - ")
         geckoSecondary(name)
-        spacer(" - ")
-        geckoHighlight(value.toString())
+        darkSpacer(" » ")
+        geckoHighlight("$value $unit")
     }
 }
