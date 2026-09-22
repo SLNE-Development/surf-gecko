@@ -29,6 +29,10 @@ import kotlin.math.ceil
 
 private val arrowDamageTag = Tag.Double("surf_gecko_arrow_damage").defaultValue(2.0)
 private val arrowPunchTag = Tag.Integer("surf_gecko_arrow_punch").defaultValue(0)
+private val arrowFixedDamageTag = Tag.Float("surf_gecko_arrow_fixed_damage")
+
+val bowFixedDamageTag: Tag<Float> = Tag.Float("surf_gecko_bow_fixed_damage")
+val bowConsumeOnShotTag: Tag<Boolean> = Tag.Boolean("surf_gecko_bow_consume_on_shot")
 
 @Singleton
 class BowCombatListener : EventRegistrar {
@@ -62,6 +66,7 @@ class BowCombatListener : EventRegistrar {
             BASE_ARROW_DAMAGE + if (powerLevel > 0) powerLevel * POWER_PER_LEVEL + POWER_BASE else 0.0
         )
         arrow.setTag(arrowPunchTag, bow.enchantmentLevel(Enchantment.PUNCH))
+        bow.getTag(bowFixedDamageTag)?.let { arrow.setTag(arrowFixedDamageTag, it) }
 
         val origin = player.position.add(0.0, player.eyeHeight - SPAWN_OFFSET, 0.0)
 
@@ -71,6 +76,10 @@ class BowCombatListener : EventRegistrar {
         arrow.scheduleRemove(Duration.ofSeconds(ARROW_LIFETIME_SECONDS))
 
         player.playBowSound(power)
+
+        if (bow.hasTag(bowConsumeOnShotTag)) {
+            player.setItemInHand(event.hand, bow.consume(1))
+        }
     }
 
     private fun handleArrowHit(event: ProjectileCollideWithEntityEvent) {
@@ -88,16 +97,20 @@ class BowCombatListener : EventRegistrar {
         }
 
         val shooter = arrow.shooter
-        val blocksPerTick = arrow.velocity.length() / ServerFlag.SERVER_TICKS_PER_SECOND
-        val base = ceil(blocksPerTick * arrow.getTag(arrowDamageTag)).toInt().coerceAtLeast(0)
-        val amount = if ((arrow.entityMeta as AbstractArrowMeta).isCritical) {
-            base + ThreadLocalRandom.current().nextInt(base / 2 + 2)
-        } else {
-            base
+        val amount = arrow.getTag(arrowFixedDamageTag) ?: run {
+            val blocksPerTick = arrow.velocity.length() / ServerFlag.SERVER_TICKS_PER_SECOND
+            val base = ceil(blocksPerTick * arrow.getTag(arrowDamageTag)).toInt().coerceAtLeast(0)
+            val critical = (arrow.entityMeta as AbstractArrowMeta).isCritical
+
+            if (critical) {
+                (base + ThreadLocalRandom.current().nextInt(base / 2 + 2)).toFloat()
+            } else {
+                base.toFloat()
+            }
         }
 
         val applied = target.damageWithInvulnerability(
-            Damage(DamageType.ARROW, arrow, shooter, arrow.position, amount.toFloat())
+            Damage(DamageType.ARROW, arrow, shooter, arrow.position, amount)
         )
 
         if (applied) {

@@ -41,17 +41,19 @@ interface ShopItem {
                 SeekerHeartbeatKnifeShopItem,
                 SeekerSpyDeviceShopItem,
                 SeekerLaserShopItem,
-                SeekerSonarShopItem,
                 SeekerWebGrenadeShopItem,
+                SeekerCompassShopItem,
+                SeekerPowerBowShopItem,
+                SeekerHiderCostumeShopItem,
                 HiderSmokeBombShopItem,
                 HiderScoutShopItem,
                 HiderSpringShopItem,
                 HiderShieldShopItem,
-                HiderEmergencyExitShopItem
+                HiderSeekerCostumeShopItem
             )
         }
 
-        fun byType(type: ShopItemType) = items.filter { }
+        fun byType(type: ShopItemType) = items.filter { it.types.contains(type) }
         fun byRole(role: GeckoGameRole) = items.filter { it.roles.contains(role) }
         fun byId(id: String) = items.find { it.id == id }
     }

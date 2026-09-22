@@ -16,7 +16,7 @@ import net.minestom.server.component.DataComponents
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 
-val seekerShopView = surfView("Sucher Shop") {
+val hiderShopView = surfView("Verstecker Shop") {
     val mapState = initialState<GeckoMap>("map")
 
     settings {
@@ -25,14 +25,16 @@ val seekerShopView = surfView("Sucher Shop") {
     }
 
     onInit {
-        layout("OO1O2O3OO", "  A S P  ", "  A S P  ", "X00000000")
+        layout("O1020304O", " A D T P ", " A D T P ", "X00000000")
     }
 
     onFirstRender {
         val map = mapState[this]
-        val attackItems = ShopItem.byType(ShopItemType.SEEKER_ATTACK).filter { it.availableOn(map) }
-        val searchItems = ShopItem.byType(ShopItemType.SEEKER_SEARCH).filter { it.availableOn(map) }
-        val potionItems = ShopItem.byType(ShopItemType.SEEKER_POTION).filter { it.availableOn(map) }
+        val attackItems = ShopItem.byType(ShopItemType.HIDER_ATTACK).filter { it.availableOn(map) }
+        val defenseItems =
+            ShopItem.byType(ShopItemType.HIDER_DEFENSE).filter { it.availableOn(map) }
+        val trollItems = ShopItem.byType(ShopItemType.HIDER_TROLL).filter { it.availableOn(map) }
+        val potionItems = ShopItem.byType(ShopItemType.HIDER_POTION).filter { it.availableOn(map) }
 
         layoutSlot(
             'O', ItemStack.builder(Material.GRAY_STAINED_GLASS_PANE)
@@ -40,8 +42,9 @@ val seekerShopView = surfView("Sucher Shop") {
         )
 
         layoutSlot('1', ShopItemType.SEEKER_ATTACK.item)
-        layoutSlot('2', ShopItemType.SEEKER_SEARCH.item)
-        layoutSlot('3', ShopItemType.SEEKER_POTION.item)
+        layoutSlot('2', ShopItemType.HIDER_DEFENSE.item)
+        layoutSlot('3', ShopItemType.HIDER_TROLL.item)
+        layoutSlot('4', ShopItemType.HIDER_POTION.item)
 
         layoutSlot('A') { index, builder ->
             val item = attackItems.getOrNull(index)
@@ -57,8 +60,22 @@ val seekerShopView = surfView("Sucher Shop") {
             )
         }
 
-        layoutSlot('S') { index, builder ->
-            val item = searchItems.getOrNull(index)
+        layoutSlot('D') { index, builder ->
+            val item = defenseItems.getOrNull(index)
+
+            if (item != null) {
+                builder.onItemClick { ShopPurchase.buy(player, item) }
+            }
+
+            builder.withItem(
+                item?.let {
+                    buildShopItemDisplay(it)
+                } ?: ItemStack.AIR
+            )
+        }
+
+        layoutSlot('T') { index, builder ->
+            val item = trollItems.getOrNull(index)
 
             if (item != null) {
                 builder.onItemClick { ShopPurchase.buy(player, item) }

@@ -1,6 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.util
 
 import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
 
@@ -29,3 +30,6 @@ fun SurfComponentBuilder.geckoHighlight(text: String, vararg decoration: TextDec
 
 fun SurfComponentBuilder.geckoUseless(text: String, vararg decoration: TextDecoration) =
     text(text, GECKO_USELESS, *decoration)
+
+fun Component.removeItalics() = decoration(TextDecoration.ITALIC, false)
+fun Iterable<Component>.removeItalics() = map { it.removeItalics() }

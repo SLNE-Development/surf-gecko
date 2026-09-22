@@ -43,18 +43,9 @@ data class GeckoGamePlayer(
             player.scheduleNextTick {
                 player.inventory.clear()
                 player.setCanPickupItem(true)
-                player.inventory.setEquipment(EquipmentSlot.HELMET, player.heldSlot, SEEKER_HELMET)
-                player.inventory.setEquipment(
-                    EquipmentSlot.CHESTPLATE,
-                    player.heldSlot,
-                    SEEKER_CHESTPLATE
-                )
-                player.inventory.setEquipment(
-                    EquipmentSlot.LEGGINGS,
-                    player.heldSlot,
-                    SEEKER_LEGGINGS
-                )
-                player.inventory.setEquipment(EquipmentSlot.BOOTS, player.heldSlot, SEEKER_BOOTS)
+                SEEKER_ARMOR.forEach { (slot, item) ->
+                    player.inventory.setEquipment(slot, player.heldSlot, item)
+                }
                 player.inventory.setItemStack(0, SEEKER_SWORD)
                 player.inventory.setItemStack(1, SEEKER_BOW)
                 player.inventory.setItemStack(
@@ -211,6 +202,13 @@ data class GeckoGamePlayer(
                 .set(DataComponents.ITEM_NAME, text("Sucher Stiefel", SEEKER_COLOR))
                 .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
                 .build()
+
+        val SEEKER_ARMOR = mapOf(
+            EquipmentSlot.HELMET to SEEKER_HELMET,
+            EquipmentSlot.CHESTPLATE to SEEKER_CHESTPLATE,
+            EquipmentSlot.LEGGINGS to SEEKER_LEGGINGS,
+            EquipmentSlot.BOOTS to SEEKER_BOOTS
+        )
 
         private val SEEKER_SWORD = ItemStack.of(Material.WOODEN_SWORD).builder()
             .set(

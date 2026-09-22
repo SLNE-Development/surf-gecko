@@ -5,7 +5,10 @@ import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.minestom.inventory.framework.open
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
+import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.player.listener.GeckoPlayerListener
+import dev.slne.surf.gecko.server.gecko.shop.type.shops.hiderShopView
+import dev.slne.surf.gecko.server.gecko.shop.type.shops.seekerShopView
 import dev.slne.surf.gecko.server.util.withTag
 import jakarta.inject.Singleton
 import net.minestom.server.component.DataComponents
@@ -68,7 +71,11 @@ class ShopItemListener : EventRegistrar {
             return
         }
 
-        shopView.open(player, mapOf("role" to gamePlayer.role, "map" to game.settings.map))
+        when(gamePlayer.role) {
+            GeckoGameRole.SEEKER -> seekerShopView.open(player, mapOf("map" to game.settings.map))
+            GeckoGameRole.HIDER -> hiderShopView.open(player, mapOf("map" to game.settings.map))
+            GeckoGameRole.SPECTATOR -> Unit
+        }
     }
 
     private val lastUseAt = ConcurrentHashMap<UUID, Long>()
