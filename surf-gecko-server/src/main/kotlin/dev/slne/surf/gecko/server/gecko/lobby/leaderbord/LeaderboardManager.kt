@@ -106,7 +106,7 @@ object LeaderboardManager {
     private suspend fun collectSnapshots() {
         val totals = mapOf(
             LeaderboardType.WINS to GeckoLeaderboardRepository.fetchWinTotals(),
-            LeaderboardType.KILLS to GeckoLeaderboardRepository.fetchKillTotals()
+            LeaderboardType.GAMES_PLAYED to GeckoLeaderboardRepository.fetchGamesPlayedTotals()
         )
 
         val topUuids = totals.values

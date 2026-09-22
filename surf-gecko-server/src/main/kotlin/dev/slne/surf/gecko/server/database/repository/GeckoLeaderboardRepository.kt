@@ -3,7 +3,6 @@ package dev.slne.surf.gecko.server.database.repository
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.SortOrder
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.count
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.eq
-import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.core.sum
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.select
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
 import dev.slne.surf.gecko.server.database.table.GeckoGameStatsTable
@@ -24,19 +23,14 @@ object GeckoLeaderboardRepository {
             .toList()
     }
 
-    suspend fun fetchKillTotals(): List<LeaderboardSummary> = suspendTransaction {
-        val kills = GeckoGameStatsTable.kills.sum()
+    suspend fun fetchGamesPlayedTotals(): List<LeaderboardSummary> = suspendTransaction {
+        val gamesPlayed = GeckoGameStatsTable.id.count()
 
         GeckoGameStatsTable
-            .select(GeckoGameStatsTable.playerUuid, kills)
+            .select(GeckoGameStatsTable.playerUuid, gamesPlayed)
             .groupBy(GeckoGameStatsTable.playerUuid)
-            .orderBy(kills, SortOrder.DESC)
-            .map {
-                LeaderboardSummary(
-                    it[GeckoGameStatsTable.playerUuid],
-                    (it.getOrNull(kills) ?: 0).toLong()
-                )
-            }
+            .orderBy(gamesPlayed, SortOrder.DESC)
+            .map { LeaderboardSummary(it[GeckoGameStatsTable.playerUuid], it[gamesPlayed]) }
             .toList()
     }
 }
