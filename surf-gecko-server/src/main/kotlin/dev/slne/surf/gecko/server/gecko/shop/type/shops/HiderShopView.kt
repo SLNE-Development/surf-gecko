@@ -1,6 +1,9 @@
 package dev.slne.surf.gecko.server.gecko.shop.type.shops
 
 import dev.slne.surf.api.minestom.inventory.framework.dsl.onItemClick
+import dev.slne.surf.api.minestom.inventory.framework.view.icon.ViewIcon
+import dev.slne.surf.api.minestom.inventory.framework.view.icon.ViewIconColor
+import dev.slne.surf.api.minestom.inventory.framework.view.icon.ViewIconType
 import dev.slne.surf.api.minestom.inventory.framework.view.onFirstRender
 import dev.slne.surf.api.minestom.inventory.framework.view.onInit
 import dev.slne.surf.api.minestom.inventory.framework.view.settings
@@ -22,10 +25,11 @@ val hiderShopView = surfView("Verstecker Shop") {
     settings {
         rows(4)
         cancelAllInteractions()
+        navigateBackOnOutsideClick(false)
     }
 
     onInit {
-        layout("O1020304O", " A D T P ", " A D T P ", "X00000000")
+        layout("010203040", " A D T P ", " A D T P ", "X00000000")
     }
 
     onFirstRender {
@@ -37,7 +41,7 @@ val hiderShopView = surfView("Verstecker Shop") {
         val potionItems = ShopItem.byType(ShopItemType.HIDER_POTION).filter { it.availableOn(map) }
 
         layoutSlot(
-            'O', ItemStack.builder(Material.GRAY_STAINED_GLASS_PANE)
+            '0', ItemStack.builder(Material.GRAY_STAINED_GLASS_PANE)
                 .set(DataComponents.ITEM_NAME, Component.empty()).build()
         )
 
@@ -45,6 +49,14 @@ val hiderShopView = surfView("Verstecker Shop") {
         layoutSlot('2', ShopItemType.HIDER_DEFENSE.item)
         layoutSlot('3', ShopItemType.HIDER_TROLL.item)
         layoutSlot('4', ShopItemType.HIDER_POTION.item)
+
+        layoutSlot('X', ViewIcon(ViewIconType.CROSS, ViewIconColor.RED).build {
+            displayName {
+                error("Schließen")
+            }
+        }).onClick { click ->
+            click.closeForPlayer()
+        }
 
         layoutSlot('A') { index, builder ->
             val item = attackItems.getOrNull(index)

@@ -2,6 +2,7 @@ package dev.slne.surf.gecko.server.gecko.lobby.npc
 
 import codes.bed.minestom.npc.api.NpcInteractionType
 import dev.slne.surf.api.core.messages.adventure.buildText
+import dev.slne.surf.api.core.messages.adventure.key
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.minestom.inventory.framework.open
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
@@ -22,11 +23,17 @@ object LobbyNpcManager {
             displayName = buildText {
                 geckoPrimary("Hide 'n Seek", TextDecoration.BOLD)
                 appendNewline()
-                white("꒑ ")
-                geckoSecondary("Spiele ansehen")
+                append {
+                    white("ꑰ")
+                    font(key("surf:menu"))
+                }
+                geckoSecondary(" Spiele ansehen")
                 appendNewline()
-                white("ꊐ ")
-                geckoSecondary("Spiel beitreten")
+                append {
+                    white("ꑲ")
+                    font(key("surf:menu"))
+                }
+                geckoSecondary(" Spiel beitreten")
             }
             profile = ResolvableProfile(
                 PlayerSkin(

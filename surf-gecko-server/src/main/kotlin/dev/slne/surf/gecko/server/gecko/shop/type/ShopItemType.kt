@@ -2,9 +2,11 @@ package dev.slne.surf.gecko.server.gecko.shop.type
 
 import dev.slne.surf.api.core.messages.adventure.text
 import dev.slne.surf.gecko.server.gecko.util.GECKO_HIGHLIGHT
+import net.kyori.adventure.text.format.TextDecoration
 import net.minestom.server.component.DataComponents
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
+import net.minestom.server.item.component.TooltipDisplay
 
 enum class ShopItemType(val item: ItemStack) {
     HIDER_ATTACK(
@@ -24,7 +26,18 @@ enum class ShopItemType(val item: ItemStack) {
     ),
     HIDER_POTION(
         ItemStack.builder(Material.POTION)
-            .set(DataComponents.ITEM_NAME, text("Trank", GECKO_HIGHLIGHT))
+            .set(
+                DataComponents.CUSTOM_NAME,
+                text("Tränke", GECKO_HIGHLIGHT).decoration(TextDecoration.ITALIC, false)
+            )
+            .set(
+                DataComponents.TOOLTIP_DISPLAY, TooltipDisplay(
+                    false, setOf(
+                        DataComponents.POTION_CONTENTS,
+                        DataComponents.POTION_DURATION_SCALE
+                    )
+                )
+            )
             .build()
     ),
 
@@ -40,7 +53,18 @@ enum class ShopItemType(val item: ItemStack) {
     ),
     SEEKER_POTION(
         ItemStack.builder(Material.POTION)
-            .set(DataComponents.ITEM_NAME, text("Trank", GECKO_HIGHLIGHT))
+            .set(
+                DataComponents.CUSTOM_NAME,
+                text("Tränke", GECKO_HIGHLIGHT).decoration(TextDecoration.ITALIC, false)
+            )
+            .set(
+                DataComponents.TOOLTIP_DISPLAY, TooltipDisplay(
+                    false, setOf(
+                        DataComponents.POTION_CONTENTS,
+                        DataComponents.POTION_DURATION_SCALE
+                    )
+                )
+            )
             .build()
     ),
 }
