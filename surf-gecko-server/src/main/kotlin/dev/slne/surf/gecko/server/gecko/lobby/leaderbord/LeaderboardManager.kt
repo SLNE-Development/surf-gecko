@@ -152,9 +152,15 @@ object LeaderboardManager {
             if (snapshot.top.isEmpty()) {
                 geckoUseless("Noch keine Daten")
             } else {
-                snapshot.top.forEach { entry ->
+                for (rank in 1..TOP_SIZE) {
+                    val entry = snapshot.top.getOrNull(rank - 1)
+
                     appendNewline()
-                    appendRow(entry.rank.toString(), entry.name, entry.value, type.unit)
+                    if (entry != null) {
+                        appendRow(entry.rank.toString(), entry.name, entry.value, type.unit)
+                    } else {
+                        appendRow(rank.toString(), "???", 0L, type.unit)
+                    }
                 }
             }
 
