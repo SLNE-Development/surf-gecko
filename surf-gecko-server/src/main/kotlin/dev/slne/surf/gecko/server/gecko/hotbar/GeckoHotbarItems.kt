@@ -4,23 +4,22 @@ import dev.slne.surf.api.minestom.inventory.framework.view.icon.ViewIconColor
 import dev.slne.surf.api.minestom.inventory.framework.view.icon.ViewIconType
 import dev.slne.surf.api.minestom.inventory.framework.view.icon.viewIcon
 import dev.slne.surf.gecko.server.gecko.player.listener.GeckoPlayerListener
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import dev.slne.surf.gecko.server.util.withTag
 import net.minestom.server.entity.Player
 
 object GeckoHotbarItems {
     private val lobbyItem = viewIcon(ViewIconType.HOME, ViewIconColor.RED) {
         displayName {
-            geckoPrimary("Zurück zur Lobby")
+            error("Zurück zur Lobby")
         }
 
         builder.withTag(GeckoHotbarAction.TAG, GeckoHotbarAction.LOBBY.name)
         builder.withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
     }
 
-    private val nextRoundItem = viewIcon(ViewIconType.RELOAD, ViewIconColor.RED) {
+    private val nextRoundItem = viewIcon(ViewIconType.RELOAD, ViewIconColor.GREEN) {
         displayName {
-            geckoPrimary("Nächste Runde")
+            success("Nächste Runde")
         }
 
         builder.withTag(GeckoHotbarAction.TAG, GeckoHotbarAction.NEXT_ROUND.name)
