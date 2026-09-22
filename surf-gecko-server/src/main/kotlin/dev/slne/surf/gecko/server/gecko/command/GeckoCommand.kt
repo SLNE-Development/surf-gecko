@@ -8,8 +8,8 @@ import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.map.GeckoMaps
 import dev.slne.surf.gecko.server.gecko.orbs.GeckoOrbs
-import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
-import dev.slne.surf.gecko.server.gecko.shop.shopView
+import dev.slne.surf.gecko.server.gecko.shop.type.shops.hiderShopView
+import dev.slne.surf.gecko.server.gecko.shop.type.shops.seekerShopView
 import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
 import dev.slne.surf.gecko.server.gecko.util.appendPrefix
@@ -112,28 +112,22 @@ fun geckoCommand() = commandTree("gecko") {
             playerExecutor { player, arguments ->
                 val type: String by arguments
 
-                val role = when (type) {
-                    "seeker" -> GeckoGameRole.SEEKER
-                    "hider" -> GeckoGameRole.HIDER
-                    else -> null
-                }
-
-                if (role == null) {
-                    player.sendText {
-                        appendPrefix()
-                        geckoPrimary("Die Rolle wurde nicht gefunden.")
+                when (type) {
+                    "seeker" -> seekerShopView.open(player, mapOf("map" to GeckoMaps.random()))
+                    "hider" -> hiderShopView.open(player, mapOf("map" to GeckoMaps.random()))
+                    else -> {
+                        player.sendText {
+                            appendPrefix()
+                            geckoPrimary("Die Rolle wurde nicht gefunden.")
+                        }
+                        return@playerExecutor
                     }
-                    return@playerExecutor
                 }
-
-                val map = GeckoMaps.random()
-
-                shopView.open(player, mapOf("map" to map, "role" to role))
             }
         }
     }
 
-    literalArgument("giveOrbs") {
+    literalArgument("giveorbs") {
         integerArgument("amount") {
             playerExecutor { player, arguments ->
                 val amount: Int by arguments
