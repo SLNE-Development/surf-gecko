@@ -9,7 +9,6 @@ import dev.slne.surf.gecko.server.gecko.shop.within
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.util.geckoHighlight
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
-import dev.slne.surf.gecko.server.util.withTag
 import net.minestom.server.component.DataComponents
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
@@ -23,11 +22,8 @@ object SeekerSonarShopItem : ShopItem {
     override val maps = null
     override val roles = listOf(GeckoGameRole.SEEKER)
 
-    private val model = ItemStack.of(Material.PAPER).builder()
+    override val item: ItemStack = ItemStack.of(Material.PAPER).builder()
         .set(DataComponents.ITEM_MODEL, "gecko:shop/sonar").build()
-
-    override val displayItem: ItemStack = model
-    override val inventoryItem: ItemStack = model.builder().withTag(ShopItem.ID_TAG, id).build()
 
     override fun onUse(player: Player): Boolean {
         val game = GeckoGameManager.findGame(player.uuid) ?: return false

@@ -13,7 +13,6 @@ import dev.slne.surf.gecko.server.gecko.shop.within
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.util.appendPrefix
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
-import dev.slne.surf.gecko.server.util.withTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.kyori.adventure.sound.Sound
@@ -39,12 +38,9 @@ object HiderSmokeBombShopItem : ShopItem {
     override val maps = null
     override val roles = listOf(GeckoGameRole.HIDER)
 
-    private val base = ItemStack.of(Material.FIREWORK_STAR)
+    override val item: ItemStack = ItemStack.of(Material.FIREWORK_STAR)
 
-    override val displayItem: ItemStack = base
-    override val inventoryItem: ItemStack = base.builder().withTag(ShopItem.ID_TAG, id).build()
-
-    private val grenade = ShopGrenade(base, 20.0, ::detonate)
+    private val grenade = ShopGrenade(item, 20.0, ::detonate)
 
     override fun onUse(player: Player): Boolean {
         val game = GeckoGameManager.findGame(player.uuid) ?: return false

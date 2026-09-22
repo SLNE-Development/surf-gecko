@@ -4,7 +4,6 @@ import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
-import dev.slne.surf.gecko.server.util.withTag
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.component.DataComponents
 import net.minestom.server.entity.Player
@@ -21,11 +20,8 @@ object HiderSpringShopItem : ShopItem {
     override val maps = null
     override val roles = listOf(GeckoGameRole.HIDER)
 
-    private val model = ItemStack.of(Material.PAPER).builder()
+    override val item: ItemStack = ItemStack.of(Material.PAPER).builder()
         .set(DataComponents.ITEM_MODEL, "gecko:shop/spring").build()
-
-    override val displayItem: ItemStack = model
-    override val inventoryItem: ItemStack = model.builder().withTag(ShopItem.ID_TAG, id).build()
 
     override fun onUse(player: Player): Boolean {
         val game = GeckoGameManager.findGame(player.uuid) ?: return false

@@ -4,7 +4,6 @@ import dev.slne.surf.api.core.messages.adventure.key
 import dev.slne.surf.api.core.messages.adventure.playSound
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
-import dev.slne.surf.gecko.server.util.withTag
 import net.minestom.server.component.DataComponents
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
@@ -21,7 +20,7 @@ object PotionSpeedShopItem : ShopItem {
     override val price = 5
     override val displayName = "Geschwindigkeitstrank"
     override val description = "Werde für 5 Sekunden schneller"
-    override val displayItem: ItemStack = ItemStack.builder(Material.POTION)
+    override val item: ItemStack = ItemStack.builder(Material.POTION)
         .set(
             DataComponents.POTION_CONTENTS, PotionContents(
                 PotionType.SWIFTNESS
@@ -33,18 +32,6 @@ object PotionSpeedShopItem : ShopItem {
         )
         .build()
     override val maps = null
-    override val inventoryItem: ItemStack = ItemStack.builder(Material.POTION)
-        .set(
-            DataComponents.POTION_CONTENTS, PotionContents(
-                PotionType.SWIFTNESS
-            )
-        )
-        .set(
-            DataComponents.TOOLTIP_DISPLAY,
-            TooltipDisplay(false, setOf(DataComponents.POTION_CONTENTS))
-        )
-        .withTag(ShopItem.ID_TAG, id)
-        .build()
 
     override fun onUse(player: Player): Boolean {
         player.addEffect(Potion(PotionEffect.SPEED, 1, 5 * 20))

@@ -7,7 +7,6 @@ import dev.slne.surf.gecko.server.gecko.shop.ShopItem
 import dev.slne.surf.gecko.server.gecko.shop.effect.grenade.GrenadeImpact
 import dev.slne.surf.gecko.server.gecko.shop.effect.grenade.ShopGrenade
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
-import dev.slne.surf.gecko.server.util.withTag
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.kyori.adventure.sound.Sound
@@ -30,12 +29,9 @@ object SeekerWebGrenadeShopItem : ShopItem {
     override val maps = null
     override val roles = listOf(GeckoGameRole.SEEKER)
 
-    private val itemBase = ItemStack.of(Material.COBWEB)
+    override val item: ItemStack = ItemStack.of(Material.COBWEB)
 
-    override val displayItem: ItemStack = itemBase
-    override val inventoryItem: ItemStack = itemBase.builder().withTag(ShopItem.ID_TAG, id).build()
-
-    private val grenade = ShopGrenade(itemBase, 20.0, ::detonate)
+    private val grenade = ShopGrenade(item, 20.0, ::detonate)
 
     override fun onUse(player: Player): Boolean {
         val game = GeckoGameManager.findGame(player.uuid) ?: return false

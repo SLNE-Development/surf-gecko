@@ -8,7 +8,6 @@ import dev.slne.surf.gecko.server.gecko.shop.effect.heart.HeartbeatEffect
 import dev.slne.surf.gecko.server.gecko.shop.effect.playOnce
 import dev.slne.surf.gecko.server.gecko.util.appendPrefix
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
-import dev.slne.surf.gecko.server.util.withTag
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
@@ -22,10 +21,7 @@ object SeekerHeartbeatKnifeShopItem : ShopItem {
     override val maps = null
     override val roles = listOf(GeckoGameRole.SEEKER)
 
-    private val model = ItemStack.of(Material.RED_DYE)
-
-    override val displayItem: ItemStack = model
-    override val inventoryItem: ItemStack = model.builder().withTag(ShopItem.ID_TAG, id).build()
+    override val item: ItemStack = ItemStack.of(Material.RED_DYE)
 
     override fun onUse(player: Player): Boolean {
         val game = GeckoGameManager.findGame(player.uuid) ?: return false

@@ -9,7 +9,6 @@ import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.util.appendPrefix
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import dev.slne.surf.gecko.server.util.secureRandom
-import dev.slne.surf.gecko.server.util.withTag
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
@@ -22,11 +21,7 @@ object HiderEmergencyExitShopItem : ShopItem {
     override val description = "Entkomme den Suchern schnell"
     override val maps = null
     override val roles = listOf(GeckoGameRole.HIDER)
-
-    private val base = ItemStack.of(Material.IRON_DOOR)
-
-    override val displayItem: ItemStack = base
-    override val inventoryItem: ItemStack = base.builder().withTag(ShopItem.ID_TAG, id).build()
+    override val item: ItemStack = ItemStack.of(Material.IRON_DOOR)
 
     override fun onUse(player: Player): Boolean {
         val game = GeckoGameManager.findGame(player.uuid) ?: return false

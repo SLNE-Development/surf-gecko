@@ -15,6 +15,7 @@ import dev.slne.surf.gecko.server.gecko.shop.items.seeker.SeekerLaserShopItem
 import dev.slne.surf.gecko.server.gecko.shop.items.seeker.SeekerWebGrenadeShopItem
 import dev.slne.surf.gecko.server.gecko.shop.items.seeker.SeekerSonarShopItem
 import dev.slne.surf.gecko.server.gecko.shop.items.seeker.SeekerSpyDeviceShopItem
+import dev.slne.surf.gecko.server.util.withTag
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
 import net.minestom.server.tag.Tag
@@ -24,12 +25,13 @@ interface ShopItem {
     val price: Int
     val displayName: String
     val description: String
-    val displayItem: ItemStack
 
+    val item: ItemStack
+    val inventoryItem: ItemStack get() = item.builder().withTag(ID_TAG, id).build()
+    val displayItem: ItemStack get() = item
     val maps: List<GeckoMap>?
     val roles: List<GeckoGameRole>
 
-    val inventoryItem: ItemStack
     fun onUse(player: Player): Boolean
 
     fun availableOn(map: GeckoMap) = maps?.contains(map) != false
