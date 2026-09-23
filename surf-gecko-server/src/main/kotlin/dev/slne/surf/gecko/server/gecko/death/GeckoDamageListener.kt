@@ -12,6 +12,7 @@ import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.util.appendPrefix
 import dev.slne.surf.gecko.server.gecko.util.geckoHighlight
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
+import dev.slne.surf.gecko.server.gecko.visual.ScreenShake
 import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.format.TextDecoration
 import net.minestom.server.entity.Player
@@ -106,6 +107,7 @@ class GeckoDamageListener : EventRegistrar {
 
         victim.playerOrNull?.let {
             it.playSound(GeckoSounds.DEATH_SELF, Sound.Emitter.self())
+            ScreenShake.play(it, 0.6, 12)
             it.showTitle {
                 title {
                     text("Gefunden", victim.role.color, TextDecoration.BOLD)

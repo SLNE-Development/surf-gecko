@@ -8,6 +8,7 @@ import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.common.game.GeckoGameInfo
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.gecko.server.coroutine.ticks
 import dev.slne.surf.gecko.server.gecko.antiafk.GeckoAntiAfkWatcher
 import dev.slne.surf.gecko.server.gecko.display.scoreboard.GeckoScoreboardManager
 import dev.slne.surf.gecko.server.gecko.heartbeat.GeckoHeartbeat
@@ -26,13 +27,14 @@ import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
 import dev.slne.surf.gecko.server.gecko.stats.GeckoGameStatsTracker
 import dev.slne.surf.gecko.server.gecko.util.*
+import dev.slne.surf.gecko.server.gecko.visual.CountdownTitle
+import dev.slne.surf.gecko.server.gecko.visual.ScreenFade
 import dev.slne.surf.gecko.server.gecko.water.GeckoWaterDamager
 import dev.slne.surf.gecko.server.util.secureRandom
 import kotlinx.coroutines.*
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.`object`.ObjectContents
 import net.minestom.server.MinecraftServer
@@ -326,11 +328,7 @@ class GeckoGame(
         if (secondsLeft != null && secondsLeft in 1..GeckoSounds.COUNTDOWN_SECONDS) {
             players.filterNotNull().forEach {
                 it.playSound(GeckoSounds.countdownTick(secondsLeft), Sound.Emitter.self())
-                it.showTitle {
-                    title {
-                        error(secondsLeft.toString(), TextDecoration.BOLD)
-                    }
-                }
+                CountdownTitle.show(it, secondsLeft.toString())
             }
         }
 
@@ -453,6 +451,9 @@ class GeckoGame(
         lobbyPlayers.clear()
         statsTracker.beginRound(gamePlayers)
 
+        forEachPlayer { ScreenFade.play(it, 10, 20, 15) }
+        delay(10.ticks)
+
         coroutineScope {
             gamePlayers.map { player ->
                 async {
@@ -462,10 +463,14 @@ class GeckoGame(
                     player.updateSocialGroup()
                     player.teleportToSpawn(settings.map)
                     player.player.hideBossBar(bossBar)
-                    player.sendRoleMessage()
                     player.player.playSound(GeckoSounds.PHASE_GAME, Sound.Emitter.self())
                 }
             }.awaitAll()
+        }
+
+        geckoAsyncScope.launch {
+            delay(35.ticks)
+            forEachGamePlayer { if (it.playerOrNull != null) it.sendRoleMessage() }
         }
 
         gameTimerSeconds = settings.roundTimeSeconds
@@ -566,11 +571,7 @@ class GeckoGame(
         val secondsUntilSearch = currentTimer - searchStartAt
 
         if (state == GeckoGameState.HIDING && secondsUntilSearch in 1..GeckoSounds.COUNTDOWN_SECONDS) {
-            broadcastCountdown(
-                secondsUntilSearch,
-                GeckoGameRole.SEEKER.color,
-                SEARCH_COUNTDOWN_SUBTITLE
-            )
+            broadcastCountdown(secondsUntilSearch, SEARCH_COUNTDOWN_SUBTITLE)
         }
 
         if (state == GeckoGameState.HIDING && currentTimer <= searchStartAt) {
@@ -604,7 +605,7 @@ class GeckoGame(
         }
 
         if (state.isGame() && currentTimer in 1..GeckoSounds.COUNTDOWN_SECONDS) {
-            broadcastCountdown(currentTimer, Colors.ERROR, END_COUNTDOWN_SUBTITLE)
+            broadcastCountdown(currentTimer, END_COUNTDOWN_SUBTITLE)
         }
 
         if (currentTimer <= 0) {
@@ -612,23 +613,8 @@ class GeckoGame(
         }
     }
 
-    private fun broadcastCountdown(
-        secondsLeft: Int,
-        color: TextColor,
-        subtitleText: Component
-    ) = forEachPlayer { player ->
-        player.showTitle {
-            title {
-                text(secondsLeft.toString(), color, TextDecoration.BOLD)
-            }
-            subtitle = subtitleText
-            times {
-                fadeIn(0)
-                stay(18)
-                fadeOut(4)
-            }
-        }
-
+    private fun broadcastCountdown(secondsLeft: Int, subtitleText: Component) = forEachPlayer { player ->
+        CountdownTitle.show(player, secondsLeft.toString(), subtitleText)
         player.playSound(GeckoSounds.countdownTick(secondsLeft), Sound.Emitter.self())
     }
 

@@ -83,6 +83,18 @@ object GeckoSounds {
         pitch(1.6f)
     }
 
+    val SONAR_WAVE = sound {
+        type(key("sonar:sonar.ping"))
+        source(Sound.Source.PLAYER)
+        volume(2f)
+    }
+
+    val SONAR_FOUND = sound {
+        type(key("minecraft:block.note_block.bit"))
+        volume(0.7f)
+        pitch(1.6f)
+    }
+
     val SHOP_SPY_DEVICE = sound {
         type(key("minecraft:block.beacon.activate"))
         pitch(1.8f)

@@ -40,6 +40,7 @@ interface ShopItem {
                 MiscLightningShopItem,
                 SeekerHeartbeatKnifeShopItem,
                 SeekerSpyDeviceShopItem,
+                SeekerSonarShopItem,
                 SeekerLaserShopItem,
                 SeekerWebGrenadeShopItem,
                 SeekerCompassShopItem,
