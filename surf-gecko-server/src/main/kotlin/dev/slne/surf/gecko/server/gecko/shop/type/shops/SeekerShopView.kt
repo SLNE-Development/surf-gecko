@@ -34,9 +34,12 @@ val seekerShopView = surfView("Sucher Shop") {
 
     onFirstRender {
         val map = mapState[this]
-        val attackItems = ShopItem.byType(ShopItemType.SEEKER_ATTACK).filter { it.availableOn(map) }
-        val searchItems = ShopItem.byType(ShopItemType.SEEKER_SEARCH).filter { it.availableOn(map) }
-        val potionItems = ShopItem.byType(ShopItemType.SEEKER_POTION).filter { it.availableOn(map) }
+        val attackItems =
+            ShopItem.byType(ShopItemType.SEEKER_ATTACK).filter { it.availableOn(map) }.shuffled()
+        val searchItems =
+            ShopItem.byType(ShopItemType.SEEKER_SEARCH).filter { it.availableOn(map) }.shuffled()
+        val potionItems =
+            ShopItem.byType(ShopItemType.SEEKER_POTION).filter { it.availableOn(map) }.shuffled()
 
         layoutSlot(
             '0', ItemStack.builder(Material.GRAY_STAINED_GLASS_PANE)

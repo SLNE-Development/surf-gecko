@@ -8,27 +8,23 @@ import net.kyori.adventure.text.format.TextDecoration
 import net.minestom.server.entity.Player
 
 object CountdownTitle {
-    enum class Palette { NUMBER, GO }
+    enum class Palette(val text: TextColor, val shadow: ShadowColor, val stay: Long, val fadeOut: Long) {
+        NUMBER(TextColor.color(0xA3F13C), ShadowColor.shadowColor(0xFF5B2E08.toInt()), 12, 0),
+        GO(TextColor.color(0xA3F13D), ShadowColor.shadowColor(0xFF5B2E09.toInt()), 20, 8)
+    }
 
     fun show(
         player: Player,
         text: String,
         subtitle: Component = Component.empty(),
         palette: Palette = Palette.NUMBER
-    ) {
-        val start = (player.instance ?: return).shaderTick(2) / 2
-        val green = 0x80 or (palette.ordinal shl 6) or ((start shr 8) and 0x3F)
-        val blue = start.low
-
-        player.showTitle {
-            title = Component.text(text, TextColor.color(0xFD, green, blue), TextDecoration.BOLD)
-                .shadowColor(ShadowColor.shadowColor(TextColor.color(0xFC, green, blue), 0xFF))
-            this.subtitle = subtitle
-            times {
-                fadeIn(0)
-                stay(16)
-                fadeOut(4)
-            }
+    ) = player.showTitle {
+        title = Component.text(text, palette.text, TextDecoration.BOLD).shadowColor(palette.shadow)
+        this.subtitle = subtitle
+        times {
+            fadeIn(8)
+            stay(palette.stay)
+            fadeOut(palette.fadeOut)
         }
     }
 }

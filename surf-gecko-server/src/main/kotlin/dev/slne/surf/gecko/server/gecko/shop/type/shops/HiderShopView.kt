@@ -34,11 +34,14 @@ val hiderShopView = surfView("Verstecker Shop") {
 
     onFirstRender {
         val map = mapState[this]
-        val attackItems = ShopItem.byType(ShopItemType.HIDER_ATTACK).filter { it.availableOn(map) }
+        val attackItems =
+            ShopItem.byType(ShopItemType.HIDER_ATTACK).filter { it.availableOn(map) }.shuffled()
         val defenseItems =
-            ShopItem.byType(ShopItemType.HIDER_DEFENSE).filter { it.availableOn(map) }
-        val trollItems = ShopItem.byType(ShopItemType.HIDER_TROLL).filter { it.availableOn(map) }
-        val potionItems = ShopItem.byType(ShopItemType.HIDER_POTION).filter { it.availableOn(map) }
+            ShopItem.byType(ShopItemType.HIDER_DEFENSE).filter { it.availableOn(map) }.shuffled()
+        val trollItems =
+            ShopItem.byType(ShopItemType.HIDER_TROLL).filter { it.availableOn(map) }.shuffled()
+        val potionItems =
+            ShopItem.byType(ShopItemType.HIDER_POTION).filter { it.availableOn(map) }.shuffled()
 
         layoutSlot(
             '0', ItemStack.builder(Material.GRAY_STAINED_GLASS_PANE)
