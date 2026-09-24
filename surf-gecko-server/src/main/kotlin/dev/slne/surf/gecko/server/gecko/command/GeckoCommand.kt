@@ -165,7 +165,7 @@ fun geckoCommand() = commandTree("gecko") {
         }
     }
 
-    literalArgument("speed") {
+    literalArgument("getspeed") {
         playerExecutor { player, _ ->
             player.sendText {
                 appendPrefix()
