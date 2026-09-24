@@ -27,6 +27,8 @@ data class GeckoGameSettings(
     val beamDuration: Duration? = 7.5.seconds.toJavaDuration(),
     val beamedPlayerPercentage: Double = 0.25,
 
+    val sonarRadius: Double = 20.0,
+
     val forcedSeekers: Set<UUID> = mutableSetOf(),
     val forcedHiders: Set<UUID> = mutableSetOf()
 ) {
@@ -53,6 +55,7 @@ data class GeckoGameSettings(
         "beam_intervall_ms" to (beamIntervall?.toMillis()?.toString() ?: "UNSET"),
         "beam_duration_ms" to (beamDuration?.toMillis()?.toString() ?: "UNSET"),
         "beamed_player_percentage" to beamedPlayerPercentage.toString(),
+        "sonar_radius" to sonarRadius.toString(),
         "forced_seekers" to forcedSeekers.joinToString(","),
         "forced_hiders" to forcedHiders.joinToString(",")
     )

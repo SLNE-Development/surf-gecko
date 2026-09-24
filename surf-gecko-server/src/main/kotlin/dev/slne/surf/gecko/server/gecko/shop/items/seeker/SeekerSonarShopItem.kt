@@ -30,7 +30,7 @@ object SeekerSonarShopItem : ShopItem {
             return false
         }
 
-        SonarWave.scan(player, 15.0, game.activeHiders().within(player, 15.0))
+        SonarWave.scan(player, game.settings.sonarRadius, game.activeHiders().within(player, 15.0))
 
         return true
     }
