@@ -22,8 +22,6 @@ import dev.slne.surf.gecko.server.gecko.util.geckoSecondary
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import net.minestom.server.component.DataComponents
-import net.minestom.server.item.ItemStack
-import net.minestom.server.item.Material
 
 val geckoGamesView = paginatedSurfView("Spieleübersicht") {
     settings {
@@ -48,7 +46,7 @@ val geckoGamesView = paginatedSurfView("Spieleübersicht") {
             builder.onClick { click ->
                 click.closeForPlayer()
 
-                if(GeckoGameManager.joinGame(click.player, game) == null) {
+                if (GeckoGameManager.joinGame(click.player, game) == null) {
                     click.player.sendText {
                         appendPrefix()
                         geckoPrimary("Das Spiel ist nicht mehr verfügbar.")
@@ -62,6 +60,13 @@ val geckoGamesView = paginatedSurfView("Spieleübersicht") {
 
     onFirstRender {
         slot(4, 9, newGameItem())
+        slot(4, 1, ViewIcon(ViewIconType.CROSS, ViewIconColor.RED).build {
+            displayName {
+                error("Schließen")
+            }
+        }).onClick { click ->
+            click.closeForPlayer()
+        }
     }
 }
 
@@ -71,37 +76,39 @@ private fun newGameItem() = ViewIcon(ViewIconType.PLUS, ViewIconColor.GREEN).bui
     }
 }
 
-private fun itemForGame(geckoGame: GeckoGame) = ItemStack.builder(stateMaterial(geckoGame))
-    .set(DataComponents.ITEM_NAME, buildText {
-        geckoPrimary("Hide 'n Seek")
-        appendSpace()
-        geckoSecondary("(GeckoGames #${geckoGame.internalId})")
-    })
-    .set(DataComponents.LORE, listOf(Component.empty(), buildText {
-        append(BitmapProvider.translateToComponent("Map", Colors.WHITE, Colors.INFO))
-        decoration(TextDecoration.ITALIC, false)
-    }, buildText {
-        geckoSecondary(geckoGame.settings.map.mapDisplayName)
-        decoration(TextDecoration.ITALIC, false)
-    }, Component.empty(), buildText {
-        append(BitmapProvider.translateToComponent("Spieler", Colors.WHITE, Colors.INFO))
-        decoration(TextDecoration.ITALIC, false)
-    }, buildText {
-        geckoSecondary("${geckoGame.players.size} / ${geckoGame.settings.maxPlayers}")
-        decoration(TextDecoration.ITALIC, false)
-    }, Component.empty(), buildText {
-        append(BitmapProvider.translateToComponent("Status", Colors.WHITE, Colors.INFO))
-        decoration(TextDecoration.ITALIC, false)
-    }, buildText {
-        geckoSecondary(stateText(geckoGame))
-        decoration(TextDecoration.ITALIC, false)
-    }))
-    .build()
+private fun itemForGame(geckoGame: GeckoGame) =
+    ViewIcon(ViewIconType.HOME, stateColor(geckoGame)).build {
+        displayName {
+            geckoPrimary("Hide 'n Seek")
+            appendSpace()
+            geckoSecondary("(GeckoGames #${geckoGame.internalId})")
+        }
+    }.builder()
+        .set(DataComponents.LORE, listOf(Component.empty(), buildText {
+            append(BitmapProvider.translateToComponent("Map", Colors.WHITE, Colors.INFO))
+            decoration(TextDecoration.ITALIC, false)
+        }, buildText {
+            geckoSecondary(geckoGame.settings.map.mapDisplayName)
+            decoration(TextDecoration.ITALIC, false)
+        }, Component.empty(), buildText {
+            append(BitmapProvider.translateToComponent("Spieler", Colors.WHITE, Colors.INFO))
+            decoration(TextDecoration.ITALIC, false)
+        }, buildText {
+            geckoSecondary("${geckoGame.players.size} / ${geckoGame.settings.maxPlayers}")
+            decoration(TextDecoration.ITALIC, false)
+        }, Component.empty(), buildText {
+            append(BitmapProvider.translateToComponent("Status", Colors.WHITE, Colors.INFO))
+            decoration(TextDecoration.ITALIC, false)
+        }, buildText {
+            geckoSecondary(stateText(geckoGame))
+            decoration(TextDecoration.ITALIC, false)
+        }))
+        .build()
 
-private fun stateMaterial(geckoGame: GeckoGame) = if (geckoGame.joinable) {
-    Material.LIME_STAINED_GLASS_PANE
+private fun stateColor(geckoGame: GeckoGame) = if (geckoGame.joinable) {
+    ViewIconColor.GREEN
 } else {
-    Material.RED_STAINED_GLASS_PANE
+    ViewIconColor.RED
 }
 
 private fun stateText(geckoGame: GeckoGame) = when (geckoGame.state) {
