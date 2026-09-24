@@ -447,7 +447,7 @@ class GeckoGame(
             lobbyCountdownJob = null
         }
 
-        if(settings != GeckoGameSettings.defaultWithMap(settings.map)) {
+        if (settings != GeckoGameSettings.defaultWithMap(settings.map)) {
             countStats = false
         }
 
@@ -463,7 +463,11 @@ class GeckoGame(
         lobbyPlayers.clear()
         statsTracker.beginRound(gamePlayers)
 
-        forEachPlayer { ScreenFade.play(it, 10, 20, 15) }
+
+        forEachPlayer {
+            ScreenFade.play(it, 10, 20, 15)
+            it.playSound(GeckoSounds.PHASE_GAME_TRANSITION, Sound.Emitter.self())
+        }
         delay(10.ticks)
 
         coroutineScope {
@@ -475,7 +479,7 @@ class GeckoGame(
                     player.updateSocialGroup()
                     player.teleportToSpawn(settings.map)
                     player.player.hideBossBar(bossBar)
-                    player.player.playSound(GeckoSounds.PHASE_GAME, Sound.Emitter.self())
+                    //    player.player.playSound(GeckoSounds.PHASE_GAME, Sound.Emitter.self())
                 }
             }.awaitAll()
         }
@@ -485,7 +489,7 @@ class GeckoGame(
             forEachGamePlayer {
                 if (it.playerOrNull != null) {
                     it.sendRoleMessage()
-                    it.player.playSound(GeckoSounds.ROLE_SELECTED_SOUND, Sound.Emitter.self())
+                    //     it.player.playSound(GeckoSounds.ROLE_SELECTED_SOUND, Sound.Emitter.self())
                 }
             }
         }

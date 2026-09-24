@@ -136,6 +136,10 @@ object GeckoSounds {
         type(key("minecraft:entity.player.levelup"))
     }
 
+    val PHASE_GAME_TRANSITION = sound {
+        type(key("sonar:role.reveal"))
+    }
+
     fun countdownTick(secondsLeft: Int) = sound {
         type(key("minecraft:ui.button.click"))
         pitch(2f)
