@@ -7,19 +7,23 @@ import dev.slne.surf.gecko.server.gecko.map.mechanic.GeckoMapMechanic
 import dev.slne.surf.gecko.server.gecko.map.mechanic.impl.VentMechanic
 import kotlinx.coroutines.coroutineScope
 import net.minestom.server.MinecraftServer
+import net.minestom.server.entity.EntityType
 import net.minestom.server.instance.InstanceContainer
 import net.minestom.server.instance.anvil.AnvilLoader
 import kotlin.io.path.Path
 
 object GeckoMapManager {
     suspend fun prepareMap(map: GeckoMap): InstanceContainer = coroutineScope {
+        val worldPath = Path("maps/${map.mapName}")
         val map = MinecraftServer.getInstanceManager()
             .createInstanceContainer(
                 AnvilLoader(
-                    Path("maps/${map.mapName}"),
+                    worldPath,
                     key("minecraft:overworld")
                 )
             )
+
+        MapEntityLoader(worldPath, listOf(EntityType.TEXT_DISPLAY)).install(map)
 
         map.defaultClock()?.pause()
 
