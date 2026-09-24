@@ -34,6 +34,7 @@ class GeckoGameJoinService : EventRegistrar {
     }
 
     private fun handleSpawn(event: PlayerSpawnEvent) {
+        event.player.setReducedDebugScreenInformation(true)
         GeckoTablistRenderer.reset(event.player.uuid)
 
         MinecraftServer.getSchedulerManager().scheduleNextTick {
