@@ -134,7 +134,6 @@ object GeckoSounds {
 
     val ROLE_SELECTED_SOUND = sound {
         type(key("minecraft:entity.player.levelup"))
-        pitch(1.5f)
     }
 
     fun countdownTick(secondsLeft: Int) = sound {
