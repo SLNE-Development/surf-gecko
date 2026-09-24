@@ -18,9 +18,11 @@ import net.kyori.adventure.text.Component
 import net.minestom.server.component.DataComponents
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
+import kotlin.random.Random
 
 val seekerShopView = surfView("Sucher Shop") {
     val mapState = initialState<GeckoMap>("map")
+    val seedState = initialState<Long>("seed")
 
     settings {
         rows(4)
@@ -34,12 +36,16 @@ val seekerShopView = surfView("Sucher Shop") {
 
     onFirstRender {
         val map = mapState[this]
+        val random = Random(seedState[this])
         val attackItems =
-            ShopItem.byType(ShopItemType.SEEKER_ATTACK).filter { it.availableOn(map) }.shuffled()
+            ShopItem.byType(ShopItemType.SEEKER_ATTACK).filter { it.availableOn(map) }
+                .shuffled(random)
         val searchItems =
-            ShopItem.byType(ShopItemType.SEEKER_SEARCH).filter { it.availableOn(map) }.shuffled()
+            ShopItem.byType(ShopItemType.SEEKER_SEARCH).filter { it.availableOn(map) }
+                .shuffled(random)
         val potionItems =
-            ShopItem.byType(ShopItemType.SEEKER_POTION).filter { it.availableOn(map) }.shuffled()
+            ShopItem.byType(ShopItemType.SEEKER_POTION).filter { it.availableOn(map) }
+                .shuffled(random)
 
         layoutSlot(
             '0', ItemStack.builder(Material.GRAY_STAINED_GLASS_PANE)

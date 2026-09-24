@@ -72,8 +72,8 @@ class ShopItemListener : EventRegistrar {
         }
 
         when(gamePlayer.role) {
-            GeckoGameRole.SEEKER -> seekerShopView.open(player, mapOf("map" to game.settings.map))
-            GeckoGameRole.HIDER -> hiderShopView.open(player, mapOf("map" to game.settings.map))
+            GeckoGameRole.SEEKER -> seekerShopView.open(player, mapOf("map" to game.settings.map, "seed" to game.seekerShopSeed))
+            GeckoGameRole.HIDER -> hiderShopView.open(player, mapOf("map" to game.settings.map, "seed" to game.hiderShopSeed))
             GeckoGameRole.SPECTATOR -> Unit
         }
     }

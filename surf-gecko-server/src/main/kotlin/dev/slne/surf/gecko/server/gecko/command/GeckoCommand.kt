@@ -2,6 +2,7 @@ package dev.slne.surf.gecko.server.gecko.command
 
 import dev.slne.minestom.lobby.api.command.commandapi.dsl.*
 import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.api.core.util.random
 import dev.slne.surf.api.minestom.inventory.framework.open
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.database.repository.GeckoPunishmentRepository
@@ -114,8 +115,16 @@ fun geckoCommand() = commandTree("gecko") {
                 val type: String by arguments
 
                 when (type) {
-                    "seeker" -> seekerShopView.open(player, mapOf("map" to GeckoMaps.random()))
-                    "hider" -> hiderShopView.open(player, mapOf("map" to GeckoMaps.random()))
+                    "seeker" -> seekerShopView.open(
+                        player,
+                        mapOf("map" to GeckoMaps.random(), "seed" to random.nextLong())
+                    )
+
+                    "hider" -> hiderShopView.open(
+                        player,
+                        mapOf("map" to GeckoMaps.random(), "seed" to random.nextLong())
+                    )
+
                     else -> {
                         player.sendText {
                             appendPrefix()

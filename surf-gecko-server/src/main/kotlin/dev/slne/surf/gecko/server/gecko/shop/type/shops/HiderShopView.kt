@@ -18,9 +18,11 @@ import net.kyori.adventure.text.Component
 import net.minestom.server.component.DataComponents
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
+import kotlin.random.Random
 
 val hiderShopView = surfView("Verstecker Shop") {
     val mapState = initialState<GeckoMap>("map")
+    val seedState = initialState<Long>("seed")
 
     settings {
         rows(4)
@@ -34,14 +36,19 @@ val hiderShopView = surfView("Verstecker Shop") {
 
     onFirstRender {
         val map = mapState[this]
+        val random = Random(seedState[this])
         val attackItems =
-            ShopItem.byType(ShopItemType.HIDER_ATTACK).filter { it.availableOn(map) }.shuffled()
+            ShopItem.byType(ShopItemType.HIDER_ATTACK).filter { it.availableOn(map) }
+                .shuffled(random)
         val defenseItems =
-            ShopItem.byType(ShopItemType.HIDER_DEFENSE).filter { it.availableOn(map) }.shuffled()
+            ShopItem.byType(ShopItemType.HIDER_DEFENSE).filter { it.availableOn(map) }
+                .shuffled(random)
         val trollItems =
-            ShopItem.byType(ShopItemType.HIDER_TROLL).filter { it.availableOn(map) }.shuffled()
+            ShopItem.byType(ShopItemType.HIDER_TROLL).filter { it.availableOn(map) }
+                .shuffled(random)
         val potionItems =
-            ShopItem.byType(ShopItemType.HIDER_POTION).filter { it.availableOn(map) }.shuffled()
+            ShopItem.byType(ShopItemType.HIDER_POTION).filter { it.availableOn(map) }
+                .shuffled(random)
 
         layoutSlot(
             '0', ItemStack.builder(Material.GRAY_STAINED_GLASS_PANE)

@@ -5,6 +5,7 @@ import dev.slne.surf.api.core.messages.Colors
 import dev.slne.surf.api.core.messages.CommonComponents
 import dev.slne.surf.api.core.messages.adventure.*
 import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
+import dev.slne.surf.api.core.util.random
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.common.game.GeckoGameInfo
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
@@ -79,6 +80,9 @@ class GeckoGame(
     val spectators get() = gamePlayers.filter { it.role == GeckoGameRole.SPECTATOR }
 
     val statsTracker = GeckoGameStatsTracker()
+
+    val seekerShopSeed = random.nextLong()
+    val hiderShopSeed = random.nextLong()
 
     val countdownBossBar2 = buildText {
         geckoPrimary("Warte auf weitere Spieler.. ".toSmallCaps())
