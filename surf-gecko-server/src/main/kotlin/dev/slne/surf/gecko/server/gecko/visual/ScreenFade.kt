@@ -2,6 +2,8 @@ package dev.slne.surf.gecko.server.gecko.visual
 
 import dev.slne.surf.api.core.messages.adventure.key
 import dev.slne.surf.api.core.messages.adventure.showTitle
+import dev.slne.surf.gecko.server.coroutine.ticks
+import kotlinx.coroutines.delay
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.ShadowColor
@@ -26,5 +28,10 @@ object ScreenFade {
             stay(stayTicks)
             fadeOut(fadeOutTicks)
         }
+    }
+
+    suspend fun transition(players: Collection<Player>) {
+        players.forEach { play(it, 5, 6, 8) }
+        delay(5.ticks)
     }
 }

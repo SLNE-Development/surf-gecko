@@ -472,7 +472,12 @@ class GeckoGame(
 
         geckoAsyncScope.launch {
             delay(35.ticks)
-            forEachGamePlayer { if (it.playerOrNull != null) it.sendRoleMessage() }
+            forEachGamePlayer {
+                if (it.playerOrNull != null) {
+                    it.sendRoleMessage()
+                    it.player.playSound(GeckoSounds.ROLE_SELECTED_SOUND, Sound.Emitter.self())
+                }
+            }
         }
 
         gameTimerSeconds = settings.roundTimeSeconds
@@ -491,9 +496,11 @@ class GeckoGame(
         startGameInfoBar()
 
         withContext(Dispatchers.IO) {
-            GeckoEventsRepository.logEvent(GeckoEvent.GameStart(
-                this@GeckoGame
-            ))
+            GeckoEventsRepository.logEvent(
+                GeckoEvent.GameStart(
+                    this@GeckoGame
+                )
+            )
         }
     }
 
@@ -621,10 +628,11 @@ class GeckoGame(
         }
     }
 
-    private fun broadcastCountdown(secondsLeft: Int, subtitleText: Component) = forEachPlayer { player ->
-        CountdownTitle.show(player, secondsLeft.toString(), subtitleText)
-        player.playSound(GeckoSounds.countdownTick(secondsLeft), Sound.Emitter.self())
-    }
+    private fun broadcastCountdown(secondsLeft: Int, subtitleText: Component) =
+        forEachPlayer { player ->
+            CountdownTitle.show(player, secondsLeft.toString(), subtitleText)
+            player.playSound(GeckoSounds.countdownTick(secondsLeft), Sound.Emitter.self())
+        }
 
     private fun checkForGameEnd(): Boolean {
         if (!state.isGame()) {

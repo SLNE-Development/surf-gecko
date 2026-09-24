@@ -14,6 +14,7 @@ import dev.slne.surf.gecko.server.gecko.settings.GeckoGameSettings
 import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
+import dev.slne.surf.gecko.server.gecko.visual.ScreenFade
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
@@ -158,6 +159,7 @@ object GeckoGameManager {
         if (reason.canMovePlayers()) {
             val players = game.players
 
+            ScreenFade.transition(players)
             players.forEach {
                 GeckoLobby.join(it)
             }

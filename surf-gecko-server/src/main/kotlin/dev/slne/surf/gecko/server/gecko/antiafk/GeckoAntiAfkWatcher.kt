@@ -9,6 +9,7 @@ import dev.slne.surf.gecko.server.gecko.GeckoGame
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.util.geckoHighlight
 import dev.slne.surf.gecko.server.gecko.util.geckoSecondary
+import dev.slne.surf.gecko.server.gecko.visual.ScreenFade
 import dev.slne.surf.playtime.api.common.surfPlaytimeApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -57,6 +58,7 @@ class GeckoAntiAfkWatcher(val game: GeckoGame) {
 
                 afkPlayers.remove(uuid)
                 geckoAsyncScope.launch {
+                    ScreenFade.transition(listOf(player))
                     GeckoLobby.join(player)
                 }
             }

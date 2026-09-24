@@ -7,6 +7,7 @@ import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.util.appendPrefix
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
+import dev.slne.surf.gecko.server.gecko.visual.ScreenFade
 import jakarta.inject.Singleton
 import kotlinx.coroutines.launch
 import net.minestom.server.entity.Player
@@ -48,6 +49,7 @@ class GeckoHotbarListener : EventRegistrar {
         }
 
         geckoAsyncScope.launch {
+            ScreenFade.transition(listOf(player))
             when (action) {
                 GeckoHotbarAction.LOBBY -> GeckoLobby.join(player)
                 GeckoHotbarAction.NEXT_ROUND -> joinNextRound(player)
