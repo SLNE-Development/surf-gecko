@@ -8,13 +8,10 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
-private const val DEFAULT_MIN_PLAYERS = 2
-private const val DEFAULT_MAX_PLAYERS = 16
-
 data class GeckoGameSettings(
     val map: GeckoMap,
-    val minPlayers: Int = DEFAULT_MIN_PLAYERS,
-    val maxPlayers: Int = DEFAULT_MAX_PLAYERS,
+    val minPlayers: Int = 2,
+    val maxPlayers: Int = 16,
     val roundTimeSeconds: Int = 600,
     val hidingTimeSeconds: Int = 60,
     val heartbeatRadius: Double = 15.0,
@@ -38,4 +35,25 @@ data class GeckoGameSettings(
             map = GeckoMaps.random()
         )
     }
+
+    fun mapData(): Map<String, String> = mapOf(
+        "map_uuid" to map.mapUuid.toString(),
+        "map_name" to map.mapName,
+        "min_players" to minPlayers.toString(),
+        "max_players" to maxPlayers.toString(),
+        "round_time_seconds" to roundTimeSeconds.toString(),
+        "hiding_time_seconds" to hidingTimeSeconds.toString(),
+        "heartbeat_radius" to heartbeatRadius.toString(),
+        "seeker_respawn_time_seconds" to seekerRespawnTimeSeconds.toString(),
+        "respawn_hiders_as_seekers" to respawnHidersAsSeekers.toString(),
+        "water_damage" to waterDamage.toString(),
+        "seeker_speed_factor" to seekerSpeedFactor.toString(),
+        "hider_speed_factor" to hiderSpeedFactor.toString(),
+        "vent_speed_factor" to ventSpeedFactor.toString(),
+        "beam_intervall_ms" to (beamIntervall?.toMillis()?.toString() ?: "UNSET"),
+        "beam_duration_ms" to (beamDuration?.toMillis()?.toString() ?: "UNSET"),
+        "beamed_player_percentage" to beamedPlayerPercentage.toString(),
+        "forced_seekers" to forcedSeekers.joinToString(","),
+        "forced_hiders" to forcedHiders.joinToString(",")
+    )
 }

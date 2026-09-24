@@ -7,6 +7,8 @@ import dev.slne.surf.gecko.server.database.table.GeckoGameStatsTable
 import dev.slne.surf.gecko.server.database.table.GeckoGamesTable
 import dev.slne.surf.gecko.server.database.table.GeckoPlayerNamesTable
 import dev.slne.surf.gecko.server.database.table.GeckoPunishmentsTable
+import dev.slne.surf.gecko.server.database.table.events.GeckoEventDataTable
+import dev.slne.surf.gecko.server.database.table.events.GeckoEventsTable
 import kotlin.io.path.Path
 
 object GeckoDatabaseManager {
@@ -20,13 +22,15 @@ object GeckoDatabaseManager {
                 GeckoGamesTable,
                 GeckoGameStatsTable,
                 GeckoPunishmentsTable,
-                GeckoPlayerNamesTable
+                GeckoPlayerNamesTable,
+                GeckoEventsTable,
+                GeckoEventDataTable
             )
         }
     }
 
     fun shutdown() {
-        if(::databaseApi.isInitialized) {
+        if (::databaseApi.isInitialized) {
             databaseApi.shutdown()
         }
     }
