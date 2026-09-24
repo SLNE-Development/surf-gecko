@@ -124,7 +124,9 @@ object GeckoGameManager {
     }
 
     suspend fun startNewGame(settings: GeckoGameSettings = GeckoGameSettings.default()): GeckoGame {
-        val gameId = withContext(Dispatchers.IO) { GeckoGameRepository.saveGame(settings) }
+        val gameId = withContext(Dispatchers.IO) {
+            GeckoGameRepository.saveGame(settings)
+        }
         val instance = GeckoMapManager.prepareMap(settings.map)
         val game = GeckoGame(gameId, settings, instance)
 

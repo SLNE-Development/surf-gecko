@@ -9,8 +9,10 @@ import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.common.game.GeckoGameInfo
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.coroutine.ticks
+import dev.slne.surf.gecko.server.database.repository.GeckoEventsRepository
 import dev.slne.surf.gecko.server.gecko.antiafk.GeckoAntiAfkWatcher
 import dev.slne.surf.gecko.server.gecko.display.scoreboard.GeckoScoreboardManager
+import dev.slne.surf.gecko.server.gecko.events.GeckoEvent
 import dev.slne.surf.gecko.server.gecko.heartbeat.GeckoHeartbeat
 import dev.slne.surf.gecko.server.gecko.hotbar.GeckoHotbarItems
 import dev.slne.surf.gecko.server.gecko.orbs.GeckoOrbSpawner
@@ -487,6 +489,12 @@ class GeckoGame(
         }
 
         startGameInfoBar()
+
+        withContext(Dispatchers.IO) {
+            GeckoEventsRepository.logEvent(GeckoEvent.GameStart(
+                this@GeckoGame
+            ))
+        }
     }
 
     private lateinit var gameInfoBarJob: Job
