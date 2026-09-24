@@ -12,7 +12,6 @@ import dev.slne.surf.api.minestom.inventory.framework.view.paginatedSurfView
 import dev.slne.surf.api.minestom.inventory.framework.view.pagination.pagination
 import dev.slne.surf.api.minestom.inventory.framework.view.settings
 import dev.slne.surf.api.minestom.inventory.framework.view.settings.PaginationViewRows
-import dev.slne.surf.api.minestom.inventory.framework.view.settings.builder.paginatedViewSettings
 import dev.slne.surf.bitmap.common.provider.BitmapProvider
 import dev.slne.surf.gecko.server.gecko.GeckoGame
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
@@ -27,11 +26,8 @@ import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 
 val geckoGamesView = paginatedSurfView("Spieleübersicht") {
-    paginatedViewSettings {
-        paginationViewRows(PaginationViewRows.THREE)
-    }
-
     settings {
+        paginationViewRows(PaginationViewRows.THREE)
         navigateBackOnOutsideClick(false)
     }
 
