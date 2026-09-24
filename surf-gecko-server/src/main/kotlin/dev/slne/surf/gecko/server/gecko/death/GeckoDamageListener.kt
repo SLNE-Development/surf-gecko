@@ -59,7 +59,9 @@ class GeckoDamageListener : EventRegistrar {
             return
         }
 
-        attackingGamePlayer?.let { game.statsTracker.addKill(it.playerUuid) }
+        if(game.countStats) {
+            attackingGamePlayer?.let { game.statsTracker.addKill(it.playerUuid) }
+        }
 
         attackingGamePlayer?.player?.sendActionBar(buildText {
             geckoPrimary("Du hast ")

@@ -84,6 +84,8 @@ class GeckoGame(
     val seekerShopSeed = random.nextLong()
     val hiderShopSeed = random.nextLong()
 
+    var countStats = true
+
     val countdownBossBar2 = buildText {
         geckoPrimary("Warte auf weitere Spieler.. ".toSmallCaps())
     }
@@ -443,6 +445,10 @@ class GeckoGame(
         if (lobbyCountdownJob != null) {
             lobbyCountdownJob?.cancel()
             lobbyCountdownJob = null
+        }
+
+        if(settings != GeckoGameSettings.defaultWithMap(settings.map)) {
+            countStats = false
         }
 
         val roles = GeckoPlayerRoleSelector.selectRoles(

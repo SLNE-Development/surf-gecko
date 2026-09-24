@@ -32,8 +32,6 @@ class GeckoGameStatsTracker {
         }
     }
 
-    fun kills(playerUuid: UUID) = entries[playerUuid]?.kills ?: 0
-
     fun markFound(playerUuid: UUID) {
         val entry = entries[playerUuid] ?: return
         val startedAt = roundStartMillis ?: return

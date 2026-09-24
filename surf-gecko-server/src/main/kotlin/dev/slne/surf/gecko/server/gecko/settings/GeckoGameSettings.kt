@@ -36,6 +36,10 @@ data class GeckoGameSettings(
         fun default() = GeckoGameSettings(
             map = GeckoMaps.random()
         )
+
+        fun defaultWithMap(map: GeckoMap) = GeckoGameSettings(
+            map = map
+        )
     }
 
     fun mapData(): Map<String, String> = mapOf(
