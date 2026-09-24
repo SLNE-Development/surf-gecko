@@ -54,9 +54,12 @@ object VentMechanic : GeckoMapMechanic, MinestomListener {
             GeckoGameManager.getGames().filter { hasThisMechanic(it) }
                 .forEach { game ->
                     game.gamePlayers.forEach { gamePlayer ->
-                        val player = gamePlayer.player
+                        val player = gamePlayer.playerOrNull ?: return@forEach
 
-                        if (isInVent(player)) return@forEach
+                        if (isInVent(player)) {
+                            return@forEach
+                        }
+
                         findVent(player) ?: return@forEach
 
                         player.sendActionBar(buildText {
