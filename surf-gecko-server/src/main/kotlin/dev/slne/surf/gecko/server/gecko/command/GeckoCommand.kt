@@ -4,6 +4,7 @@ import dev.slne.minestom.lobby.api.command.commandapi.dsl.*
 import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.minestom.inventory.framework.open
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.gecko.server.database.repository.GeckoPunishmentRepository
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.map.GeckoMaps
@@ -172,6 +173,22 @@ fun geckoCommand() = commandTree("gecko") {
                 geckoSecondary(player.getAttribute(Attribute.MOVEMENT_SPEED).baseValue.toString())
                 geckoPrimary(" und deine FOV Modifier liegt bei ")
                 geckoSecondary(player.fieldViewModifier.toString())
+            }
+        }
+    }
+
+    literalArgument("unpunishself") {
+        playerExecutorSuspend { player, _ ->
+            if (GeckoPunishmentRepository.unpunishPlayer(player.uuid)) {
+                player.sendText {
+                    appendPrefix()
+                    geckoPrimary("Du wurdest erfolgreich entbannt.")
+                }
+            } else {
+                player.sendText {
+                    appendPrefix()
+                    geckoPrimary("Du bist nicht gebannt oder wurdest bereits entbannt.")
+                }
             }
         }
     }
