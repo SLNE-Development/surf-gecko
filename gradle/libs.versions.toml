@@ -35,6 +35,7 @@ spark = "1.10.181-SNAPSHOT"
 guice = "7.0.0"
 minestom-lobby-api = "1.0.0-SNAPSHOT"
 minestom-tab = "1.0.1"
+wsee = "13.0.4"
 
 [libraries]
 minestom = { module = "net.minestom:minestom", version.ref = "minestom" }
@@ -97,6 +98,7 @@ luckperms-minestom = { module = "club.tesseract:luckperms-minestom", version.ref
 spark-common = { module = "me.lucko:spark-common", version.ref = "spark" }
 spark-minestom = { module = "me.lucko:spark-minestom", version.ref = "spark" }
 minestom-tab = { module = "com.bradenkennedy:minestom-tab", version.ref = "minestom-tab" }
+wsee = { module = "net.worldseed.multipart:WorldSeedEntityEngine", version.ref = "wsee" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

@@ -16,6 +16,7 @@ import kotlin.io.path.Path
 object GeckoLobby {
     val spawn = Pos(-19.5, 145.0, -8.5, 90f, 0f)
     val npcPos = Pos(-26.5, 145.0, -8.5, -90f, 0f)
+    val mascotPos = Pos(-23.5, 145.0, -5.5, -136f, 0f)
 
     var initialized = false
 

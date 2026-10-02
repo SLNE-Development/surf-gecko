@@ -15,6 +15,8 @@ import dev.slne.surf.gecko.server.gecko.display.tablist.GeckoTablistRenderer
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.lobby.elytra.ElytraBoostListener
 import dev.slne.surf.gecko.server.gecko.lobby.leaderbord.LeaderboardManager
+import dev.slne.surf.gecko.server.gecko.lobby.mascot.DuckMascotListener
+import dev.slne.surf.gecko.server.gecko.lobby.mascot.DuckMascotManager
 import dev.slne.surf.gecko.server.gecko.lobby.npc.LobbyNpcManager
 import dev.slne.surf.gecko.server.gecko.lobby.riseup.RiseUpListener
 import dev.slne.surf.gecko.server.gecko.map.GeckoMapManager
@@ -38,10 +40,12 @@ object GeckoInstance {
         PlayerCulling.init()
         AntiMap.init()
         LobbyNpcManager.create()
+        DuckMascotManager.create()
         LeaderboardManager.init()
 
         RiseUpListener.register()
         ElytraBoostListener.register()
+        DuckMascotListener.register()
 
         geckoCommand()
         skipCommand()

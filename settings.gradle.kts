@@ -19,6 +19,7 @@ dependencyResolutionManagement {
         maven("https://repo.lucko.me/")
         maven("https://reposilite.slne.dev/public") { name = "slne-repository-public" }
         maven("https://reposilite.slne.dev/releases") { name = "slne-repository-releases" }
+        maven("https://reposilite.atlasengine.ca/public") { name = "atlasengine-repository-public" }
     }
 }
 

@@ -19,6 +19,7 @@ repositories {
     maven("https://reposilite.slne.dev/public") { name = "slne-repository-public" }
     maven("https://reposilite.slne.dev/releases") { name = "slne-repository-releases" }
     maven("https://repo.lucko.me/")
+    maven("https://reposilite.atlasengine.ca/public") { name = "atlasengine-repository-public" }
 }
 
 dependencies {
@@ -41,6 +42,7 @@ dependencies {
     compileOnly(libs.configurate.kotlin)
     compileOnly(libs.polar)
     compileOnly(libs.brigadier)
+    compileOnly(libs.wsee)
     compileOnly(libs.surf.database.r2dbc)
     compileOnly(libs.surf.redis.api) {
         artifact { classifier = "all" }
@@ -58,6 +60,7 @@ dependencies {
     compileOnly(libs.flare.fastutil)
     runtimeDownload(libs.polar)
     runtimeDownload(libs.npc)
+    runtimeDownload(libs.wsee)
     runtimeDownload(libs.brigadier)
     runtimeDownload(libs.adventure.text.minimessage)
 
