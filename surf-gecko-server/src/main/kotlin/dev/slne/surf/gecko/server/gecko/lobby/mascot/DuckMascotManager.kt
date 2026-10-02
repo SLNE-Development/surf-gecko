@@ -28,7 +28,7 @@ object DuckMascotManager {
         "Jede Runde bist du entweder Verstecker oder Sucher.",
         "Verstecker haben zu Beginn Zeit, sich ein gutes Versteck zu suchen.",
         "Die Sucher müssen alle Verstecker finden, bevor die Zeit abläuft.",
-        "Wirst du gefunden, suchst du ab dann selbst mit!",
+        "Wirst du gefunden, suchst du ab dann selbst mit oder scheidest aus.",
         "Sammle Orbs ein und kaufe dir damit hilfreiche Items im Shop.",
         "Klicke den NPC neben mir an, um einer Runde beizutreten. Viel Spaß!",
     )
