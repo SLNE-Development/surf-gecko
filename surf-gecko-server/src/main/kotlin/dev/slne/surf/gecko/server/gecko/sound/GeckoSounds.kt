@@ -140,6 +140,27 @@ object GeckoSounds {
         type(key("sonar:role.reveal"))
     }
 
+    val DIALOG_OPEN = sound {
+        type(key("dialog:open"))
+        source(Sound.Source.MASTER)
+    }
+
+    val DIALOG_NEXT = sound {
+        type(key("dialog:next"))
+        source(Sound.Source.MASTER)
+    }
+
+    val DIALOG_BLIP = sound {
+        type(key("dialog:blip"))
+        source(Sound.Source.MASTER)
+        volume(0.6f)
+    }
+
+    val DIALOG_DUCK = sound {
+        type(key("dialog:duck"))
+        source(Sound.Source.NEUTRAL)
+    }
+
     fun countdownTick(secondsLeft: Int) = sound {
         type(key("minecraft:ui.button.click"))
         pitch(2f)

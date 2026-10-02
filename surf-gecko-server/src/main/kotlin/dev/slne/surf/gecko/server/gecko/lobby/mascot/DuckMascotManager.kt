@@ -4,10 +4,12 @@ import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.gecko.server.coroutine.geckoScope
 import dev.slne.surf.gecko.server.coroutine.ticks
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
+import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.util.geckoHighlight
 import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.Component
 import net.minestom.server.entity.Player
 import net.worldseed.multipart.ModelEngine
@@ -15,11 +17,7 @@ import net.worldseed.resourcepack.PackBuilder
 import java.io.StringReader
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.io.path.ExperimentalPathApi
-import kotlin.io.path.Path
-import kotlin.io.path.createDirectories
-import kotlin.io.path.deleteRecursively
-import kotlin.io.path.outputStream
+import kotlin.io.path.*
 import kotlin.time.Duration.Companion.seconds
 
 object DuckMascotManager {
@@ -48,7 +46,8 @@ object DuckMascotManager {
         models.deleteRecursively()
 
         javaClass.getResourceAsStream("/wsee/duck_mascot_large_flying.bbmodel")!!.use { input ->
-            bbmodels.resolve("duck_mascot_large_flying.bbmodel").outputStream().use { input.copyTo(it) }
+            bbmodels.resolve("duck_mascot_large_flying.bbmodel").outputStream()
+                .use { input.copyTo(it) }
         }
 
         val config = PackBuilder.generate(bbmodels, resourcePack, models)
@@ -63,12 +62,17 @@ object DuckMascotManager {
         }
 
         geckoScope.launch {
+            player.playSound(GeckoSounds.DIALOG_OPEN, Sound.Emitter.self())
             mascot.play("nod")
-            delay(1.6.seconds)
+            delay(0.7.seconds)
 
-            for (line in lines) {
+            for ((index, line) in lines.withIndex()) {
                 if (!player.isOnline || !GeckoLobby.contains(player)) {
                     return@launch
+                }
+
+                if (index > 0) {
+                    player.playSound(GeckoSounds.DIALOG_NEXT, Sound.Emitter.self())
                 }
 
                 mascot.play("quack")
@@ -78,6 +82,11 @@ object DuckMascotManager {
                         geckoHighlight("Ente: ")
                         geckoPrimary(line.take(length))
                     })
+
+                    if (length % 2 == 0 && !line[length - 1].isWhitespace()) {
+                        player.playSound(GeckoSounds.DIALOG_BLIP, Sound.Emitter.self())
+                    }
+
                     delay(1.ticks)
                 }
 
