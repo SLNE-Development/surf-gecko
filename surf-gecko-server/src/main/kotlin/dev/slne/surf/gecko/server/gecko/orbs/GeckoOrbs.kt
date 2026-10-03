@@ -14,7 +14,8 @@ import net.minestom.server.tag.Tag
 object GeckoOrbs {
     val ORB_TAG_KEY: Tag<Boolean> = Tag.Boolean("gecko_orb")
 
-    val ITEM: ItemStack = ItemStack.of(Material.GOLD_NUGGET).builder()
+    val ITEM: ItemStack = ItemStack.of(Material.PAPER).builder()
+        .set(DataComponents.ITEM_MODEL, "nexo:gecko/orb")
         .set(DataComponents.ITEM_NAME, buildText { geckoHighlight("Orb") })
         .withTag(ORB_TAG_KEY, true)
         .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
