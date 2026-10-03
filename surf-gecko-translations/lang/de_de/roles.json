@@ -1,0 +1,11 @@
+{
+  "role.seeker.name": "<seeker>Sucher",
+  "role.seeker.description": "Finde alle Verstecker",
+  "role.hider.name": "<hider>Verstecker",
+  "role.hider.description": "Verstecke dich vor den Suchern",
+  "role.spectator.name": "<spectator>Zuschauer",
+  "role.spectator.description": "Du bist ausgeschieden.",
+
+  "map.scientist-city.name": "Wissenschaftler Stadt",
+  "map.test-map.name": "Test Map"
+}

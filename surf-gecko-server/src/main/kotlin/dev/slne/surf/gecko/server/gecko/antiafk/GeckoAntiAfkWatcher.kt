@@ -7,9 +7,8 @@ import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.gecko.GeckoGame
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
-import dev.slne.surf.gecko.server.gecko.util.geckoHighlight
-import dev.slne.surf.gecko.server.gecko.util.geckoSecondary
 import dev.slne.surf.gecko.server.gecko.visual.ScreenFade
+import dev.slne.surf.gecko.server.i18n.translate
 import dev.slne.surf.playtime.api.common.surfPlaytimeApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -17,7 +16,6 @@ import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.title.Title
 import net.minestom.server.entity.Player
 import java.time.Duration
@@ -67,15 +65,8 @@ class GeckoAntiAfkWatcher(val game: GeckoGame) {
 
     private fun warn(player: Player, secondsLeft: Long) {
         player.showTitle {
-            title {
-                error("AFK", TextDecoration.BOLD)
-            }
-
-            subtitle {
-                geckoSecondary("Bewege dich, sonst wirst du in ")
-                geckoHighlight(secondsLeft.toString())
-                geckoSecondary(" Sekunden gekickt.")
-            }
+            title = player.translate("game.afk.title")
+            subtitle = player.translate("game.afk.subtitle", "seconds" to secondsLeft)
 
             times {
                 fadeIn(0)

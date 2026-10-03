@@ -1,6 +1,5 @@
 package dev.slne.surf.gecko.server.gecko.shop.items.hider
 
-import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
@@ -9,8 +8,7 @@ import dev.slne.surf.gecko.server.gecko.shop.effect.glow.GlowEffect
 import dev.slne.surf.gecko.server.gecko.shop.effect.playOnce
 import dev.slne.surf.gecko.server.gecko.shop.type.ShopItemType
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
-import dev.slne.surf.gecko.server.gecko.util.appendPrefix
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
+import dev.slne.surf.gecko.server.i18n.sendTranslated
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.component.DataComponents
 import net.minestom.server.entity.Player
@@ -21,8 +19,6 @@ import kotlin.time.Duration.Companion.seconds
 object HiderScoutShopItem : ShopItem {
     override val id = "hider_scout"
     override val price = 6
-    override val displayName = "Ausguck"
-    override val description = "Zeigt dir 10 Sekunden lang alle Sucher"
     override val maps = null
     override val roles = listOf(GeckoGameRole.HIDER)
     override val item: ItemStack = ItemStack.of(Material.PAPER).builder()
@@ -44,10 +40,7 @@ object HiderScoutShopItem : ShopItem {
         }
 
         if (!playOnce(player, 10.seconds, GlowEffect(player, seekers))) {
-            player.sendText {
-                appendPrefix()
-                geckoPrimary("Du bist bereits auf dem Ausguck.")
-            }
+            player.sendTranslated("shop.item.hider_scout.already-active")
             return false
         }
 

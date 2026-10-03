@@ -1,12 +1,12 @@
 package dev.slne.surf.gecko.server.gecko.display.tablist
 
-import dev.slne.surf.api.core.font.toSmallCaps
-import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
-import dev.slne.surf.gecko.server.gecko.util.geckoSecondary
+import dev.slne.surf.gecko.server.i18n.LocalizedComponent
+import dev.slne.surf.gecko.server.i18n.PlayerLanguages
+import dev.slne.surf.gecko.server.i18n.translatable
+import dev.slne.surf.gecko.server.i18n.translate
 import kotlinx.coroutines.Job
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
@@ -19,6 +19,8 @@ object GeckoGameTablistManager {
         job = geckoAsyncScope.runAtFixedRate(1.seconds) {
             sendAdditions()
         }
+
+        PlayerLanguages.onChange(::sendAdditions)
     }
 
     fun shutdown() {
@@ -28,25 +30,18 @@ object GeckoGameTablistManager {
     }
 
     fun sendAdditions() {
-        MinecraftServer.getConnectionManager().onlinePlayers.forEach {
-            it.sendPlayerListHeaderAndFooter(buildText {
-                appendNewline()
-                geckoPrimary("                      CASTCRAFTER.DE                      ")
-                appendNewline()
-                geckoPrimary("Hide 'n Seek")
-                spacer(" » ")
-                geckoPrimary(currentState(it))
-                appendNewline()
-            }, buildText {
-                appendNewline()
-                geckoSecondary("castcrafter.de".toSmallCaps())
-                appendNewline()
-            })
-        }
+        MinecraftServer.getConnectionManager().onlinePlayers.forEach(::sendAdditions)
     }
 
-    private fun currentState(player: Player): String {
-        val game = GeckoGameManager.findGame(player.uuid) ?: return "Lobby"
-        return game.settings.map.mapDisplayName
+    private fun sendAdditions(player: Player) {
+        player.sendPlayerListHeaderAndFooter(
+            player.translate("display.tablist.header", "state" to currentState(player)),
+            player.translate("display.tablist.footer")
+        )
+    }
+
+    private fun currentState(player: Player): LocalizedComponent {
+        val game = GeckoGameManager.findGame(player.uuid) ?: return translatable("display.tablist.lobby")
+        return game.settings.map.displayName
     }
 }

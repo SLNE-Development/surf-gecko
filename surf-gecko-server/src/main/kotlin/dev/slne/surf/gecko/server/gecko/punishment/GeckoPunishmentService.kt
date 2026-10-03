@@ -1,22 +1,21 @@
 package dev.slne.surf.gecko.server.gecko.punishment
 
 import dev.slne.surf.api.core.messages.adventure.bossBar
-import dev.slne.surf.api.core.messages.adventure.buildText
-import dev.slne.surf.api.core.messages.adventure.sendText
-import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.database.repository.GeckoPunishmentRepository
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
-import dev.slne.surf.gecko.server.gecko.util.GECKO_SECONDARY
-import dev.slne.surf.gecko.server.gecko.util.appendPrefix
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
-import dev.slne.surf.gecko.server.gecko.util.geckoSecondary
+import dev.slne.surf.gecko.server.i18n.GeckoTranslations
+import dev.slne.surf.gecko.server.i18n.LocalizedComponent
+import dev.slne.surf.gecko.server.i18n.formatDuration
+import dev.slne.surf.gecko.server.i18n.sendTranslated
+import dev.slne.surf.gecko.server.i18n.translatable
+import dev.slne.surf.gecko.server.i18n.translate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import net.kyori.adventure.bossbar.BossBar
-import net.kyori.adventure.text.format.TextDecoration
+import net.kyori.adventure.text.Component
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.Player
 import java.util.*
@@ -49,19 +48,11 @@ object GeckoPunishmentService {
     fun apply(player: Player, punishment: GeckoGamePunishment) {
         punishments[player.uuid] = punishment
 
-        player.sendText {
-            appendNewline()
-            appendPrefix()
-            error("Du wurdest gesperrt.", TextDecoration.BOLD)
-            appendNewline()
-            appendPrefix()
-            geckoPrimary("Grund: ")
-            geckoSecondary(punishment.reason)
-            appendNewline()
-            appendPrefix()
-            appendRemaining(punishment)
-            appendNewline()
-        }
+        player.sendTranslated(
+            "punishment.punished",
+            "reason" to punishment.reasonText,
+            "remaining" to punishment.remainingText
+        )
     }
 
     fun activePunishment(playerUuid: UUID) = punishments[playerUuid]?.takeIf { it.isActive() }
@@ -97,19 +88,11 @@ object GeckoPunishmentService {
     }
 
     private fun sendNo(player: Player, punishment: GeckoGamePunishment) {
-        player.sendText {
-            appendNewline()
-            appendPrefix()
-            error("Du kannst aktuell keinem Spiel beitreten.", TextDecoration.BOLD)
-            appendNewline()
-            appendPrefix()
-            geckoPrimary("Grund: ")
-            geckoSecondary(punishment.reason)
-            appendNewline()
-            appendPrefix()
-            appendRemaining(punishment)
-            appendNewline()
-        }
+        player.sendTranslated(
+            "punishment.join-denied",
+            "reason" to punishment.reasonText,
+            "remaining" to punishment.remainingText
+        )
     }
 
     private fun update() {
@@ -138,11 +121,7 @@ object GeckoPunishmentService {
             }
         }
 
-        bossBar.name(buildText {
-            error("Gesperrt", TextDecoration.BOLD)
-            spacer(" » ")
-            appendRemaining(punishment)
-        })
+        bossBar.name(player.translate("punishment.bossbar", "remaining" to punishment.remainingText))
 
         player.showBossBar(bossBar)
     }
@@ -153,15 +132,11 @@ object GeckoPunishmentService {
     }
 }
 
-private fun SurfComponentBuilder.appendRemaining(punishment: GeckoGamePunishment) {
-    val remaining = punishment.remaining()
+val GeckoGamePunishment.reasonText: LocalizedComponent
+    get() = if (GeckoTranslations.has(reason)) translatable(reason) else LocalizedComponent { Component.text(reason) }
 
-    if (remaining == null) {
-        geckoPrimary("Dauer: ")
-        geckoSecondary("Permanent")
-        return
+private val GeckoGamePunishment.remainingText: LocalizedComponent
+    get() {
+        val remaining = remaining() ?: return translatable("punishment.duration.permanent")
+        return translatable("punishment.duration.remaining", "time" to formatDuration(remaining, short = true))
     }
-
-    geckoPrimary("Noch ")
-    appendTime(remaining, showSeconds = true, shortForms = true, timeColor = GECKO_SECONDARY)
-}

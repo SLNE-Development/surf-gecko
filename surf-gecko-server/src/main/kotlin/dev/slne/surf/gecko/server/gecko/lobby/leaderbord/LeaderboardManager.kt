@@ -1,10 +1,8 @@
 package dev.slne.surf.gecko.server.gecko.lobby.leaderbord
 
-import dev.slne.surf.api.core.font.toSmallCaps
 import dev.slne.surf.api.core.messages.Colors
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.text
-import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.MinestomDispatchers
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
@@ -13,8 +11,9 @@ import dev.slne.surf.gecko.server.database.repository.GeckoLeaderboardRepository
 import dev.slne.surf.gecko.server.database.repository.GeckoPlayerNameRepository
 import dev.slne.surf.gecko.server.event.register
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
-import dev.slne.surf.gecko.server.gecko.util.geckoSecondary
-import dev.slne.surf.gecko.server.gecko.util.geckoUseless
+import dev.slne.surf.gecko.server.i18n.PlayerLanguages
+import dev.slne.surf.gecko.server.i18n.translate
+import dev.slne.surf.gecko.server.i18n.translatePlain
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -45,6 +44,14 @@ object LeaderboardManager {
 
     suspend fun init() {
         LeaderboardListener.register()
+
+        PlayerLanguages.onChange { player ->
+            val playerHolograms = holograms[player.uuid] ?: return@onChange
+
+            geckoScope.launch {
+                update(player, playerHolograms)
+            }
+        }
 
         refreshJob = geckoAsyncScope.runAtFixedRate(5.minutes) {
             refresh()
@@ -146,49 +153,65 @@ object LeaderboardManager {
 
         return buildText {
             appendNewline()
-            text(type.title.toSmallCaps(), LEADERBOARD_COLOR, TextDecoration.BOLD)
+            append(
+                player.translate("lobby.leaderboard.${type.id}.title")
+                    .colorIfAbsent(LEADERBOARD_COLOR)
+                    .decorate(TextDecoration.BOLD)
+            )
             appendNewline()
 
             if (snapshot.top.isEmpty()) {
-                geckoUseless("Noch keine Daten")
+                append(player.translate("lobby.leaderboard.empty"))
             } else {
                 for (rank in 1..TOP_SIZE) {
                     val entry = snapshot.top.getOrNull(rank - 1)
 
                     appendNewline()
                     if (entry != null) {
-                        appendRow(entry.rank.toString(), entry.name, entry.value, type.unit)
+                        append(
+                            row(
+                                player,
+                                type,
+                                entry.rank.toString(),
+                                entry.name ?: player.translatePlain("lobby.leaderboard.unknown-player"),
+                                entry.value
+                            )
+                        )
                     } else {
-                        appendRow(rank.toString(), "???", 0L, type.unit)
+                        append(row(player, type, rank.toString(), "???", 0L))
                     }
                 }
             }
 
             appendNewline()
             appendNewline()
-            geckoSecondary("Du ")
-            darkSpacer(" » ")
-            text(place?.value?.toString() ?: "-", LEADERBOARD_COLOR)
-            text(" ${type.unit}", LEADERBOARD_COLOR)
-            darkSpacer(" (")
-            append(coloredRank(place?.rank?.toString() ?: "-"))
-            darkSpacer(")")
+            append(
+                player.translate(
+                    "lobby.leaderboard.self",
+                    "value" to valueText(player, type, place?.value?.toString() ?: "-"),
+                    "rank" to coloredRank(place?.rank?.toString() ?: "-")
+                )
+            )
             appendNewline()
         }
     }
 
-    private fun SurfComponentBuilder.appendRow(
+    private fun row(
+        player: Player,
+        type: LeaderboardType,
         rank: String,
         name: String,
-        value: Long,
-        unit: String
-    ) {
-        append(coloredRank(rank))
-        spacer(" ")
-        white(name)
-        darkSpacer(" » ")
-        text("$value $unit", LEADERBOARD_COLOR)
-    }
+        value: Long
+    ) = player.translate(
+        "lobby.leaderboard.row",
+        "rank" to coloredRank(rank),
+        "name" to name,
+        "value" to valueText(player, type, value)
+    )
+
+    private fun valueText(player: Player, type: LeaderboardType, value: Any) =
+        player.translate("lobby.leaderboard.${type.id}.value", "value" to value)
+            .colorIfAbsent(LEADERBOARD_COLOR)
 
     private fun coloredRank(rank: String) = when (rank) {
         "1" -> text("#1", TextColor.fromHexString("#F1FA7F"))

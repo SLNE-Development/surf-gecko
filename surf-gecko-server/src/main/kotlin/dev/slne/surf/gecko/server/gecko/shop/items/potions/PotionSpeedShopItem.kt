@@ -19,8 +19,6 @@ object PotionSpeedShopItem : ShopItem {
     override val id = "speed_potion"
     override val roles = listOf(GeckoGameRole.HIDER, GeckoGameRole.SEEKER)
     override val price = 5
-    override val displayName = "Geschwindigkeitstrank"
-    override val description = "Werde für 5 Sekunden schneller"
     override val types = listOf(ShopItemType.HIDER_POTION, ShopItemType.SEEKER_POTION)
     override val item: ItemStack = ItemStack.builder(Material.POTION)
         .set(

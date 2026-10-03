@@ -19,10 +19,35 @@ data class Config(
     @Setting("chat")
     val chat: ChatConfig = ChatConfig(),
 
+    @Setting("translations")
+    val translations: TranslationsConfig = TranslationsConfig(),
+
     @Setting("max-players")
     @Comment("Player limit reported on the server list and enforced by the extensions.")
     val maxPlayers: Int = 100,
 ) {
+
+    @ConfigSerializable
+    data class TranslationsConfig(
+        @Setting("repository")
+        @Comment("GitHub repository (owner/name) the translations are fetched from on startup and on /i18n reload.")
+        val repository: String = "SLNE-Development/surf-gecko",
+
+        @Setting("branch")
+        val branch: String = "version/26.2",
+
+        @Setting("path")
+        @Comment("Directory inside the repository that holds one folder per language, e.g. lang/de_de/*.json.")
+        val path: String = "surf-gecko-translations/lang",
+
+        @Setting("token")
+        @Comment("Optional GitHub token, required if the repository is private.")
+        val token: String = "",
+
+        @Setting("cache-directory")
+        @Comment("Last successfully fetched translations, used when GitHub cannot be reached.")
+        val cacheDirectory: String = "translations",
+    )
 
     @ConfigSerializable
     data class AddressConfig(

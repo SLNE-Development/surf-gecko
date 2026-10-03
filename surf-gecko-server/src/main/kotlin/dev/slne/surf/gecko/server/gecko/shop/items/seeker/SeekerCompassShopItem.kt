@@ -1,6 +1,5 @@
 package dev.slne.surf.gecko.server.gecko.shop.items.seeker
 
-import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
@@ -10,8 +9,7 @@ import dev.slne.surf.gecko.server.gecko.shop.effect.playOnce
 import dev.slne.surf.gecko.server.gecko.shop.nearestTo
 import dev.slne.surf.gecko.server.gecko.shop.type.ShopItemType
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
-import dev.slne.surf.gecko.server.gecko.util.appendPrefix
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
+import dev.slne.surf.gecko.server.i18n.sendTranslated
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
@@ -21,8 +19,6 @@ import kotlin.time.Duration.Companion.seconds
 object SeekerCompassShopItem : ShopItem {
     override val id = "seeker_compass"
     override val price = 6
-    override val displayName = "Sucher Kompass"
-    override val description = "Zeigt dir 10 Sekunden lang den nähesten Verstecker"
     override val maps = null
     override val roles = listOf(GeckoGameRole.SEEKER)
     override val types = listOf(ShopItemType.SEEKER_ATTACK)
@@ -44,10 +40,7 @@ object SeekerCompassShopItem : ShopItem {
         val effect = CompassEffect(player, displayName) { game.activeHiders().nearestTo(player) }
 
         if (!playOnce(player, 10.seconds, effect)) {
-            player.sendText {
-                appendPrefix()
-                geckoPrimary("Dein Sucher Kompass ist bereits aktiv.")
-            }
+            player.sendTranslated("shop.item.seeker_compass.already-active")
             return false
         }
 

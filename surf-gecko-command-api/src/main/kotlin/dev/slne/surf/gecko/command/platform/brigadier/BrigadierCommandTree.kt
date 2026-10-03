@@ -31,10 +31,9 @@ import net.minestom.server.command.CommandSender
 import net.minestom.server.command.ConsoleSender
 import net.minestom.server.entity.Player
 
-private val NO_COMPATIBLE_EXECUTOR: Component = Component.text(
-    "Dieser Befehl kann von diesem Absendertyp nicht ausgeführt werden.",
-    NamedTextColor.RED,
-)
+var noCompatibleExecutorMessage: (CommandSender) -> Component = {
+    Component.text("Dieser Befehl kann von diesem Absendertyp nicht ausgeführt werden.", NamedTextColor.RED)
+}
 
 /**
  * The Brigadier command tree that owns parsing and dispatch for every registered command.
@@ -193,7 +192,7 @@ internal class BrigadierCommandTree(
 
         val selected = selectExecutor(sender, path.executors)
             ?: run {
-                sender.sendMessage(NO_COMPATIBLE_EXECUTOR)
+                sender.sendMessage(noCompatibleExecutorMessage(sender))
                 return@Command 0
             }
 

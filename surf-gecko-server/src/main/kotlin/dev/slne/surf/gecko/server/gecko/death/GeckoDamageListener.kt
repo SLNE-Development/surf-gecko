@@ -2,19 +2,17 @@ package dev.slne.surf.gecko.server.gecko.death
 
 import com.google.inject.Singleton
 import dev.slne.minestom.lobby.api.event.EventRegistrar
-import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.showTitle
 import dev.slne.surf.gecko.server.gecko.GeckoGame
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
-import dev.slne.surf.gecko.server.gecko.util.appendPrefix
-import dev.slne.surf.gecko.server.gecko.util.geckoHighlight
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import dev.slne.surf.gecko.server.gecko.visual.ScreenShake
+import dev.slne.surf.gecko.server.i18n.sendTranslatedActionBar
+import dev.slne.surf.gecko.server.i18n.translate
 import net.kyori.adventure.sound.Sound
-import net.kyori.adventure.text.format.TextDecoration
+import net.kyori.adventure.text.Component
 import net.minestom.server.entity.Player
 import net.minestom.server.event.Event
 import net.minestom.server.event.EventNode
@@ -63,34 +61,21 @@ class GeckoDamageListener : EventRegistrar {
             attackingGamePlayer?.let { game.statsTracker.addKill(it.playerUuid) }
         }
 
-        attackingGamePlayer?.player?.sendActionBar(buildText {
-            geckoPrimary("Du hast ")
-            text(gamePlayer.player.username, gamePlayer.role.color)
-            if (attackingGamePlayer.role == GeckoGameRole.SEEKER) {
-                geckoPrimary(" gefunden")
-            } else {
-                geckoPrimary(" getötet")
-            }
+        val victimName = Component.text(gamePlayer.player.username, gamePlayer.role.color)
+        val outcome = if (attackingGamePlayer?.role == GeckoGameRole.SEEKER) "found" else "killed"
 
-        })
+        attackingGamePlayer?.player?.sendTranslatedActionBar("game.kill.actionbar.$outcome", "victim" to victimName)
 
         playKillSounds(game, gamePlayer, attackingGamePlayer)
 
-        game.sendText {
-            appendPrefix()
-            text(gamePlayer.player.username, gamePlayer.role.color)
-
-            if (attackingGamePlayer != null) {
-                geckoPrimary(" wurde von ")
-                text(attackingGamePlayer.player.username, attackingGamePlayer.role.color)
-                if (attackingGamePlayer.role == GeckoGameRole.SEEKER) {
-                    geckoPrimary(" gefunden")
-                } else {
-                    geckoPrimary(" getötet")
-                }
-            } else {
-                geckoPrimary(" ist gestorben")
-            }
+        if (attackingGamePlayer != null) {
+            game.sendTranslated(
+                "game.kill.broadcast.$outcome",
+                "victim" to victimName,
+                "attacker" to Component.text(attackingGamePlayer.player.username, attackingGamePlayer.role.color)
+            )
+        } else {
+            game.sendTranslated("game.kill.broadcast.died", "victim" to victimName)
         }
 
         event.isCancelled = true
@@ -110,18 +95,13 @@ class GeckoDamageListener : EventRegistrar {
         victim.playerOrNull?.let {
             it.playSound(GeckoSounds.DEATH_SELF, Sound.Emitter.self())
             ScreenShake.play(it, 0.6, 12)
+            val player = it
             it.showTitle {
-                title {
-                    text("Gefunden", victim.role.color, TextDecoration.BOLD)
-                }
-                subtitle {
-                    if (killer != null) {
-                        geckoPrimary("Du wurdest von ")
-                        geckoHighlight(killer.player.username)
-                        geckoPrimary(" erwischt")
-                    } else {
-                        geckoPrimary("Du bist gestorben")
-                    }
+                title = player.translate("game.kill.title").colorIfAbsent(victim.role.color)
+                subtitle = if (killer != null) {
+                    player.translate("game.kill.subtitle.killer", "killer" to killer.player.username)
+                } else {
+                    player.translate("game.kill.subtitle.died")
                 }
                 times {
                     fadeIn(2)

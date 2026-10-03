@@ -1,13 +1,15 @@
 package dev.slne.surf.gecko.server.performance.monitor
 
 import dev.slne.surf.api.core.messages.adventure.bossBar
-import dev.slne.surf.api.core.messages.adventure.buildText
-import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
+import dev.slne.surf.gecko.server.i18n.GeckoLanguage
+import dev.slne.surf.gecko.server.i18n.GeckoTranslations
+import dev.slne.surf.gecko.server.i18n.PlayerLanguages
+import dev.slne.surf.gecko.server.i18n.language
 import kotlinx.coroutines.Job
 import net.kyori.adventure.bossbar.BossBar
+import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import net.minestom.server.MinecraftServer
@@ -18,10 +20,14 @@ import kotlin.time.Duration.Companion.seconds
 object StatusBarManager {
     private const val BYTES_PER_MEGABYTE = 1024.0 * 1024.0
 
-    private val statusBossBar = bossBar {
-        color = BossBar.Color.GREEN
-        overlay = BossBar.Overlay.NOTCHED_20
-        progress = 1f
+    private val statusBossBars = EnumMap<GeckoLanguage, BossBar>(GeckoLanguage::class.java).apply {
+        for (language in GeckoLanguage.entries) {
+            put(language, bossBar {
+                color = BossBar.Color.GREEN
+                overlay = BossBar.Overlay.NOTCHED_20
+                progress = 1f
+            })
+        }
     }
 
     private var job: Job? = null
@@ -31,32 +37,44 @@ object StatusBarManager {
             SystemStatistics.sample()
             update()
         }
+
+        PlayerLanguages.onChange { player ->
+            if (isVisible(player)) {
+                hide(player)
+                player.showBossBar(statusBossBars.getValue(player.language))
+            }
+        }
     }
 
     fun shutdown() {
         job?.cancel()
         job = null
 
-        MinecraftServer.getBossBarManager().destroyBossBar(statusBossBar)
+        statusBossBars.values.forEach { MinecraftServer.getBossBarManager().destroyBossBar(it) }
     }
 
     fun toggle(player: Player): Boolean {
         if (isVisible(player)) {
-            player.hideBossBar(statusBossBar)
+            hide(player)
             return false
         }
 
-        player.showBossBar(statusBossBar)
+        player.showBossBar(statusBossBars.getValue(player.language))
         update()
 
         return true
     }
 
-    fun isVisible(player: Player) =
-        statusBossBar in MinecraftServer.getBossBarManager().getPlayerBossBars(player)
+    fun isVisible(player: Player): Boolean {
+        val shown = MinecraftServer.getBossBarManager().getPlayerBossBars(player)
+        return statusBossBars.values.any { it in shown }
+    }
+
+    private fun hide(player: Player) = statusBossBars.values.forEach { player.hideBossBar(it) }
 
     private fun update() {
-        if (MinecraftServer.getBossBarManager().getBossBarViewers(statusBossBar).isEmpty()) {
+        val bossBarManager = MinecraftServer.getBossBarManager()
+        if (statusBossBars.values.all { bossBarManager.getBossBarViewers(it).isEmpty() }) {
             return
         }
 
@@ -80,37 +98,24 @@ object StatusBarManager {
         val memoryGrade = Grade.atMost(memoryRatio, 0.6, 0.85)
         val cpuGrade = Grade.atMost(cpuLoad, 0.5, 0.8)
 
-        statusBossBar.name(buildText {
-            geckoPrimary("TPS")
-            spacer(": ")
-            text(decimal(tps), tpsGrade.textColor)
+        val progress = (tps / TickStatistics.targetTps).toFloat().coerceIn(0f, 1f)
+        val color = worstOf(tpsGrade, msptGrade, memoryGrade, cpuGrade).barColor
 
-            separator()
-            geckoPrimary("MSPT")
-            spacer(": ")
-            text(decimal(mspt), msptGrade.textColor)
-
-            separator()
-            geckoPrimary("RAM")
-            spacer(": ")
-            text(memory(usedMemory), memoryGrade.textColor)
-            spacer("/")
-            text(memory(maxMemory), memoryGrade.textColor)
-
-            separator()
-            geckoPrimary("CPU")
-            spacer(": ")
-            text(percent(cpuLoad), cpuGrade.textColor)
-        })
-
-        statusBossBar.progress((tps / TickStatistics.targetTps).toFloat().coerceIn(0f, 1f))
-        statusBossBar.color(worstOf(tpsGrade, msptGrade, memoryGrade, cpuGrade).barColor)
-    }
-
-    private fun SurfComponentBuilder.separator() {
-        appendSpace()
-        darkSpacer("|")
-        appendSpace()
+        for ((language, bossBar) in statusBossBars) {
+            bossBar.name(
+                GeckoTranslations.render(
+                    language,
+                    "statusbar.format",
+                    "tps" to text(decimal(tps), tpsGrade.textColor),
+                    "mspt" to text(decimal(mspt), msptGrade.textColor),
+                    "ram_used" to text(memory(usedMemory), memoryGrade.textColor),
+                    "ram_max" to text(memory(maxMemory), memoryGrade.textColor),
+                    "cpu" to text(percent(cpuLoad), cpuGrade.textColor)
+                )
+            )
+            bossBar.progress(progress)
+            bossBar.color(color)
+        }
     }
 
     private fun worstOf(vararg grades: Grade) = grades.max()

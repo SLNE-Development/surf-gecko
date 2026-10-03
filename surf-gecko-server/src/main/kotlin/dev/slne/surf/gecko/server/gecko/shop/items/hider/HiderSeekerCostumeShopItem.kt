@@ -1,6 +1,5 @@
 package dev.slne.surf.gecko.server.gecko.shop.items.hider
 
-import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.COLOR_SEEKER
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
@@ -10,8 +9,8 @@ import dev.slne.surf.gecko.server.gecko.shop.effect.costume.CostumeEffect
 import dev.slne.surf.gecko.server.gecko.shop.effect.playOnce
 import dev.slne.surf.gecko.server.gecko.shop.type.ShopItemType
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
-import dev.slne.surf.gecko.server.gecko.util.appendPrefix
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
+import dev.slne.surf.gecko.server.i18n.language
+import dev.slne.surf.gecko.server.i18n.sendTranslated
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.component.DataComponents
 import net.minestom.server.entity.Player
@@ -23,8 +22,6 @@ import kotlin.time.Duration.Companion.seconds
 object HiderSeekerCostumeShopItem : ShopItem {
     override val id = "hider_seeker_costume"
     override val price = 8
-    override val displayName = "Sucher Kostüm"
-    override val description = "Verkleidet dich 20 Sekunden lang als Sucher"
     override val maps = null
     override val roles = listOf(GeckoGameRole.HIDER)
     override val types = listOf(ShopItemType.HIDER_ATTACK)
@@ -45,19 +42,13 @@ object HiderSeekerCostumeShopItem : ShopItem {
             return false
         }
 
-        if (!playOnce(player, 20.seconds, CostumeEffect(player, GeckoGamePlayer.SEEKER_ARMOR))) {
-            player.sendText {
-                appendPrefix()
-                geckoPrimary("Du trägst bereits ein Sucher Kostüm.")
-            }
+        if (!playOnce(player, 20.seconds, CostumeEffect(player, GeckoGamePlayer.seekerArmor(player.language)))) {
+            player.sendTranslated("shop.item.hider_seeker_costume.already-active")
             return false
         }
 
         player.playSound(GeckoSounds.SHOP_SHIELD, Sound.Emitter.self())
-        player.sendText {
-            appendPrefix()
-            geckoPrimary("Du siehst 20 Sekunden lang wie ein Sucher aus.")
-        }
+        player.sendTranslated("shop.item.hider_seeker_costume.activated")
 
         return true
     }

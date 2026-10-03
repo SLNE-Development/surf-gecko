@@ -1,11 +1,13 @@
 package dev.slne.surf.gecko.server.gecko.shop.type.shops
 
 import dev.slne.surf.api.minestom.inventory.framework.dsl.onItemClick
+import dev.slne.surf.api.minestom.inventory.framework.modifyConfig
 import dev.slne.surf.api.minestom.inventory.framework.view.icon.ViewIcon
 import dev.slne.surf.api.minestom.inventory.framework.view.icon.ViewIconColor
 import dev.slne.surf.api.minestom.inventory.framework.view.icon.ViewIconType
 import dev.slne.surf.api.minestom.inventory.framework.view.onFirstRender
 import dev.slne.surf.api.minestom.inventory.framework.view.onInit
+import dev.slne.surf.api.minestom.inventory.framework.view.onOpen
 import dev.slne.surf.api.minestom.inventory.framework.view.settings
 import dev.slne.surf.api.minestom.inventory.framework.view.state.get
 import dev.slne.surf.api.minestom.inventory.framework.view.state.initialState
@@ -14,6 +16,8 @@ import dev.slne.surf.gecko.server.gecko.map.GeckoMap
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
 import dev.slne.surf.gecko.server.gecko.shop.ShopPurchase
 import dev.slne.surf.gecko.server.gecko.shop.type.ShopItemType
+import dev.slne.surf.gecko.server.i18n.language
+import dev.slne.surf.gecko.server.i18n.translate
 import net.kyori.adventure.text.Component
 import net.minestom.server.component.DataComponents
 import net.minestom.server.item.ItemStack
@@ -28,6 +32,11 @@ val seekerShopView = surfView("Sucher Shop") {
         rows(4)
         cancelAllInteractions()
         navigateBackOnOutsideClick(false)
+    }
+
+    onOpen {
+        val title = player.translate("shop.menu.seeker.title")
+        modifyConfig { title(title) }
     }
 
     onInit {
@@ -52,14 +61,12 @@ val seekerShopView = surfView("Sucher Shop") {
                 .set(DataComponents.ITEM_NAME, Component.empty()).build()
         )
 
-        layoutSlot('1', ShopItemType.SEEKER_ATTACK.item)
-        layoutSlot('2', ShopItemType.SEEKER_SEARCH.item)
-        layoutSlot('3', ShopItemType.SEEKER_POTION.item)
+        layoutSlot('1', ShopItemType.SEEKER_ATTACK.item(player.language))
+        layoutSlot('2', ShopItemType.SEEKER_SEARCH.item(player.language))
+        layoutSlot('3', ShopItemType.SEEKER_POTION.item(player.language))
 
         layoutSlot('X', ViewIcon(ViewIconType.CROSS, ViewIconColor.RED).build {
-            displayName {
-                error("Schließen")
-            }
+            displayName(player.translate("common.menu.close"))
         }).onClick { click ->
             click.closeForPlayer()
         }
@@ -73,7 +80,7 @@ val seekerShopView = surfView("Sucher Shop") {
 
             builder.withItem(
                 item?.let {
-                    buildShopItemDisplay(it)
+                    buildShopItemDisplay(it, player)
                 } ?: ItemStack.AIR
             )
         }
@@ -87,7 +94,7 @@ val seekerShopView = surfView("Sucher Shop") {
 
             builder.withItem(
                 item?.let {
-                    buildShopItemDisplay(it)
+                    buildShopItemDisplay(it, player)
                 } ?: ItemStack.AIR
             )
         }
@@ -101,7 +108,7 @@ val seekerShopView = surfView("Sucher Shop") {
 
             builder.withItem(
                 item?.let {
-                    buildShopItemDisplay(it)
+                    buildShopItemDisplay(it, player)
                 } ?: ItemStack.AIR
             )
         }

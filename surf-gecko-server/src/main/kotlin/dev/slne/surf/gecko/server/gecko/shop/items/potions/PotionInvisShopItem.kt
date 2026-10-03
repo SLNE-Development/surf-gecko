@@ -19,8 +19,6 @@ object PotionInvisShopItem : ShopItem {
     override val id = "invisibility_potion"
     override val roles = listOf(GeckoGameRole.HIDER)
     override val price = 5
-    override val displayName = "Unsichtbarkeitstrank"
-    override val description = "Werde für 10 Sekunden unsichtbar"
     override val types = listOf(ShopItemType.HIDER_POTION, ShopItemType.SEEKER_POTION)
     override val item: ItemStack = ItemStack.builder(Material.POTION)
         .set(

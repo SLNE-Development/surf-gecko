@@ -1,0 +1,42 @@
+{
+  "lobby.games.title": "Spieleübersicht",
+  "lobby.games.create": "<success>Neue Runde erstellen",
+  "lobby.games.unavailable": "<prefix><primary>Das Spiel ist nicht mehr verfügbar.",
+  "lobby.games.item.name": "<primary>Hide 'n Seek <secondary>(GeckoGames #<id>)",
+  "lobby.games.item.heading.map": "Map",
+  "lobby.games.item.heading.players": "Spieler",
+  "lobby.games.item.heading.status": "Status",
+  "lobby.games.item.map": "<secondary><map>",
+  "lobby.games.item.players": "<secondary><players> / <max>",
+  "lobby.games.state.offline": "<secondary>Runde nicht verfügbar",
+  "lobby.games.state.lobby": "<secondary>Warten auf weitere Spieler...",
+  "lobby.games.state.hiding": "<secondary>Spieler verstecken sich...",
+  "lobby.games.state.searching": "<secondary>Sucher suchen die Versteckten...",
+  "lobby.games.state.ending": "<secondary>Runde wird beendet...",
+  "lobby.games.state.ended": "<secondary>Runde ist zu Ende",
+
+  "lobby.elytra.item": "<primary>Elytra Boost",
+
+  "lobby.leaderboard.wins.title": "<small_caps>Siege</small_caps>",
+  "lobby.leaderboard.wins.value": "<value> Siege",
+  "lobby.leaderboard.games-played.title": "<small_caps>Gespielte Spiele</small_caps>",
+  "lobby.leaderboard.games-played.value": "<value> Spiele",
+  "lobby.leaderboard.empty": "<muted>Noch keine Daten",
+  "lobby.leaderboard.unknown-player": "Unbekannt",
+  "lobby.leaderboard.row": "<rank><spacer> </spacer><white><name></white><dark_spacer> » </dark_spacer><value>",
+  "lobby.leaderboard.self": "<secondary>Du </secondary><dark_spacer> » </dark_spacer><value><dark_spacer> (</dark_spacer><rank><dark_spacer>)",
+
+  "lobby.mascot.speech": "<highlight>Ente: <primary><text>",
+  "lobby.mascot.lines": [
+    "Quak! Willkommen bei Hide 'n Seek!",
+    "Jede Runde bist du entweder Verstecker oder Sucher.",
+    "Verstecker haben zu Beginn Zeit, sich ein gutes Versteck zu suchen.",
+    "Die Sucher müssen alle Verstecker finden, bevor die Zeit abläuft.",
+    "Wirst du gefunden, suchst du ab dann selbst mit oder scheidest aus.",
+    "Sammle Orbs ein und kaufe dir damit hilfreiche Items im Shop.",
+    "Klicke den NPC neben mir an, um einer Runde beizutreten. Viel Spaß!"
+  ],
+
+  "lobby.npc.games.name": "<primary><b>Hide 'n Seek</b></primary><newline><left_click><secondary> Spiele ansehen</secondary><newline><right_click><secondary> Spiel beitreten",
+  "lobby.npc.games.no-game": "<prefix><primary>Du konntest keiner Runde zugewiesen werden."
+}

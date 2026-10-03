@@ -1,6 +1,5 @@
 package dev.slne.surf.gecko.server.gecko.shop.items.hider
 
-import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.gecko.server.coroutine.geckoScope
 import dev.slne.surf.gecko.server.coroutine.ticks
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
@@ -12,8 +11,7 @@ import dev.slne.surf.gecko.server.gecko.shop.effect.grenade.ShopGrenade
 import dev.slne.surf.gecko.server.gecko.shop.type.ShopItemType
 import dev.slne.surf.gecko.server.gecko.shop.within
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
-import dev.slne.surf.gecko.server.gecko.util.appendPrefix
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
+import dev.slne.surf.gecko.server.i18n.sendTranslated
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.kyori.adventure.sound.Sound
@@ -34,8 +32,6 @@ import kotlin.time.TimeSource
 object HiderSmokeBombShopItem : ShopItem {
     override val id = "hider_smoke_bomb"
     override val price = 7
-    override val displayName = "Rauchbombe"
-    override val description = "Blende die Sucher"
     override val maps = null
     override val roles = listOf(GeckoGameRole.HIDER)
     override val types = listOf(ShopItemType.HIDER_DEFENSE)
@@ -88,10 +84,7 @@ object HiderSmokeBombShopItem : ShopItem {
                     seeker.addEffect(Potion(PotionEffect.SLOWNESS, 0, 40))
 
                     if (blinded.add(seeker.uuid)) {
-                        seeker.sendText {
-                            appendPrefix()
-                            geckoPrimary("Du wurdest von einer Rauchbombe geblendet!")
-                        }
+                        seeker.sendTranslated("shop.item.hider_smoke_bomb.blinded")
                     }
                 }
 

@@ -1,6 +1,5 @@
 package dev.slne.surf.gecko.server.gecko.map.mechanic.impl
 
-import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.coroutine.geckoScope
@@ -9,8 +8,7 @@ import dev.slne.surf.gecko.server.event.MinestomListener
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.map.mechanic.GeckoMapMechanic
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
-import dev.slne.surf.gecko.server.gecko.util.GECKO_SECONDARY
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
+import dev.slne.surf.gecko.server.i18n.sendTranslatedActionBar
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -62,11 +60,7 @@ object VentMechanic : GeckoMapMechanic, MinestomListener {
 
                         findVent(player) ?: return@forEach
 
-                        player.sendActionBar(buildText {
-                            geckoPrimary("Drücke ")
-                            translatable("key.sneak", GECKO_SECONDARY)
-                            geckoPrimary(" um den Schacht zu betreten")
-                        })
+                        player.sendTranslatedActionBar("game.vent.hint")
                     }
                 }
         }

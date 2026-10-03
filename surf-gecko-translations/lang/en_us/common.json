@@ -1,0 +1,35 @@
+{
+  "common.menu.close": "<error>Close",
+  "common.time.separator": "<spacer>, ",
+  "common.time.day.one": "<amount> day",
+  "common.time.day.other": "<amount> days",
+  "common.time.day.short": "<amount>d",
+  "common.time.hour.one": "<amount> hour",
+  "common.time.hour.other": "<amount> hours",
+  "common.time.hour.short": "<amount>h",
+  "common.time.minute.one": "<amount> minute",
+  "common.time.minute.other": "<amount> minutes",
+  "common.time.minute.short": "<amount>m",
+  "common.time.second.one": "<amount> second",
+  "common.time.second.other": "<amount> seconds",
+  "common.time.second.short": "<amount>s",
+
+  "language.name": "English",
+  "language.menu.title": "Language",
+  "language.menu.select": [
+    "",
+    "<muted>Click to select <secondary><language></secondary>."
+  ],
+  "language.menu.selected": [
+    "",
+    "<success>Currently selected"
+  ],
+  "language.changed": "<prefix><primary>Your language has been changed to <highlight><language></highlight>.",
+  "language.already-selected": "<prefix><primary>You are already using <highlight><language></highlight>.",
+  "language.save-failed": "<prefix><error>Your language could not be saved. It only applies until you rejoin.",
+
+  "i18n.reload.started": "<info_prefix><info>Reloading translations...",
+  "i18n.reload.success": "<success_prefix><success>Translations loaded from <var><source></var>: <var><languages></var>",
+  "i18n.reload.missing": "<warning_prefix><warning><var><language></var> is missing <var><count></var> translations: <spacer><keys>",
+  "i18n.reload.failed": "<error_prefix><error>Translations could not be loaded: <var><error>"
+}

@@ -1,0 +1,18 @@
+{
+  "display.scoreboard.title": "<primary><b>      Hide 'n Seek      ",
+  "display.scoreboard.footer": "<primary><small_caps>castcrafter.de</small_caps>",
+  "display.scoreboard.heading.map": "Map",
+  "display.scoreboard.heading.players": "Spieler",
+  "display.scoreboard.heading.waiting-time": "Wartezeit:",
+  "display.scoreboard.heading.time": "Zeit: ",
+  "display.scoreboard.heading.ending": "Spielende",
+  "display.scoreboard.map": "<white><map>",
+  "display.scoreboard.players": "<white><players>/<max> 👥",
+  "display.scoreboard.waiting": "<white>Warten...",
+  "display.scoreboard.time": "<white><time> ⌚",
+  "display.scoreboard.roles": "<seekers><spacer> / </spacer><hiders><white> 👥",
+
+  "display.tablist.header": "<newline><primary>                      CASTCRAFTER.DE                      </primary><newline><primary>Hide 'n Seek</primary><spacer> » </spacer><primary><state></primary><newline>",
+  "display.tablist.footer": "<newline><secondary><small_caps>castcrafter.de</small_caps></secondary><newline>",
+  "display.tablist.lobby": "Lobby"
+}

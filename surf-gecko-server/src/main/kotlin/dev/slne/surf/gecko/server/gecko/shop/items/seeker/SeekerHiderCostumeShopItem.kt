@@ -1,6 +1,5 @@
 package dev.slne.surf.gecko.server.gecko.shop.items.seeker
 
-import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.COLOR_HIDER
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
@@ -10,8 +9,8 @@ import dev.slne.surf.gecko.server.gecko.shop.effect.costume.CostumeEffect
 import dev.slne.surf.gecko.server.gecko.shop.effect.playOnce
 import dev.slne.surf.gecko.server.gecko.shop.type.ShopItemType
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
-import dev.slne.surf.gecko.server.gecko.util.appendPrefix
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
+import dev.slne.surf.gecko.server.i18n.GeckoLanguage
+import dev.slne.surf.gecko.server.i18n.sendTranslated
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.component.DataComponents
 import net.minestom.server.entity.Player
@@ -23,8 +22,6 @@ import kotlin.time.Duration.Companion.seconds
 object SeekerHiderCostumeShopItem : ShopItem {
     override val id = "seeker_hider_costume"
     override val price = 8
-    override val displayName = "Verstecker Kostüm"
-    override val description = "Verkleidet dich 20 Sekunden lang als Verstecker"
     override val maps = null
     override val roles = listOf(GeckoGameRole.SEEKER)
     override val types = listOf(ShopItemType.SEEKER_ATTACK)
@@ -37,7 +34,7 @@ object SeekerHiderCostumeShopItem : ShopItem {
         )
         .build()
 
-    private val costume = GeckoGamePlayer.SEEKER_ARMOR.mapValues { ItemStack.AIR }
+    private val costume = GeckoGamePlayer.seekerArmor(GeckoLanguage.FALLBACK).mapValues { ItemStack.AIR }
 
     override fun onUse(player: Player): Boolean {
         val game = GeckoGameManager.findGame(player.uuid) ?: return false
@@ -48,18 +45,12 @@ object SeekerHiderCostumeShopItem : ShopItem {
         }
 
         if (!playOnce(player, 20.seconds, CostumeEffect(player, costume))) {
-            player.sendText {
-                appendPrefix()
-                geckoPrimary("Du trägst bereits ein Verstecker Kostüm.")
-            }
+            player.sendTranslated("shop.item.seeker_hider_costume.already-active")
             return false
         }
 
         player.playSound(GeckoSounds.SHOP_SHIELD, Sound.Emitter.self())
-        player.sendText {
-            appendPrefix()
-            geckoPrimary("Du siehst 20 Sekunden lang wie ein Verstecker aus.")
-        }
+        player.sendTranslated("shop.item.seeker_hider_costume.activated")
 
         return true
     }

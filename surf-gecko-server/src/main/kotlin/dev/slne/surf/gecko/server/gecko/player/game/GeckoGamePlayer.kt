@@ -1,8 +1,6 @@
 package dev.slne.surf.gecko.server.gecko.player.game
 
-import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.core.messages.adventure.showTitle
-import dev.slne.surf.api.core.messages.adventure.text
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.map.GeckoMap
 import dev.slne.surf.gecko.server.gecko.map.mechanic.impl.VentMechanic
@@ -10,17 +8,25 @@ import dev.slne.surf.gecko.server.gecko.player.listener.GeckoPlayerListener
 import dev.slne.surf.gecko.server.gecko.shop.ShopItemListener
 import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
 import dev.slne.surf.gecko.server.gecko.util.*
+import dev.slne.surf.gecko.server.i18n.GeckoLanguage
+import dev.slne.surf.gecko.server.i18n.GeckoTranslations
+import dev.slne.surf.gecko.server.i18n.language
+import dev.slne.surf.gecko.server.i18n.render
+import dev.slne.surf.gecko.server.i18n.sendTranslated
+import dev.slne.surf.gecko.server.i18n.translate
 import dev.slne.surf.gecko.server.util.withTag
 import net.kyori.adventure.text.format.TextColor
 import net.minestom.server.MinecraftServer
 import net.minestom.server.component.DataComponents
 import net.minestom.server.entity.EquipmentSlot
 import net.minestom.server.entity.GameMode
+import net.minestom.server.entity.Player
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 import net.minestom.server.item.component.EnchantmentList
 import net.minestom.server.item.component.TooltipDisplay
 import net.minestom.server.item.enchant.Enchantment
+import net.minestom.server.tag.Tag
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -41,13 +47,14 @@ data class GeckoGamePlayer(
     fun applyEquipment() = when (role) {
         GeckoGameRole.SEEKER -> {
             player.scheduleNextTick {
+                val language = player.language
                 player.inventory.clear()
                 player.setCanPickupItem(true)
-                SEEKER_ARMOR.forEach { (slot, item) ->
+                seekerArmor(language).forEach { (slot, item) ->
                     player.inventory.setEquipment(slot, player.heldSlot, item)
                 }
-                player.inventory.setItemStack(0, SEEKER_SWORD)
-                player.inventory.setItemStack(1, SEEKER_BOW)
+                player.inventory.setItemStack(0, seekerSword(language))
+                player.inventory.setItemStack(1, seekerBow(language))
                 player.inventory.setItemStack(
                     17,
                     ItemStack.of(Material.ARROW).withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
@@ -70,20 +77,10 @@ data class GeckoGamePlayer(
     }
 
     fun sendRoleMessage() {
-        player.sendText {
-            appendPrefix()
-            geckoPrimary("Du bist ein ")
-            append(role.displayText)
-            geckoPrimary(".")
-        }
+        player.sendTranslated("game.role.assigned", "role" to role.displayText)
         player.showTitle {
-            title {
-                append(role.displayText)
-            }
-
-            subtitle {
-                geckoSecondary(role.description)
-            }
+            title = player.render(role.displayText)
+            subtitle = player.translate("game.role.subtitle", "description" to role.description)
         }
     }
 
@@ -159,73 +156,55 @@ data class GeckoGamePlayer(
 
     companion object {
         private val SEEKER_COLOR = TextColor.color(227, 36, 36)
-        private val SEEKER_HELMET =
-            ItemStack.of(Material.LEATHER_HELMET).builder()
-                .set(DataComponents.DYED_COLOR, SEEKER_COLOR)
+        val SEEKER_GEAR_TAG: Tag<String> = Tag.String("gecko_seeker_gear")
+
+        private fun seekerGear(language: GeckoLanguage, material: Material, id: String) =
+            ItemStack.of(material).builder()
                 .set(
                     DataComponents.TOOLTIP_DISPLAY,
                     TooltipDisplay(false, setOf(DataComponents.ENCHANTMENTS))
                 )
-                .set(DataComponents.ITEM_NAME, text("Sucher Helm", SEEKER_COLOR))
-                .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
-                .build()
-
-        private val SEEKER_CHESTPLATE =
-            ItemStack.of(Material.LEATHER_CHESTPLATE).builder()
-                .set(DataComponents.DYED_COLOR, SEEKER_COLOR)
                 .set(
-                    DataComponents.TOOLTIP_DISPLAY,
-                    TooltipDisplay(false, setOf(DataComponents.ENCHANTMENTS))
+                    DataComponents.ITEM_NAME,
+                    GeckoTranslations.render(language, "game.gear.seeker.$id").colorIfAbsent(SEEKER_COLOR)
                 )
-                .set(DataComponents.ITEM_NAME, text("Sucher Brustschutz", SEEKER_COLOR))
+                .withTag(SEEKER_GEAR_TAG, id)
                 .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
-                .build()
 
-        private val SEEKER_LEGGINGS =
-            ItemStack.of(Material.LEATHER_LEGGINGS).builder()
+        private fun seekerArmorPiece(language: GeckoLanguage, material: Material, id: String) =
+            seekerGear(language, material, id)
                 .set(DataComponents.DYED_COLOR, SEEKER_COLOR)
-                .set(
-                    DataComponents.TOOLTIP_DISPLAY,
-                    TooltipDisplay(false, setOf(DataComponents.ENCHANTMENTS))
-                )
-                .set(DataComponents.ITEM_NAME, text("Sucher Hose", SEEKER_COLOR))
-                .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
                 .build()
 
-        private val SEEKER_BOOTS =
-            ItemStack.of(Material.LEATHER_BOOTS).builder()
-                .set(DataComponents.DYED_COLOR, SEEKER_COLOR)
-                .set(
-                    DataComponents.TOOLTIP_DISPLAY,
-                    TooltipDisplay(false, setOf(DataComponents.ENCHANTMENTS))
-                )
-                .set(DataComponents.ITEM_NAME, text("Sucher Stiefel", SEEKER_COLOR))
-                .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
-                .build()
-
-        val SEEKER_ARMOR = mapOf(
-            EquipmentSlot.HELMET to SEEKER_HELMET,
-            EquipmentSlot.CHESTPLATE to SEEKER_CHESTPLATE,
-            EquipmentSlot.LEGGINGS to SEEKER_LEGGINGS,
-            EquipmentSlot.BOOTS to SEEKER_BOOTS
+        fun seekerArmor(language: GeckoLanguage) = mapOf(
+            EquipmentSlot.HELMET to seekerArmorPiece(language, Material.LEATHER_HELMET, "helmet"),
+            EquipmentSlot.CHESTPLATE to seekerArmorPiece(language, Material.LEATHER_CHESTPLATE, "chestplate"),
+            EquipmentSlot.LEGGINGS to seekerArmorPiece(language, Material.LEATHER_LEGGINGS, "leggings"),
+            EquipmentSlot.BOOTS to seekerArmorPiece(language, Material.LEATHER_BOOTS, "boots")
         )
 
-        private val SEEKER_SWORD = ItemStack.of(Material.WOODEN_SWORD).builder()
-            .set(
-                DataComponents.TOOLTIP_DISPLAY,
-                TooltipDisplay(false, setOf(DataComponents.ENCHANTMENTS))
-            )
-            .set(DataComponents.ITEM_NAME, text("Sucher Schwert", SEEKER_COLOR))
-            .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
-            .build()
-        private val SEEKER_BOW = ItemStack.of(Material.BOW).builder()
+        fun seekerSword(language: GeckoLanguage) = seekerGear(language, Material.WOODEN_SWORD, "sword").build()
+
+        fun seekerBow(language: GeckoLanguage) = seekerGear(language, Material.BOW, "bow")
             .set(DataComponents.ENCHANTMENTS, EnchantmentList(mapOf(Enchantment.INFINITY to 1)))
-            .set(
-                DataComponents.TOOLTIP_DISPLAY,
-                TooltipDisplay(false, setOf(DataComponents.ENCHANTMENTS))
-            )
-            .set(DataComponents.ITEM_NAME, text("Sucher Bogen", SEEKER_COLOR))
-            .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
             .build()
+
+        fun seekerGear(language: GeckoLanguage, id: String): ItemStack? = when (id) {
+            "sword" -> seekerSword(language)
+            "bow" -> seekerBow(language)
+            else -> seekerArmor(language).values.firstOrNull { it.getTag(SEEKER_GEAR_TAG) == id }
+        }
+
+        fun relocalizeSeekerGear(player: Player) {
+            val inventory = player.inventory
+
+            for (slot in 0 until inventory.size) {
+                val item = inventory.getItemStack(slot)
+                val id = item.getTag(SEEKER_GEAR_TAG) ?: continue
+                val localized = seekerGear(player.language, id) ?: continue
+
+                inventory.setItemStack(slot, localized.withAmount(item.amount()))
+            }
+        }
     }
 }

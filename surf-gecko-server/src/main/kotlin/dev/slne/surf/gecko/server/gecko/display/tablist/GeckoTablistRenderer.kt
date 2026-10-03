@@ -7,6 +7,10 @@ import dev.slne.surf.bitmap.common.provider.BitmapProvider
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.social.SocialGroup
 import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
+import dev.slne.surf.gecko.server.i18n.GeckoLanguage
+import dev.slne.surf.gecko.server.i18n.GeckoTranslations
+import dev.slne.surf.gecko.server.i18n.PlayerLanguages
+import dev.slne.surf.gecko.server.i18n.language
 import dev.slne.surf.gecko.server.integration.luckperms.LuckPermsAccess
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import net.kyori.adventure.text.Component
@@ -37,6 +41,7 @@ object GeckoTablistRenderer {
 
     fun init() {
         luckpermsListener = LuckPermsAccess.subscribeToRankChanges { refresh() }
+        PlayerLanguages.onChange { refresh() }
     }
 
     fun shutdown() {
@@ -91,7 +96,7 @@ object GeckoTablistRenderer {
                 TabEntry(target.rankedName, target.rankOrder)
 
             else -> TabEntry(
-                target.roleName ?: target.grayName,
+                target.roleName?.get(viewer.language) ?: target.grayName,
                 if (target.group == SocialGroup.GAME_SEEKER) SEEKER_ORDER else HIDER_ORDER
             )
         }
@@ -115,22 +120,25 @@ object GeckoTablistRenderer {
 
         return TabProfile(
             player = player,
+            language = player.language,
             group = SocialGroupManager.groupOf(player.uuid),
             gameId = game?.internalId,
             rankedName = miniMessage.deserialize("$prefix${player.username}"),
             rankOrder = RANK_ORDER_BASE + weight,
             roleName = role?.let {
-                buildText {
-                    append(
-                        BitmapProvider.translateToComponent(
-                            it.displayName,
-                            Colors.WHITE,
-                            it.color,
-                            affixAmount = 3
+                GeckoLanguage.entries.associateWith { language ->
+                    buildText {
+                        append(
+                            BitmapProvider.translateToComponent(
+                                GeckoTranslations.renderPlain(language, "role.${it.id}.name"),
+                                Colors.WHITE,
+                                it.color,
+                                affixAmount = 3
+                            )
                         )
-                    )
-                    appendSpace()
-                    text(player.username, it.color)
+                        appendSpace()
+                        text(player.username, it.color)
+                    }
                 }
             },
             grayName = miniMessage.deserialize("$prefix${player.username}").darkenColors()

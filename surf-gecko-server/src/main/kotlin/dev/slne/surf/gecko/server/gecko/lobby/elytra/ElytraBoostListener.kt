@@ -20,14 +20,14 @@ object ElytraBoostListener : MinestomListener {
 
     @EventHandler
     fun onInventoryClick(event: InventoryPreClickEvent) {
-        if (event.clickedItem == ElytraBoostHandler.elytraItem) {
+        if (ElytraBoostHandler.isElytraItem(event.clickedItem)) {
             event.isCancelled = true
         }
     }
 
     @EventHandler
     fun onSwap(event: PlayerSwapItemEvent) {
-        if (event.offHandItem == ElytraBoostHandler.elytraItem || event.mainHandItem == ElytraBoostHandler.elytraItem) {
+        if (ElytraBoostHandler.isElytraItem(event.offHandItem) || ElytraBoostHandler.isElytraItem(event.mainHandItem)) {
             event.isCancelled = true
         }
 

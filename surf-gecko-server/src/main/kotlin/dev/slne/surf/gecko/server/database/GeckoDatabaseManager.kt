@@ -5,6 +5,7 @@ import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.SchemaUtils
 import dev.slne.surf.database.libs.org.jetbrains.exposed.v1.r2dbc.transactions.suspendTransaction
 import dev.slne.surf.gecko.server.database.table.GeckoGameStatsTable
 import dev.slne.surf.gecko.server.database.table.GeckoGamesTable
+import dev.slne.surf.gecko.server.database.table.GeckoPlayerLanguagesTable
 import dev.slne.surf.gecko.server.database.table.GeckoPlayerNamesTable
 import dev.slne.surf.gecko.server.database.table.GeckoPunishmentsTable
 import dev.slne.surf.gecko.server.database.table.events.GeckoEventDataTable
@@ -23,6 +24,7 @@ object GeckoDatabaseManager {
                 GeckoGameStatsTable,
                 GeckoPunishmentsTable,
                 GeckoPlayerNamesTable,
+                GeckoPlayerLanguagesTable,
                 GeckoEventsTable,
                 GeckoEventDataTable
             )

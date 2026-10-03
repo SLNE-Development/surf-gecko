@@ -4,7 +4,7 @@ import dev.slne.minestom.lobby.api.command.commandapi.dsl.commandTree
 import dev.slne.minestom.lobby.api.command.commandapi.dsl.gameModeArgument
 import dev.slne.minestom.lobby.api.command.commandapi.dsl.playerExecutor
 import dev.slne.minestom.lobby.api.command.commandapi.dsl.playersArgument
-import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.gecko.server.i18n.sendTranslated
 import dev.slne.surf.gecko.server.permission.PermissionList
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
@@ -18,12 +18,10 @@ fun gameModeCommand() = commandTree("gamemode") {
             val gamemode: GameMode by arguments
 
             player.setGameMode(gamemode)
-            player.sendText {
-                appendSuccessPrefix()
-                success("Dein Spielmodus wurde zu ")
-                variableValue(gamemode.name.lowercase().replaceFirstChar { it.uppercase() })
-                success(" geändert.")
-            }
+            player.sendTranslated(
+                "command.gamemode.self",
+                "gamemode" to gamemode.name.lowercase().replaceFirstChar { it.uppercase() }
+            )
         }
 
         playersArgument("targets") {
@@ -33,14 +31,11 @@ fun gameModeCommand() = commandTree("gamemode") {
 
                 targets.forEach { it.setGameMode(gamemode) }
 
-                player.sendText {
-                    appendSuccessPrefix()
-                    success("Der Spielmodus von ")
-                    variableValue(targets.joinToString(", ") { it.username })
-                    success(" wurde zu ")
-                    variableValue(gamemode.name.lowercase().replaceFirstChar { it.uppercase() })
-                    success(" geändert.")
-                }
+                player.sendTranslated(
+                    "command.gamemode.others",
+                    "players" to targets.joinToString(", ") { it.username },
+                    "gamemode" to gamemode.name.lowercase().replaceFirstChar { it.uppercase() }
+                )
             }
         }
     }

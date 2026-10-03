@@ -1,0 +1,11 @@
+{
+  "role.seeker.name": "<seeker>Seeker",
+  "role.seeker.description": "Find all hiders",
+  "role.hider.name": "<hider>Hider",
+  "role.hider.description": "Hide from the seekers",
+  "role.spectator.name": "<spectator>Spectator",
+  "role.spectator.description": "You have been eliminated.",
+
+  "map.scientist-city.name": "Scientist City",
+  "map.test-map.name": "Test Map"
+}

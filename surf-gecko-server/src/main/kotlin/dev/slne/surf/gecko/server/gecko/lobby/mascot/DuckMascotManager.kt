@@ -1,16 +1,16 @@
 package dev.slne.surf.gecko.server.gecko.lobby.mascot
 
-import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.gecko.server.coroutine.geckoScope
 import dev.slne.surf.gecko.server.coroutine.ticks
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
-import dev.slne.surf.gecko.server.gecko.util.geckoHighlight
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
+import dev.slne.surf.gecko.server.i18n.sendTranslatedActionBar
+import dev.slne.surf.gecko.server.i18n.translateLines
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.minestom.server.entity.Player
 import net.worldseed.multipart.ModelEngine
 import net.worldseed.resourcepack.PackBuilder
@@ -22,16 +22,6 @@ import kotlin.time.Duration.Companion.seconds
 
 object DuckMascotManager {
     private val talking = ConcurrentHashMap.newKeySet<UUID>()
-
-    private val lines = listOf(
-        "Quak! Willkommen bei Hide 'n Seek!",
-        "Jede Runde bist du entweder Verstecker oder Sucher.",
-        "Verstecker haben zu Beginn Zeit, sich ein gutes Versteck zu suchen.",
-        "Die Sucher müssen alle Verstecker finden, bevor die Zeit abläuft.",
-        "Wirst du gefunden, suchst du ab dann selbst mit oder scheidest aus.",
-        "Sammle Orbs ein und kaufe dir damit hilfreiche Items im Shop.",
-        "Klicke den NPC neben mir an, um einer Runde beizutreten. Viel Spaß!",
-    )
 
     lateinit var mascot: DuckMascot
 
@@ -66,6 +56,9 @@ object DuckMascotManager {
             mascot.play("nod")
             delay(0.7.seconds)
 
+            val lines = player.translateLines("lobby.mascot.lines")
+                .map { PlainTextComponentSerializer.plainText().serialize(it) }
+
             for ((index, line) in lines.withIndex()) {
                 if (!player.isOnline || !GeckoLobby.contains(player)) {
                     return@launch
@@ -78,10 +71,7 @@ object DuckMascotManager {
                 mascot.play("quack")
 
                 for (length in 1..line.length) {
-                    player.sendActionBar(buildText {
-                        geckoHighlight("Ente: ")
-                        geckoPrimary(line.take(length))
-                    })
+                    player.sendTranslatedActionBar("lobby.mascot.speech", "text" to line.take(length))
 
                     if (length % 2 == 0 && !line[length - 1].isWhitespace()) {
                         player.playSound(GeckoSounds.DIALOG_BLIP, Sound.Emitter.self())

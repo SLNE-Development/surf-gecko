@@ -4,7 +4,7 @@ import dev.slne.minestom.lobby.api.command.commandapi.dsl.anyExecutor
 import dev.slne.minestom.lobby.api.command.commandapi.dsl.commandTree
 import dev.slne.minestom.lobby.api.command.commandapi.dsl.playerExecutor
 import dev.slne.minestom.lobby.api.command.commandapi.dsl.playersArgument
-import dev.slne.surf.api.core.messages.adventure.sendText
+import dev.slne.surf.gecko.server.i18n.sendTranslated
 import dev.slne.surf.gecko.server.performance.monitor.StatusBarManager
 import dev.slne.surf.gecko.server.permission.PermissionList
 import net.minestom.server.entity.Player
@@ -27,19 +27,13 @@ fun statusBarCommand() = commandTree("statusbar") {
                 notifyToggle(target, StatusBarManager.toggle(target))
             }
 
-            sender.sendText {
-                appendSuccessPrefix()
-                success("Die Serverauslastung wurde für ")
-                variableValue(targets.joinToString(", ") { it.username })
-                success(" umgeschaltet.")
-            }
+            sender.sendTranslated(
+                "command.statusbar.others",
+                "players" to targets.joinToString(", ") { it.username }
+            )
         }
     }
 }
 
-private fun notifyToggle(player: Player, visible: Boolean) = player.sendText {
-    appendSuccessPrefix()
-    success("Die Anzeige der Serverauslastung wurde ")
-    variableValue(if (visible) "aktiviert" else "deaktiviert")
-    success(".")
-}
+private fun notifyToggle(player: Player, visible: Boolean) =
+    player.sendTranslated(if (visible) "command.statusbar.enabled" else "command.statusbar.disabled")

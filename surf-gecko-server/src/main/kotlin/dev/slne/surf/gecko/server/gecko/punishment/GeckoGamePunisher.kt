@@ -33,7 +33,7 @@ object GeckoGamePunisher {
         null
     )
 
-    private const val REASON_DEFAULT = "Fehlverhalten"
+    private const val REASON_DEFAULT = "punishment.reason.default"
 
     suspend fun punish(player: Player, reason: String = REASON_DEFAULT): GeckoGamePunishment =
         punish(player.uuid, reason).also { GeckoPunishmentService.apply(player, it) }

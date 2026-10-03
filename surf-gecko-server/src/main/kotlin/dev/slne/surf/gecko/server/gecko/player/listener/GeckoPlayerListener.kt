@@ -2,6 +2,8 @@ package dev.slne.surf.gecko.server.gecko.player.listener
 
 import dev.slne.minestom.lobby.api.event.EventRegistrar
 import dev.slne.surf.gecko.server.gecko.orbs.GeckoOrbs
+import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
+import dev.slne.surf.gecko.server.i18n.PlayerLanguages
 import jakarta.inject.Singleton
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
@@ -31,6 +33,8 @@ class GeckoPlayerListener : EventRegistrar {
             cancel(event, event.player)
         }
         node.addListener(InventoryPreClickEvent::class.java) { handleInventoryClick(it) }
+
+        PlayerLanguages.onChange { GeckoGamePlayer.relocalizeSeekerGear(it) }
 
         node.addListener(PlayerSwapItemEvent::class.java) {
             if (it.offHandItem.hasTag(GECKO_ITEM_TAG)) {

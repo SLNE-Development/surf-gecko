@@ -1,0 +1,42 @@
+{
+  "lobby.games.title": "Game Overview",
+  "lobby.games.create": "<success>Create new round",
+  "lobby.games.unavailable": "<prefix><primary>This game is no longer available.",
+  "lobby.games.item.name": "<primary>Hide 'n Seek <secondary>(GeckoGames #<id>)",
+  "lobby.games.item.heading.map": "Map",
+  "lobby.games.item.heading.players": "Players",
+  "lobby.games.item.heading.status": "Status",
+  "lobby.games.item.map": "<secondary><map>",
+  "lobby.games.item.players": "<secondary><players> / <max>",
+  "lobby.games.state.offline": "<secondary>Round unavailable",
+  "lobby.games.state.lobby": "<secondary>Waiting for more players...",
+  "lobby.games.state.hiding": "<secondary>Players are hiding...",
+  "lobby.games.state.searching": "<secondary>Seekers are on the hunt...",
+  "lobby.games.state.ending": "<secondary>Round is ending...",
+  "lobby.games.state.ended": "<secondary>Round is over",
+
+  "lobby.elytra.item": "<primary>Elytra Boost",
+
+  "lobby.leaderboard.wins.title": "<small_caps>Wins</small_caps>",
+  "lobby.leaderboard.wins.value": "<value> wins",
+  "lobby.leaderboard.games-played.title": "<small_caps>Games played</small_caps>",
+  "lobby.leaderboard.games-played.value": "<value> games",
+  "lobby.leaderboard.empty": "<muted>No data yet",
+  "lobby.leaderboard.unknown-player": "Unknown",
+  "lobby.leaderboard.row": "<rank><spacer> </spacer><white><name></white><dark_spacer> » </dark_spacer><value>",
+  "lobby.leaderboard.self": "<secondary>You </secondary><dark_spacer> » </dark_spacer><value><dark_spacer> (</dark_spacer><rank><dark_spacer>)",
+
+  "lobby.mascot.speech": "<highlight>Duck: <primary><text>",
+  "lobby.mascot.lines": [
+    "Quack! Welcome to Hide 'n Seek!",
+    "Every round, you're either a hider or a seeker.",
+    "Hiders get some time at the start to find a good hiding spot.",
+    "Seekers have to find every hider before time runs out.",
+    "Once you're found, you either join the seekers or you're out.",
+    "Collect orbs and spend them on helpful items in the shop.",
+    "Click the NPC next to me to join a round. Have fun!"
+  ],
+
+  "lobby.npc.games.name": "<primary><b>Hide 'n Seek</b></primary><newline><left_click><secondary> Browse games</secondary><newline><right_click><secondary> Join a game",
+  "lobby.npc.games.no-game": "<prefix><primary>We couldn't find a round for you to join."
+}

@@ -88,6 +88,7 @@ dependencies {
         exclude(group = "com.google.code.gson", module = "gson")
         exclude(group = "com.google.guava", module = "guava")
     }
+    compileOnly(libs.gson)
     runtimeDownload(libs.gson)
     runtimeDownload(libs.guava)
     implementation(libs.spark.minestom)
@@ -117,6 +118,30 @@ application {
 
 tasks.jar {
     archiveClassifier = "thin"
+}
+
+val bundleTranslations by tasks.registering {
+    val source = rootProject.layout.projectDirectory.dir("surf-gecko-translations/lang").asFile
+    val output = layout.buildDirectory.dir("generated/translations").get().asFile
+    inputs.dir(source)
+    outputs.dir(output)
+
+    doLast {
+        val target = output.resolve("lang")
+        target.deleteRecursively()
+        source.copyRecursively(target)
+
+        val index = target.walkTopDown()
+            .filter { it.isFile && it.extension == "json" }
+            .map { it.relativeTo(target).invariantSeparatorsPath }
+            .sorted()
+            .joinToString("\n")
+        target.resolve("index.txt").writeText(index)
+    }
+}
+
+sourceSets.main {
+    resources.srcDir(bundleTranslations)
 }
 
 tasks.shadowJar {

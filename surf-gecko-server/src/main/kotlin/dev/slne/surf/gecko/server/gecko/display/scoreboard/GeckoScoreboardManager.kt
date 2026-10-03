@@ -1,200 +1,142 @@
 package dev.slne.surf.gecko.server.gecko.display.scoreboard
 
-import dev.slne.surf.api.core.font.toSmallCaps
 import dev.slne.surf.api.core.messages.Colors
-import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.bitmap.common.provider.BitmapProvider
 import dev.slne.surf.gecko.server.gecko.GeckoGame
+import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
+import dev.slne.surf.gecko.server.i18n.GeckoLanguage
+import dev.slne.surf.gecko.server.i18n.GeckoTranslations
+import dev.slne.surf.gecko.server.i18n.PlayerLanguages
+import dev.slne.surf.gecko.server.i18n.language
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.TextDecoration
 import net.minestom.server.entity.Player
 import net.minestom.server.scoreboard.Sidebar
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration
 
 object GeckoScoreboardManager {
-    private val sidebars = ConcurrentHashMap<ULong, Sidebar>()
+    private val sidebars = ConcurrentHashMap<ULong, ConcurrentHashMap<GeckoLanguage, Sidebar>>()
+
+    init {
+        PlayerLanguages.onChange { player ->
+            val game = GeckoGameManager.findGame(player.uuid) ?: return@onChange
+            val gameSidebars = sidebars[game.internalId] ?: return@onChange
+
+            if (gameSidebars.values.any { it.isViewer(player) }) {
+                showSidebar(game, player)
+            }
+        }
+    }
 
     fun createSidebar(game: GeckoGame) {
-        val sidebar = Sidebar(buildText {
-            geckoPrimary("      Hide 'n Seek      ", TextDecoration.BOLD)
-        })
+        sidebars[game.internalId] = ConcurrentHashMap()
+    }
 
-        sidebar.createLine(
-            Sidebar.ScoreboardLine(
-                "1",
-                Component.empty(),
-                9,
-                Sidebar.NumberFormat.blank()
-            )
-        )
-        sidebar.createLine(
-            Sidebar.ScoreboardLine(
-                "2",
-                Component.empty(),
-                8,
-                Sidebar.NumberFormat.blank()
-            )
-        )
-        sidebar.createLine(
-            Sidebar.ScoreboardLine(
-                "3",
-                Component.empty(),
-                7,
-                Sidebar.NumberFormat.blank()
-            )
-        )
-        sidebar.createLine(
-            Sidebar.ScoreboardLine(
-                "4",
-                Component.empty(),
-                6,
-                Sidebar.NumberFormat.blank()
-            )
-        )
-        sidebar.createLine(
-            Sidebar.ScoreboardLine(
-                "5",
-                Component.empty(),
-                5,
-                Sidebar.NumberFormat.blank()
-            )
-        )
-        sidebar.createLine(
-            Sidebar.ScoreboardLine(
-                "6",
-                Component.empty(),
-                4,
-                Sidebar.NumberFormat.blank()
-            )
-        )
-        sidebar.createLine(
-            Sidebar.ScoreboardLine(
-                "7",
-                Component.empty(),
-                3,
-                Sidebar.NumberFormat.blank()
-            )
-        )
-        sidebar.createLine(
-            Sidebar.ScoreboardLine(
-                "8",
-                Component.empty(),
-                2,
-                Sidebar.NumberFormat.blank()
-            )
-        )
-        sidebar.createLine(Sidebar.ScoreboardLine("9", buildText {
-            geckoPrimary("castcrafter.de".toSmallCaps())
-        }, 1, Sidebar.NumberFormat.blank()))
+    private fun sidebar(game: GeckoGame, language: GeckoLanguage) =
+        sidebars[game.internalId]?.computeIfAbsent(language, ::newSidebar)
 
-        sidebars[game.internalId] = sidebar
+    private fun newSidebar(language: GeckoLanguage): Sidebar {
+        val sidebar = Sidebar(GeckoTranslations.render(language, "display.scoreboard.title"))
+
+        for (line in 1..8) {
+            sidebar.createLine(
+                Sidebar.ScoreboardLine(
+                    line.toString(),
+                    Component.empty(),
+                    10 - line,
+                    Sidebar.NumberFormat.blank()
+                )
+            )
+        }
+        sidebar.createLine(
+            Sidebar.ScoreboardLine(
+                "9",
+                GeckoTranslations.render(language, "display.scoreboard.footer"),
+                1,
+                Sidebar.NumberFormat.blank()
+            )
+        )
+
+        return sidebar
     }
 
     fun updateSidebar(game: GeckoGame) {
-        val sidebar = sidebars[game.internalId] ?: return
+        sidebars[game.internalId]?.forEach { (language, sidebar) -> updateSidebar(game, language, sidebar) }
+    }
 
+    private fun updateSidebar(game: GeckoGame, language: GeckoLanguage, sidebar: Sidebar) {
+        sidebar.updateLineContent("2", heading(language, "display.scoreboard.heading.map"))
         sidebar.updateLineContent(
-            "2",
-            BitmapProvider.translateToComponent("Map", Colors.WHITE, Colors.INFO)
+            "3",
+            GeckoTranslations.render(language, "display.scoreboard.map", "map" to game.settings.map.displayName)
         )
-        sidebar.updateLineContent("3", buildText {
-            white(game.settings.map.mapDisplayName)
-        })
 
         when (game.state) {
             GeckoGameState.LOBBY -> {
                 sidebar.updateLineContent("4", Component.empty())
-                sidebar.updateLineContent("5", buildText {
-                    append(
-                        BitmapProvider.translateToComponent(
-                            "Spieler",
-                            Colors.WHITE,
-                            Colors.INFO
-                        )
+                sidebar.updateLineContent("5", heading(language, "display.scoreboard.heading.players"))
+                sidebar.updateLineContent(
+                    "6",
+                    GeckoTranslations.render(
+                        language,
+                        "display.scoreboard.players",
+                        "players" to game.lobbyPlayers.size.toString().padStart(2, '0'),
+                        "max" to game.settings.maxPlayers.toString().padStart(2, '0')
                     )
-                })
-                sidebar.updateLineContent("6", buildText {
-                    white(
-                        "${
-                            game.lobbyPlayers.size.toString().padStart(2, '0')
-                        }/${game.settings.maxPlayers.toString().padStart(2, '0')} 👥"
-                    )
-                })
+                )
 
                 sidebar.updateLineContent("7", Component.empty())
                 sidebar.updateLineContent(
                     "8",
-                    buildText {
-                        append(
-                            BitmapProvider.translateToComponent(
-                                "Wartezeit:",
-                                Colors.WHITE,
-                                Colors.INFO
-                            )
-                        )
-                        appendSpace()
+                    Component.textOfChildren(
+                        heading(language, "display.scoreboard.heading.waiting-time"),
+                        Component.space(),
                         if (game.countdownSeconds == null) {
-                            white("Warten...")
+                            GeckoTranslations.render(language, "display.scoreboard.waiting")
                         } else {
-                            append(getGameTime(game).color(Colors.WHITE))
-                            white(" ⌚")
+                            timeText(language, getGameTime(game))
                         }
-                    }
+                    )
                 )
             }
 
             GeckoGameState.HIDING, GeckoGameState.SEARCHING -> {
                 sidebar.updateLineContent("4", Component.empty())
-                sidebar.updateLineContent("5", buildText {
-                    append(
-                        BitmapProvider.translateToComponent(
-                            game.gamePlayers.count { it.role == GeckoGameRole.SEEKER }.toString()
-                                .padStart(2, '0'),
-                            Colors.WHITE,
-                            GeckoGameRole.SEEKER.color,
-                            affixAmount = 3
-                        )
+                sidebar.updateLineContent(
+                    "5",
+                    GeckoTranslations.render(
+                        language,
+                        "display.scoreboard.roles",
+                        "seekers" to roleCount(game, GeckoGameRole.SEEKER),
+                        "hiders" to roleCount(game, GeckoGameRole.HIDER)
                     )
-                    spacer(" / ")
-                    append(
-                        BitmapProvider.translateToComponent(
-                            game.gamePlayers.count { it.role == GeckoGameRole.HIDER }.toString()
-                                .padStart(2, '0'),
-                            Colors.WHITE,
-                            GeckoGameRole.HIDER.color,
-                            affixAmount = 3
-                        )
-                    )
-                    white(" 👥")
-                })
+                )
                 sidebar.updateLineContent("6", Component.empty())
 
-                sidebar.updateLineContent("7", buildText {
-                    append(BitmapProvider.translateToComponent("Zeit: ", Colors.WHITE, Colors.INFO))
-                    append(getGameTime(game).color(Colors.WHITE))
-                    white(" ⌚")
-                })
+                sidebar.updateLineContent(
+                    "7",
+                    Component.textOfChildren(
+                        heading(language, "display.scoreboard.heading.time"),
+                        timeText(language, getGameTime(game))
+                    )
+                )
                 sidebar.updateLineContent("8", Component.empty())
             }
 
             GeckoGameState.ENDING, GeckoGameState.ENDED -> {
                 sidebar.updateLineContent("4", Component.empty())
+                sidebar.updateLineContent("5", heading(language, "display.scoreboard.heading.ending"))
                 sidebar.updateLineContent(
-                    "5",
-                    BitmapProvider.translateToComponent("Spielende", Colors.WHITE, Colors.INFO)
-                )
-                sidebar.updateLineContent("6", buildText {
-                    white(
-                        formatSeconds(
-                            game.endingTimerSeconds ?: Duration.ZERO.inWholeSeconds.toInt()
+                    "6",
+                    timeText(
+                        language,
+                        Component.text(
+                            formatSeconds(game.endingTimerSeconds ?: Duration.ZERO.inWholeSeconds.toInt())
                         )
                     )
-                    white(" ⌚")
-                })
+                )
 
                 sidebar.updateLineContent("7", Component.empty())
                 sidebar.updateLineContent("8", Component.empty())
@@ -206,26 +148,48 @@ object GeckoScoreboardManager {
         }
     }
 
-    fun showSidebar(game: GeckoGame, player: Player) {
-        val sidebar = sidebars[game.internalId] ?: return
+    private fun heading(language: GeckoLanguage, key: String) =
+        BitmapProvider.translateToComponent(
+            GeckoTranslations.renderPlain(language, key),
+            Colors.WHITE,
+            Colors.INFO
+        )
 
-        sidebars.values.forEach {
-            if (it !== sidebar) it.removeViewer(player)
+    private fun timeText(language: GeckoLanguage, time: Component) =
+        GeckoTranslations.render(language, "display.scoreboard.time", "time" to time)
+
+    private fun roleCount(game: GeckoGame, role: GeckoGameRole) = BitmapProvider.translateToComponent(
+        game.gamePlayers.count { it.role == role }.toString().padStart(2, '0'),
+        Colors.WHITE,
+        role.color,
+        affixAmount = 3
+    )
+
+    fun showSidebar(game: GeckoGame, player: Player) {
+        val language = player.language
+        val sidebar = sidebar(game, language) ?: return
+
+        sidebars.values.forEach { gameSidebars ->
+            gameSidebars.values.forEach {
+                if (it !== sidebar) it.removeViewer(player)
+            }
         }
 
-        updateSidebar(game)
+        updateSidebar(game, language, sidebar)
         sidebar.addViewer(player)
     }
 
     fun hideSidebar(player: Player) {
-        sidebars.values.forEach { it.removeViewer(player) }
+        sidebars.values.forEach { gameSidebars -> gameSidebars.values.forEach { it.removeViewer(player) } }
     }
 
-    fun getSidebar(game: GeckoGame) = sidebars[game.internalId]
+    fun getSidebar(game: GeckoGame, language: GeckoLanguage) = sidebars[game.internalId]?.get(language)
 
     fun removeSidebar(game: GeckoGame) {
-        val sidebar = sidebars.remove(game.internalId) ?: return
-        sidebar.viewers.toSet().forEach { sidebar.removeViewer(it) }
+        val gameSidebars = sidebars.remove(game.internalId) ?: return
+        gameSidebars.values.forEach { sidebar ->
+            sidebar.viewers.toSet().forEach { sidebar.removeViewer(it) }
+        }
     }
 
     fun getGameTime(game: GeckoGame) = if (game.state.isGame()) {

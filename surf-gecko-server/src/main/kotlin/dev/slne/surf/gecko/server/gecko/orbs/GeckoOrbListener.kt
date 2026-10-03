@@ -4,6 +4,7 @@ import dev.slne.minestom.lobby.api.event.EventRegistrar
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
+import dev.slne.surf.gecko.server.i18n.PlayerLanguages
 import jakarta.inject.Singleton
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.entity.Player
@@ -15,6 +16,8 @@ import net.minestom.server.event.item.PickupItemEvent
 class GeckoOrbListener : EventRegistrar {
     override fun register(node: EventNode<Event>) {
         node.addListener(PickupItemEvent::class.java) { handlePickup(it) }
+
+        PlayerLanguages.onChange { GeckoOrbs.relocalize(it) }
     }
 
     private fun handlePickup(event: PickupItemEvent) {
@@ -35,7 +38,7 @@ class GeckoOrbListener : EventRegistrar {
             return
         }
 
-        if (!player.inventory.addItemStack(stack)) {
+        if (!player.inventory.addItemStack(GeckoOrbs.localize(stack, player))) {
             event.isCancelled = true
             return
         }

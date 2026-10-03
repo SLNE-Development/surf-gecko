@@ -1,35 +1,20 @@
 package dev.slne.surf.gecko.server.gecko.shop.type
 
-import dev.slne.surf.api.core.messages.adventure.text
-import dev.slne.surf.gecko.server.gecko.util.GECKO_HIGHLIGHT
-import net.kyori.adventure.text.format.TextDecoration
+import dev.slne.surf.gecko.server.gecko.util.removeItalics
+import dev.slne.surf.gecko.server.i18n.GeckoLanguage
+import dev.slne.surf.gecko.server.i18n.GeckoTranslations
 import net.minestom.server.component.DataComponents
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 import net.minestom.server.item.component.TooltipDisplay
 
-enum class ShopItemType(val item: ItemStack) {
-    HIDER_ATTACK(
-        ItemStack.builder(Material.IRON_SWORD)
-            .set(DataComponents.ITEM_NAME, text("Angriff", GECKO_HIGHLIGHT))
-            .build()
-    ),
-    HIDER_DEFENSE(
-        ItemStack.builder(Material.SHIELD)
-            .set(DataComponents.ITEM_NAME, text("Verteidigung", GECKO_HIGHLIGHT))
-            .build()
-    ),
-    HIDER_TROLL(
-        ItemStack.builder(Material.CARROT_ON_A_STICK)
-            .set(DataComponents.ITEM_NAME, text("Weiteres", GECKO_HIGHLIGHT))
-            .build()
-    ),
+enum class ShopItemType(private val nameKey: String, private val base: ItemStack, private val customName: Boolean = false) {
+    HIDER_ATTACK("shop.category.attack.name", ItemStack.of(Material.IRON_SWORD)),
+    HIDER_DEFENSE("shop.category.defense.name", ItemStack.of(Material.SHIELD)),
+    HIDER_TROLL("shop.category.troll.name", ItemStack.of(Material.CARROT_ON_A_STICK)),
     HIDER_POTION(
+        "shop.category.potion.name",
         ItemStack.builder(Material.POTION)
-            .set(
-                DataComponents.CUSTOM_NAME,
-                text("Tränke", GECKO_HIGHLIGHT).decoration(TextDecoration.ITALIC, false)
-            )
             .set(
                 DataComponents.TOOLTIP_DISPLAY, TooltipDisplay(
                     false, setOf(
@@ -38,25 +23,15 @@ enum class ShopItemType(val item: ItemStack) {
                     )
                 )
             )
-            .build()
+            .build(),
+        true
     ),
 
-    SEEKER_ATTACK(
-        ItemStack.builder(Material.IRON_SWORD)
-            .set(DataComponents.ITEM_NAME, text("Angriff", GECKO_HIGHLIGHT))
-            .build()
-    ),
-    SEEKER_SEARCH(
-        ItemStack.builder(Material.BOW)
-            .set(DataComponents.ITEM_NAME, text("Suche", GECKO_HIGHLIGHT))
-            .build()
-    ),
+    SEEKER_ATTACK("shop.category.attack.name", ItemStack.of(Material.IRON_SWORD)),
+    SEEKER_SEARCH("shop.category.search.name", ItemStack.of(Material.BOW)),
     SEEKER_POTION(
+        "shop.category.potion.name",
         ItemStack.builder(Material.POTION)
-            .set(
-                DataComponents.CUSTOM_NAME,
-                text("Tränke", GECKO_HIGHLIGHT).decoration(TextDecoration.ITALIC, false)
-            )
             .set(
                 DataComponents.TOOLTIP_DISPLAY, TooltipDisplay(
                     false, setOf(
@@ -65,6 +40,17 @@ enum class ShopItemType(val item: ItemStack) {
                     )
                 )
             )
-            .build()
-    ),
+            .build(),
+        true
+    );
+
+    fun item(language: GeckoLanguage): ItemStack {
+        val name = GeckoTranslations.render(language, nameKey)
+
+        return if (customName) {
+            base.with(DataComponents.CUSTOM_NAME, name.removeItalics())
+        } else {
+            base.with(DataComponents.ITEM_NAME, name)
+        }
+    }
 }

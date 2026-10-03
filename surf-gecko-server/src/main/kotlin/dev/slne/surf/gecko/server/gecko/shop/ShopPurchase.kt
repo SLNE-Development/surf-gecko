@@ -1,12 +1,10 @@
 package dev.slne.surf.gecko.server.gecko.shop
 
-import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.orbs.GeckoOrbs
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
-import dev.slne.surf.gecko.server.gecko.util.appendPrefix
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
-import dev.slne.surf.gecko.server.gecko.util.geckoSecondary
+import dev.slne.surf.gecko.server.i18n.language
+import dev.slne.surf.gecko.server.i18n.sendTranslated
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.entity.Player
 import net.minestom.server.inventory.PlayerInventory
@@ -27,30 +25,19 @@ object ShopPurchase {
 
         if (balance < item.price) {
             player.playSound(GeckoSounds.SHOP_DENY, Sound.Emitter.self())
-            player.sendText {
-                appendPrefix()
-                geckoPrimary("Du hast nicht genug Orbs.")
-            }
+            player.sendTranslated("shop.purchase.not-enough-orbs")
             return
         }
 
-        if (!player.inventory.addItemStack(item.inventoryItem)) {
+        if (!player.inventory.addItemStack(item.inventoryItem(player.language))) {
             player.playSound(GeckoSounds.SHOP_DENY, Sound.Emitter.self())
-            player.sendText {
-                appendPrefix()
-                geckoPrimary("Du hast keinen Platz mehr im Inventar.")
-            }
+            player.sendTranslated("shop.purchase.inventory-full")
             return
         }
 
         GeckoOrbs.take(player, item.price)
         player.playSound(GeckoSounds.SHOP_BUY, Sound.Emitter.self())
-        player.sendText {
-            appendPrefix()
-            geckoPrimary("Du hast ")
-            geckoSecondary(item.displayName)
-            geckoPrimary(" gekauft.")
-        }
+        player.sendTranslated("shop.purchase.success", "item" to item.displayName)
     }
 
     fun consume(player: Player, item: ShopItem) {

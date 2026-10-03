@@ -4,6 +4,7 @@ import com.google.inject.Singleton
 import dev.slne.minestom.lobby.api.event.EventRegistrar
 import dev.slne.minestom.lobby.api.extension.addListener
 import dev.slne.minestom.lobby.api.player.event.PlayerLoginEvent
+import dev.slne.surf.gecko.server.i18n.PlayerLanguages
 import dev.slne.surf.gecko.server.player.config.AwaitSettingsTask
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger
 import net.minestom.server.event.Event
@@ -26,6 +27,7 @@ class PlayerConnectionService : EventRegistrar {
 
     private fun handleDisconnection(event: PlayerDisconnectEvent) {
         AwaitSettingsTask.handleDisconnect(event)
+        PlayerLanguages.invalidate(event.player.uuid)
         connectionLogger.info("${event.player.username} (${event.player.uuid}) disconnected")
     }
 }

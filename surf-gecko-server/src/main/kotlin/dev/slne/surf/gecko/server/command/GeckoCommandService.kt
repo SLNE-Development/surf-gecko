@@ -4,6 +4,8 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import dev.slne.minestom.lobby.api.command.CommandRegistrar
 import dev.slne.surf.gecko.command.platform.CommandAPIHook
+import dev.slne.surf.gecko.command.platform.brigadier.noCompatibleExecutorMessage
+import dev.slne.surf.gecko.server.i18n.translate
 import dev.slne.surf.gecko.server.lifecycle.GeckoService
 import net.minestom.server.MinecraftServer
 import net.minestom.server.utils.callback.CommandCallback
@@ -14,6 +16,8 @@ class GeckoCommandService @Inject constructor(
 ) : GeckoService {
 
     override suspend fun start() {
+        noCompatibleExecutorMessage = { it.translate("command.no-compatible-executor") }
+
         ServerGeckoCommandRegistrar.registerAll()
 
         for (registrar in registrars) {

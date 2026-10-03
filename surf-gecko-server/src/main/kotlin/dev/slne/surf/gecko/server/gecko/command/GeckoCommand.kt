@@ -1,7 +1,6 @@
 package dev.slne.surf.gecko.server.gecko.command
 
 import dev.slne.minestom.lobby.api.command.commandapi.dsl.*
-import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.core.util.random
 import dev.slne.surf.api.minestom.inventory.framework.open
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
@@ -14,9 +13,7 @@ import dev.slne.surf.gecko.server.gecko.shop.type.shops.hiderShopView
 import dev.slne.surf.gecko.server.gecko.shop.type.shops.seekerShopView
 import dev.slne.surf.gecko.server.gecko.social.SocialGroupManager
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
-import dev.slne.surf.gecko.server.gecko.util.appendPrefix
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
-import dev.slne.surf.gecko.server.gecko.util.geckoSecondary
+import dev.slne.surf.gecko.server.i18n.sendTranslated
 import dev.slne.surf.gecko.server.permission.PermissionList
 import kotlinx.coroutines.launch
 import net.kyori.adventure.nbt.BinaryTag
@@ -33,14 +30,10 @@ fun geckoCommand() = commandTree("gecko") {
     withPermission(PermissionList.COMMAND_GECKO)
     literalArgument("info") {
         anyExecutor { sender, _ ->
-            sender.sendText {
-                appendPrefix()
-                geckoPrimary(
-                    "GeckoGames: ${
-                        GeckoGameManager.getGames().map { it.gameInfo.toString() }
-                    }"
-                )
-            }
+            sender.sendTranslated(
+                "command.gecko.info",
+                "games" to GeckoGameManager.getGames().map { it.gameInfo.toString() }
+            )
         }
     }
 
@@ -48,14 +41,7 @@ fun geckoCommand() = commandTree("gecko") {
         playerExecutorSuspend { player, _ ->
             val game = GeckoGameManager.selectGame(player)
 
-            player.sendText {
-                appendPrefix()
-                if (game == null) {
-                    geckoPrimary("Du konntest keinem Spiel zugewiesen werden.")
-                } else {
-                    geckoPrimary("Du wurdest einem Spiel zugewiesen.")
-                }
-            }
+            player.sendTranslated(if (game == null) "command.gecko.join.failed" else "command.gecko.join.success")
         }
     }
 
@@ -70,10 +56,7 @@ fun geckoCommand() = commandTree("gecko") {
                 GeckoGameManager.selectGame(it)
             }
 
-            player.sendText {
-                appendPrefix()
-                geckoPrimary("Alle Spieler wurden der Warteschlange hinzugefügt.")
-            }
+            player.sendTranslated("command.gecko.queue-all")
         }
     }
 
@@ -89,23 +72,16 @@ fun geckoCommand() = commandTree("gecko") {
         playerExecutorSuspend { player, _ ->
             GeckoLobby.join(player)
 
-            player.sendText {
-                appendPrefix()
-                geckoPrimary("Du bist nun in der Lobby.")
-            }
+            player.sendTranslated("command.lobby.joined")
         }
     }
 
     literalArgument("groups") {
         playerExecutor { player, _ ->
-            player.sendText {
-                appendPrefix()
-                geckoPrimary(
-                    "Gruppen: ${
-                        SocialGroupManager.groups().map { "${it.key}=${it.value}" }
-                    }"
-                )
-            }
+            player.sendTranslated(
+                "command.gecko.groups",
+                "groups" to SocialGroupManager.groups().map { "${it.key}=${it.value}" }
+            )
         }
     }
 
@@ -126,10 +102,7 @@ fun geckoCommand() = commandTree("gecko") {
                     )
 
                     else -> {
-                        player.sendText {
-                            appendPrefix()
-                            geckoPrimary("Die Rolle wurde nicht gefunden.")
-                        }
+                        player.sendTranslated("command.gecko.shop.unknown-role")
                         return@playerExecutor
                     }
                 }
@@ -144,10 +117,7 @@ fun geckoCommand() = commandTree("gecko") {
 
                 GeckoOrbs.give(player, amount)
 
-                player.sendText {
-                    appendPrefix()
-                    geckoPrimary("Du hast $amount Orbs erhalten.")
-                }
+                player.sendTranslated("command.gecko.giveorbs", "amount" to amount)
             }
         }
     }
@@ -156,48 +126,34 @@ fun geckoCommand() = commandTree("gecko") {
         playerExecutor { player, _ ->
             val game = GeckoGameManager.findGame(player.uuid)
             if (game == null) {
-                player.sendText {
-                    appendPrefix()
-                    geckoPrimary("Du bist in keinem Spiel.")
-                }
+                player.sendTranslated("command.not-in-game")
                 return@playerExecutor
             }
 
             geckoAsyncScope.launch {
                 GeckoGameManager.endGame(game, GeckoGameEndReason.MANUELL)
 
-                player.sendText {
-                    appendPrefix()
-                    geckoPrimary("Das aktuelle Spiel wurde beendet.")
-                }
+                player.sendTranslated("command.gecko.endcurrent")
             }
         }
     }
 
     literalArgument("getspeed") {
         playerExecutor { player, _ ->
-            player.sendText {
-                appendPrefix()
-                geckoPrimary("Deine aktuelle Geschwindigkeit liegt bei ")
-                geckoSecondary(player.getAttribute(Attribute.MOVEMENT_SPEED).baseValue.toString())
-                geckoPrimary(" und deine FOV Modifier liegt bei ")
-                geckoSecondary(player.fieldViewModifier.toString())
-            }
+            player.sendTranslated(
+                "command.gecko.getspeed",
+                "speed" to player.getAttribute(Attribute.MOVEMENT_SPEED).baseValue,
+                "fov" to player.fieldViewModifier
+            )
         }
     }
 
     literalArgument("unpunishself") {
         playerExecutorSuspend { player, _ ->
             if (GeckoPunishmentRepository.unpunishPlayer(player.uuid)) {
-                player.sendText {
-                    appendPrefix()
-                    geckoPrimary("Du wurdest erfolgreich entbannt.")
-                }
+                player.sendTranslated("command.gecko.unpunishself.success")
             } else {
-                player.sendText {
-                    appendPrefix()
-                    geckoPrimary("Du bist nicht gebannt oder wurdest bereits entbannt.")
-                }
+                player.sendTranslated("command.gecko.unpunishself.not-punished")
             }
         }
     }
@@ -207,10 +163,7 @@ private fun dumpItem(player: Player, all: Boolean) {
     val item = player.itemInMainHand
 
     if (item.isAir) {
-        player.sendText {
-            appendPrefix()
-            geckoPrimary("Du hältst kein Item in der Hand.")
-        }
+        player.sendTranslated("command.gecko.dumpitem.empty-hand")
         return
     }
 
@@ -237,11 +190,7 @@ private fun dumpItem(player: Player, all: Boolean) {
         "$id[${body.substring(1, body.length - 1)}]"
     }
 
-    player.sendText {
-        appendPrefix()
-        geckoPrimary("Das Item: ")
-        geckoSecondary(argument)
-    }
+    player.sendTranslated("command.gecko.dumpitem.result", "item" to argument)
 }
 
 @Suppress("UNCHECKED_CAST")

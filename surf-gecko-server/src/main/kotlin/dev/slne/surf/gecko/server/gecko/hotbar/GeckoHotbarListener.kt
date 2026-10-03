@@ -1,13 +1,12 @@
 package dev.slne.surf.gecko.server.gecko.hotbar
 
 import dev.slne.minestom.lobby.api.event.EventRegistrar
-import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
-import dev.slne.surf.gecko.server.gecko.util.appendPrefix
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
 import dev.slne.surf.gecko.server.gecko.visual.ScreenFade
+import dev.slne.surf.gecko.server.i18n.PlayerLanguages
+import dev.slne.surf.gecko.server.i18n.sendTranslated
 import jakarta.inject.Singleton
 import kotlinx.coroutines.launch
 import net.minestom.server.entity.Player
@@ -39,6 +38,8 @@ class GeckoHotbarListener : EventRegistrar {
         node.addListener(PlayerEntityInteractEvent::class.java) {
             handleInteract(it.player, it.player.getItemInHand(it.hand))
         }
+
+        PlayerLanguages.onChange { GeckoHotbarItems.relocalize(it) }
     }
 
     private fun handleInteract(player: Player, item: ItemStack) {
@@ -67,10 +68,7 @@ class GeckoHotbarListener : EventRegistrar {
 
         GeckoLobby.join(player)
 
-        player.sendText {
-            appendPrefix()
-            geckoPrimary("Es ist aktuell keine Runde verfügbar.")
-        }
+        player.sendTranslated("game.hotbar.no-round")
     }
 
     private val lastUseAt = ConcurrentHashMap<UUID, Long>()

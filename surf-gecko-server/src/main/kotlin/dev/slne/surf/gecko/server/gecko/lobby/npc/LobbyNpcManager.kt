@@ -3,38 +3,31 @@ package dev.slne.surf.gecko.server.gecko.lobby.npc
 import codes.bed.minestom.npc.api.NpcInteractionType
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.key
-import dev.slne.surf.api.core.messages.adventure.sendText
 import dev.slne.surf.api.minestom.inventory.framework.open
 import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.lobby.view.geckoGamesView
-import dev.slne.surf.gecko.server.gecko.util.appendPrefix
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
-import dev.slne.surf.gecko.server.gecko.util.geckoSecondary
+import dev.slne.surf.gecko.server.i18n.sendTranslated
+import dev.slne.surf.gecko.server.i18n.translatable
 import kotlinx.coroutines.launch
-import net.kyori.adventure.text.format.TextDecoration
 import net.minestom.server.entity.PlayerSkin
 import net.minestom.server.network.player.ResolvableProfile
 
 object LobbyNpcManager {
     fun create() {
         equipableMannequinNpc("games", GeckoLobby.instance, GeckoLobby.npcPos) {
-            displayName = buildText {
-                geckoPrimary("Hide 'n Seek", TextDecoration.BOLD)
-                appendNewline()
-                append {
+            displayName = translatable(
+                "lobby.npc.games.name",
+                "left_click" to buildText {
                     white("ꑰ")
                     font(key("surf:menu"))
-                }
-                geckoSecondary(" Spiele ansehen")
-                appendNewline()
-                append {
+                },
+                "right_click" to buildText {
                     white("ꑲ")
                     font(key("surf:menu"))
                 }
-                geckoSecondary(" Spiel beitreten")
-            }
+            )
             profile = ResolvableProfile(
                 PlayerSkin(
                     "ewogICJ0aW1lc3RhbXAiIDogMTc4ODc5MDQ1ODg4OCwKICAicHJvZmlsZUlkIiA6ICI0ZWEwN2YwODlmN2U0MWZhYmMwNjRhMjZlNWM1OWU2ZSIsCiAgInByb2ZpbGVOYW1lIiA6ICJzcGlmZnRvcGlhMiIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS85NmFkY2RiNzk3NjljYmQ4MDZhZTY1NTc1NjNjMzAzNDE1ZDEwZTA0YzIyNzliNzk0ZDRmNjUwNGRjNTlhOGU3IgogICAgfQogIH0KfQ==",
@@ -50,10 +43,7 @@ object LobbyNpcManager {
                     NpcInteractionType.RIGHT_CLICK -> {
                         geckoAsyncScope.launch {
                             if (GeckoGameManager.selectGame(player) == null) {
-                                player.sendText {
-                                    appendPrefix()
-                                    geckoPrimary("Du konntest keiner Runde zugewiesen werden.")
-                                }
+                                player.sendTranslated("lobby.npc.games.no-game")
                             }
                         }
                     }

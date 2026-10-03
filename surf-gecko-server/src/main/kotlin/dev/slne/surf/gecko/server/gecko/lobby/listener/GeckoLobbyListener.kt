@@ -1,8 +1,9 @@
 package dev.slne.surf.gecko.server.gecko.lobby.listener
 
 import dev.slne.minestom.lobby.api.event.EventRegistrar
-import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
+import dev.slne.surf.gecko.server.i18n.GeckoLanguage
+import dev.slne.surf.gecko.server.i18n.GeckoTranslations
 import jakarta.inject.Singleton
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
@@ -29,9 +30,7 @@ class GeckoLobbyListener : EventRegistrar {
         }
         node.addListener(AsyncPlayerPreLoginEvent::class.java) {
             if (!GeckoLobby.initialized) {
-                it.connection.kick(buildText {
-                    error("GeckoLobby is not initialized yet. Please try again later.")
-                })
+                it.connection.kick(GeckoTranslations.render(GeckoLanguage.FALLBACK, "login.lobby-not-initialized"))
             }
         }
     }

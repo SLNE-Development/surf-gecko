@@ -14,8 +14,6 @@ import net.minestom.server.item.Material
 object SeekerSonarShopItem : ShopItem {
     override val id = "seeker_sonar"
     override val price = 7
-    override val displayName = "Sonar"
-    override val description = "Zeigt dir alle Verstecker im Umkreis von 15 Blöcken"
     override val maps = null
     override val roles = listOf(GeckoGameRole.SEEKER)
     override val types = listOf(ShopItemType.SEEKER_SEARCH)

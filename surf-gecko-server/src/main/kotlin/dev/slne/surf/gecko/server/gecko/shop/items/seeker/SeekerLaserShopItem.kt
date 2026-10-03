@@ -21,9 +21,6 @@ import kotlin.time.Duration.Companion.seconds
 object SeekerLaserShopItem : ShopItem {
     override val id = "seeker_laser"
     override val price = 12
-    override val displayName = "Laser"
-    override val description =
-        "Markiert allen Suchern 7,5 Sekunden lang den Standort jedes Versteckers"
     override val maps = null
     override val roles = listOf(GeckoGameRole.SEEKER)
     override val types = listOf(ShopItemType.SEEKER_SEARCH)

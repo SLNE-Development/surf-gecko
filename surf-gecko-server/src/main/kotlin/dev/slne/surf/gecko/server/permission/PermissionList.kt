@@ -5,6 +5,8 @@ object PermissionList {
     private const val BASE_SERVER = "$BASE.server"
     private const val BASE_GAME = "$BASE.game"
 
+    const val COMMAND_I18N = "$BASE_SERVER.i18n.command"
+    const val COMMAND_LANGUAGE = "$BASE.language.command"
     const val COMMAND_STOP = "$BASE_SERVER.stop.command"
     const val COMMAND_STATUSBAR = "$BASE_SERVER.statusbar.command"
     const val COMMAND_STATUSBAR_OTHERS = "$BASE_SERVER.statusbar.others.command"

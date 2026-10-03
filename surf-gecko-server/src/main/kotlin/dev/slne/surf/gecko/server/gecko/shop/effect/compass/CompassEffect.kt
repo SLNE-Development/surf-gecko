@@ -1,9 +1,11 @@
 package dev.slne.surf.gecko.server.gecko.shop.effect.compass
 
-import dev.slne.surf.api.core.messages.adventure.text
 import dev.slne.surf.gecko.server.gecko.player.listener.GeckoPlayerListener
 import dev.slne.surf.gecko.server.gecko.shop.effect.GeckoEffect
-import dev.slne.surf.gecko.server.gecko.util.GECKO_HIGHLIGHT
+import dev.slne.surf.gecko.server.i18n.GeckoLanguage
+import dev.slne.surf.gecko.server.i18n.LocalizedComponent
+import dev.slne.surf.gecko.server.i18n.language
+import dev.slne.surf.gecko.server.i18n.translate
 import dev.slne.surf.gecko.server.util.withTag
 import net.minestom.server.component.DataComponents
 import net.minestom.server.coordinate.Point
@@ -18,10 +20,11 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class CompassEffect(
     private val player: Player,
-    private val displayName: String,
+    private val displayName: LocalizedComponent,
     private val target: () -> Player?
 ) : GeckoEffect(500.milliseconds) {
     private var tracked: Point? = null
+    private var language: GeckoLanguage? = null
 
     override fun isActive() = player.isOnline
 
@@ -29,6 +32,7 @@ class CompassEffect(
         val current = target()
 
         tracked = current?.position?.asBlockVec()
+        language = player.language
         player.inventory.addItemStack(compassFor(current))
     }
 
@@ -36,11 +40,12 @@ class CompassEffect(
         val current = target()
         val position = current?.position?.asBlockVec()
 
-        if (position == tracked) {
+        if (position == tracked && player.language == language) {
             return
         }
 
         tracked = position
+        language = player.language
         slot()?.let { player.inventory.setItemStack(it, compassFor(current)) }
     }
 
@@ -55,7 +60,7 @@ class CompassEffect(
         val builder = ItemStack.of(Material.COMPASS).builder()
             .withTag(COMPASS_TAG, true)
             .withTag(GeckoPlayerListener.GECKO_ITEM_TAG, true)
-            .set(DataComponents.ITEM_NAME, text(displayName, GECKO_HIGHLIGHT))
+            .set(DataComponents.ITEM_NAME, player.translate("shop.item.inventory.name", "name" to displayName))
 
         val instance = target?.instance
 

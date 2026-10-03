@@ -16,8 +16,6 @@ import net.minestom.server.potion.PotionEffect
 object HiderSpringShopItem : ShopItem {
     override val id = "hider_spring"
     override val price = 3
-    override val displayName = "Sprungfeder"
-    override val description = "Katapultiert dich nach vorne und lässt dich sanft landen"
     override val maps = null
     override val roles = listOf(GeckoGameRole.HIDER)
     override val types = listOf(ShopItemType.HIDER_DEFENSE)

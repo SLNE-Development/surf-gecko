@@ -1,6 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.map
 
 import dev.slne.surf.gecko.server.gecko.map.mechanic.GeckoMapMechanic
+import dev.slne.surf.gecko.server.i18n.translatable
 import net.minestom.server.coordinate.Pos
 import java.time.OffsetDateTime
 import java.util.*
@@ -15,6 +16,8 @@ interface GeckoMap {
     val mechanics: List<GeckoMapMechanic>
 
     val submittedAt: OffsetDateTime
+
+    val displayName get() = translatable("map.$mapName.name")
 
     data class MapAuthor(
         val name: String,

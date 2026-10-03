@@ -1,7 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.player.game
 
 import dev.slne.surf.api.core.messages.Colors
-import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
+import dev.slne.surf.gecko.server.i18n.translatable
 import net.kyori.adventure.text.format.TextColor
 
 val COLOR_SEEKER = TextColor.color(227, 0, 58)
@@ -10,20 +10,12 @@ val COLOR_SPECTATOR = Colors.SPACER
 
 enum class GeckoGameRole(
     val id: String,
-    val displayName: String,
     val color: TextColor,
-    val description: String,
-    display: SurfComponentBuilder.() -> Unit
 ) {
-    SEEKER("seeker", "Sucher", COLOR_SEEKER, "Finde alle Verstecker", {
-        text("Sucher", COLOR_SEEKER)
-    }),
-    HIDER("hider", "Verstecker", COLOR_HIDER, "Verstecke dich vor den Suchern", {
-        text("Verstecker", COLOR_HIDER)
-    }),
-    SPECTATOR("spectator", "Zuschauer", COLOR_SPECTATOR, "Du bist ausgeschieden.", {
-        text("Zuschauer", COLOR_SPECTATOR)
-    });
+    SEEKER("seeker", COLOR_SEEKER),
+    HIDER("hider", COLOR_HIDER),
+    SPECTATOR("spectator", COLOR_SPECTATOR);
 
-    val displayText = SurfComponentBuilder(display)
+    val displayText = translatable("role.$id.name")
+    val description = translatable("role.$id.description")
 }

@@ -25,8 +25,6 @@ import kotlin.time.Duration.Companion.seconds
 object SeekerWebGrenadeShopItem : ShopItem {
     override val id = "seeker_web_grenade"
     override val price = 7
-    override val displayName = "Netzgranate"
-    override val description = "Fange die Sucher mit einem Netz"
     override val maps = null
     override val roles = listOf(GeckoGameRole.SEEKER)
     override val types = listOf(ShopItemType.SEEKER_ATTACK)

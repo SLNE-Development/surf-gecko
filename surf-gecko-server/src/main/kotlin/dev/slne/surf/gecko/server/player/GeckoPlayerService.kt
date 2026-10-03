@@ -11,6 +11,7 @@ import dev.slne.surf.gecko.server.player.config.AwaitSettingsTask
 import dev.slne.surf.gecko.server.player.config.EnabledFeaturesTask
 import dev.slne.surf.gecko.server.player.config.GeckoConfiguration
 import dev.slne.surf.gecko.server.player.config.JoinWorldTask
+import dev.slne.surf.gecko.server.player.config.LoadLanguageTask
 import dev.slne.surf.gecko.server.player.config.ResourcePackTask
 import dev.slne.surf.gecko.server.player.config.SynchronizeRegistriesTask
 
@@ -32,6 +33,7 @@ class GeckoPlayerService @Inject constructor(
                 EnabledFeaturesTask,
                 SynchronizeRegistriesTask,
                 AwaitSettingsTask,
+                LoadLanguageTask,
                 ResourcePackTask,
                 JoinWorldTask,
             ),

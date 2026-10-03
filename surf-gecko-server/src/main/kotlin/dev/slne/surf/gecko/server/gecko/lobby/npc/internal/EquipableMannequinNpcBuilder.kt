@@ -1,6 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.lobby.npc
 
 import codes.bed.minestom.npc.api.NpcInteraction
+import dev.slne.surf.gecko.server.i18n.LocalizedComponent
 import net.kyori.adventure.text.Component
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.coordinate.Vec
@@ -26,7 +27,7 @@ class EquipableMannequinNpcBuilder(private val name: String) {
     /**
      * The hologram text shown above the NPC.
      */
-    var displayName: Component = Component.empty()
+    var displayName: LocalizedComponent = LocalizedComponent { Component.empty() }
 
     /**
      * The profile the mannequin renders, or `null` for the default profile.

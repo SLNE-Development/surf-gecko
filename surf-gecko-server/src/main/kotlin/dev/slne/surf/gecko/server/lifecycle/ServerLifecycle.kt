@@ -6,6 +6,7 @@ import dev.slne.surf.gecko.server.chat.GeckoChatService
 import dev.slne.surf.gecko.server.command.GeckoCommandApiService
 import dev.slne.surf.gecko.server.command.GeckoCommandService
 import dev.slne.surf.gecko.server.event.GeckoEventService
+import dev.slne.surf.gecko.server.i18n.GeckoTranslationService
 import dev.slne.surf.gecko.server.view.GeckoViewService
 import dev.slne.surf.gecko.server.integration.luckperms.LuckPermsService
 import dev.slne.surf.gecko.server.integration.spark.SparkService
@@ -16,6 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 @Singleton
 class ServerLifecycle @Inject constructor(
+    translations: GeckoTranslationService,
     events: GeckoEventService,
     views: GeckoViewService,
     luckPerms: LuckPermsService,
@@ -28,7 +30,7 @@ class ServerLifecycle @Inject constructor(
 ) {
     private val services =
         listOf<GeckoService>(
-            events, views, luckPerms, spark, statusBar, commandApi, commands, chat, players
+            translations, events, views, luckPerms, spark, statusBar, commandApi, commands, chat, players
         )
 
     private val started = ArrayDeque<GeckoService>()

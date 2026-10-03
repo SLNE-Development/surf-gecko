@@ -1,13 +1,10 @@
 package dev.slne.surf.gecko.server.gecko.visual
 
-import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.gecko.server.coroutine.geckoScope
 import dev.slne.surf.gecko.server.coroutine.ticks
 import dev.slne.surf.gecko.server.gecko.shop.effect.glow.GlowEffect
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
-import dev.slne.surf.gecko.server.gecko.util.geckoHighlight
-import dev.slne.surf.gecko.server.gecko.util.geckoPrimary
-import dev.slne.surf.gecko.server.gecko.util.geckoUseless
+import dev.slne.surf.gecko.server.i18n.sendTranslatedActionBar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.kyori.adventure.sound.Sound
@@ -47,7 +44,7 @@ object SonarWave {
 
             launch {
                 delay((2 + duration).ticks)
-                initiator.sendActionBar(summary(targets.size, radius.toInt()))
+                sendSummary(initiator, targets.size, radius.toInt())
             }
 
             repeat(2) { pulse ->
@@ -89,12 +86,9 @@ object SonarWave {
         )
     }
 
-    private fun summary(found: Int, range: Int) = buildText {
-        if (found == 0) {
-            geckoUseless("Niemand in $range Blöcken")
-        } else {
-            geckoHighlight(found.toString())
-            geckoPrimary(" Verstecker in $range Blöcken")
-        }
+    private fun sendSummary(player: Player, found: Int, range: Int) = when (found) {
+        0 -> player.sendTranslatedActionBar("game.sonar.none", "range" to range)
+        1 -> player.sendTranslatedActionBar("game.sonar.found.one", "found" to found, "range" to range)
+        else -> player.sendTranslatedActionBar("game.sonar.found.other", "found" to found, "range" to range)
     }
 }

@@ -22,7 +22,7 @@ class LeaderboardSnapshot(
         ): LeaderboardSnapshot {
             val sorted = totals.sortedWith(
                 compareByDescending<LeaderboardSummary> { it.value }
-                    .thenBy { names[it.playerUuid] ?: "Unbekannt" }
+                    .thenBy { names[it.playerUuid].orEmpty() }
             )
 
             val places = HashMap<UUID, LeaderboardPlacement>(sorted.size)
@@ -37,7 +37,7 @@ class LeaderboardSnapshot(
             val top = sorted.take(topSize).map { total ->
                 LeaderboardTopEntry(
                     rank = places.getValue(total.playerUuid).rank,
-                    name = names[total.playerUuid] ?: "Unbekannt",
+                    name = names[total.playerUuid],
                     value = total.value
                 )
             }

@@ -1,10 +1,6 @@
 package dev.slne.surf.gecko.server.gecko
 
-import dev.slne.surf.api.core.font.toSmallCaps
-import dev.slne.surf.api.core.messages.Colors
-import dev.slne.surf.api.core.messages.CommonComponents
 import dev.slne.surf.api.core.messages.adventure.*
-import dev.slne.surf.api.core.messages.builder.SurfComponentBuilder
 import dev.slne.surf.api.core.util.random
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.common.game.GeckoGameInfo
@@ -29,10 +25,15 @@ import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameEndReason
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState
 import dev.slne.surf.gecko.server.gecko.stats.GeckoGameStatsTracker
-import dev.slne.surf.gecko.server.gecko.util.*
 import dev.slne.surf.gecko.server.gecko.visual.CountdownTitle
 import dev.slne.surf.gecko.server.gecko.visual.ScreenFade
 import dev.slne.surf.gecko.server.gecko.water.GeckoWaterDamager
+import dev.slne.surf.gecko.server.i18n.LocalizedBossBar
+import dev.slne.surf.gecko.server.i18n.formatDuration
+import dev.slne.surf.gecko.server.i18n.sendTranslated
+import dev.slne.surf.gecko.server.i18n.sendTranslatedActionBar
+import dev.slne.surf.gecko.server.i18n.translatable
+import dev.slne.surf.gecko.server.i18n.translate
 import dev.slne.surf.gecko.server.util.secureRandom
 import kotlinx.coroutines.*
 import net.kyori.adventure.bossbar.BossBar
@@ -86,36 +87,13 @@ class GeckoGame(
 
     var countStats = true
 
-    val countdownBossBar2 = buildText {
-        geckoPrimary("Warte auf weitere Spieler.. ".toSmallCaps())
-    }
+    private val bossBar = LocalizedBossBar(translatable("game.bossbar.waiting.2"), BossBar.Color.PINK)
 
-    val countdownBossBar3 = buildText {
-        geckoPrimary("Warte auf weitere Spieler...".toSmallCaps())
-    }
+    private val gameInfoBossBar = LocalizedBossBar(color = BossBar.Color.PINK)
 
-    private val bossBar = bossBar {
-        name {
-            append(countdownBossBar3)
-        }
-        color = BossBar.Color.PINK
-    }
+    fun countDownBossBar(seconds: Int) = translatable("game.bossbar.countdown", "seconds" to seconds)
 
-    private val gameInfoBossBar = bossBar {
-        color = BossBar.Color.PINK
-    }
-
-    fun countDownBossBar(seconds: Int) = buildText {
-        geckoPrimary("Das Spiel startet in ".toSmallCaps())
-        geckoSecondary(seconds.toString())
-        geckoPrimary(" Sekunden.".toSmallCaps())
-    }
-
-    fun backToLobbyBossBar(seconds: Int) = buildText {
-        geckoPrimary("Zurück zur Lobby in ".toSmallCaps())
-        geckoSecondary(seconds.toString())
-        geckoPrimary(" Sekunden...".toSmallCaps())
-    }
+    fun backToLobbyBossBar(seconds: Int) = translatable("game.bossbar.back-to-lobby", "seconds" to seconds)
 
     val playerCount get() = lobbyPlayers.size + gamePlayers.size
     val freeSlots get() = settings.maxPlayers - playerCount
@@ -128,7 +106,7 @@ class GeckoGame(
 
     fun findGamePlayer(playerUuid: UUID) = gamePlayers.firstOrNull { it.playerUuid == playerUuid }
 
-    fun hideBossBar(player: Player) = player.hideBossBar(bossBar)
+    fun hideBossBar(player: Player) = bossBar.hide(player)
 
     fun stopHeartbeat() = heartbeat.stop()
     fun stopOrbSpawner() = orbSpawner.stop()
@@ -167,39 +145,17 @@ class GeckoGame(
             GeckoHotbarItems.giveEndingItems(it)
         }
 
-        sendText {
-            appendNewline()
-            appendPrefix()
-            when (reason) {
-                GeckoGameEndReason.SEEKER_WIN -> {
-                    text(
-                        "Die Sucher haben gewonnen",
-                        GeckoGameRole.SEEKER.color,
-                        TextDecoration.BOLD
-                    )
-                }
-
-                GeckoGameEndReason.HIDER_WIN -> {
-                    text(
-                        "Die Verstecker haben gewonnen",
-                        GeckoGameRole.HIDER.color,
-                        TextDecoration.BOLD
-                    )
-                }
-
-                else -> {
-                    error("Das Spiel wurde beendet", TextDecoration.BOLD)
-                }
-            }
-            appendNewline()
-            appendPrefix()
-            geckoSecondary("Du wirst in ".toSmallCaps())
-            geckoHighlight((endingTimerSeconds ?: 30).toString())
-            geckoSecondary(" Sekunden in")
-            appendNewline()
-            appendPrefix()
-            geckoSecondary("die Lobby geschickt.")
+        val result = when (reason) {
+            GeckoGameEndReason.SEEKER_WIN -> translatable("game.end.seeker-win")
+            GeckoGameEndReason.HIDER_WIN -> translatable("game.end.hider-win")
+            else -> translatable("game.end.cancelled")
         }
+
+        sendTranslated(
+            "game.end.message",
+            "result" to result,
+            "seconds" to (endingTimerSeconds ?: 30)
+        )
 
         endingJob = geckoAsyncScope.runAtFixedRate(1.seconds, 1.seconds) {
             val currentEndingSeconds = endingTimerSeconds ?: return@runAtFixedRate
@@ -210,11 +166,11 @@ class GeckoGame(
 
             if (currentEndingSeconds <= 0) {
                 forEachPlayer {
-                    it.hideBossBar(bossBar)
+                    bossBar.hide(it)
                 }
             } else {
                 forEachPlayer {
-                    it.showBossBar(bossBar)
+                    bossBar.show(it)
                 }
             }
 
@@ -258,26 +214,18 @@ class GeckoGame(
         gamePlayer.applyEquipment()
         gamePlayer.teleportToSpawn(settings.map)
 
-        gamePlayer.player.sendText {
-            appendPrefix()
-            geckoPrimary("Du wurdest gefunden und bist nun ")
-            append(GeckoGameRole.SPECTATOR.displayText)
-            geckoPrimary(".")
-        }
+        gamePlayer.player.sendTranslated("game.found.spectator", "role" to GeckoGameRole.SPECTATOR.displayText)
     }
 
     private fun startSeekerRespawn(gamePlayer: GeckoGamePlayer) {
         gamePlayer.respawnSecondsLeft = settings.seekerRespawnTimeSeconds
         gamePlayer.moveToSeekerLobby(settings.map)
 
-        gamePlayer.player.sendText {
-            appendPrefix()
-            geckoPrimary("Du wurdest getötet und respawnst in ")
-            geckoHighlight(settings.seekerRespawnTimeSeconds.toString())
-            geckoPrimary(" Sekunden als ")
-            append(GeckoGameRole.SEEKER.displayText)
-            geckoPrimary(".")
-        }
+        gamePlayer.player.sendTranslated(
+            "game.respawn.message",
+            "seconds" to settings.seekerRespawnTimeSeconds,
+            "role" to GeckoGameRole.SEEKER.displayText
+        )
 
         gamePlayer.applyGameMode()
         gamePlayer.applySpeed()
@@ -293,11 +241,7 @@ class GeckoGame(
             if (secondsLeft > 0) {
                 gamePlayer.respawnSecondsLeft = secondsLeft
 
-                player.sendActionBar(buildText {
-                    geckoPrimary("Respawn in ")
-                    geckoHighlight(secondsLeft.toString())
-                    geckoPrimary(" Sekunden")
-                })
+                player.sendTranslatedActionBar("game.respawn.actionbar", "seconds" to secondsLeft)
 
                 return@forEach
             }
@@ -305,10 +249,7 @@ class GeckoGame(
             gamePlayer.respawnSecondsLeft = null
             gamePlayer.respawnAsSeeker(settings.map)
 
-            player.sendText {
-                appendPrefix()
-                geckoPrimary("Du bist wieder im Spiel.")
-            }
+            player.sendTranslated("game.respawn.back")
         }
     }
 
@@ -347,20 +288,19 @@ class GeckoGame(
         if (state.isGame()) {
             val gamePlayer = findGamePlayer(player.uuid) ?: return
 
-            sendText {
-                appendPrefix()
-                text(player.username, gamePlayer.role.color, TextDecoration.BOLD)
-                geckoPrimary(" hat das Spiel verlassen.")
-            }
+            sendTranslated(
+                "game.player-left",
+                "player" to Component.text(player.username, gamePlayer.role.color, TextDecoration.BOLD)
+            )
 
             statsTracker.markLeft(gamePlayer.playerUuid)
             gamePlayers.removeAll { it.playerUuid == gamePlayer.playerUuid }
             gamePlayer.clearRespawnState()
             gamePlayer.resetSpeed()
-            gameInfoBossBar.removeViewer(player)
+            gameInfoBossBar.hide(player)
 
             if (gamePlayer.role != GeckoGameRole.SPECTATOR) {
-                GeckoGamePunisher.punish(player, "Verlassen des Spiels während der Runde")
+                GeckoGamePunisher.punish(player, "punishment.reason.left-game")
             }
 
             if (checkForGameEnd()) {
@@ -397,35 +337,13 @@ class GeckoGame(
 
         forEachGamePlayer {
             if (it.playerUuid == newSeeker.playerUuid) {
-                it.player.sendText {
-                    appendNewline()
-                    appendPrefix()
-                    text(
-                        "Der Sucher hat das Spiel verlassen.",
-                        GeckoGameRole.SEEKER.color,
-                        TextDecoration.BOLD
-                    )
-                    appendNewline()
-                    appendPrefix()
-                    geckoPrimary("Du wurdest zufällig als neuer ")
-                    append(GeckoGameRole.SEEKER.displayText)
-                    geckoPrimary(" ausgewählt.")
-                }
+                it.player.sendTranslated("game.seeker-left.self", "role" to GeckoGameRole.SEEKER.displayText)
             } else {
-                it.player.sendText {
-                    appendNewline()
-                    appendPrefix()
-                    text(
-                        "Der Sucher hat das Spiel verlassen.",
-                        GeckoGameRole.SEEKER.color,
-                        TextDecoration.BOLD
-                    )
-                    appendNewline()
-                    appendPrefix()
-                    geckoHighlight(newSeeker.player.username)
-                    geckoPrimary(" ist nun ")
-                    append(GeckoGameRole.SEEKER.displayText)
-                }
+                it.player.sendTranslated(
+                    "game.seeker-left.other",
+                    "player" to newSeeker.player.username,
+                    "role" to GeckoGameRole.SEEKER.displayText
+                )
             }
         }
     }
@@ -478,7 +396,7 @@ class GeckoGame(
                     player.applyEquipment()
                     player.updateSocialGroup()
                     player.teleportToSpawn(settings.map)
-                    player.player.hideBossBar(bossBar)
+                    bossBar.hide(player.player)
                     //    player.player.playSound(GeckoSounds.PHASE_GAME, Sound.Emitter.self())
                 }
             }.awaitAll()
@@ -521,36 +439,36 @@ class GeckoGame(
     private lateinit var gameInfoBarJob: Job
     private fun startGameInfoBar() {
         players.forEach {
-            gameInfoBossBar.addViewer(it)
+            gameInfoBossBar.show(it)
         }
 
         gameInfoBarJob = geckoAsyncScope.runAtFixedRate(500.milliseconds) {
-            gameInfoBossBar.name(buildText {
-                geckoHighlight(settings.map.mapDisplayName)
+            forEachPlayer { gameInfoBossBar.show(it) }
 
-                val nextBeam = periodicBeamManager.nextBeam ?: return@buildText
+            val nextBeam = periodicBeamManager.nextBeam
 
-                appendSpace()
-                append(
-                    Component.`object`(
+            if (nextBeam == null) {
+                gameInfoBossBar.name(translatable("game.bossbar.info", "map" to settings.map.displayName))
+                return@runAtFixedRate
+            }
+
+            gameInfoBossBar.name(
+                translatable(
+                    "game.bossbar.info-beam",
+                    "map" to settings.map.displayName,
+                    "icon" to Component.`object`(
                         ObjectContents.sprite(
                             key("minecraft", "gui"),
                             key("minecraft", "mob_effect/glowing")
                         )
-                    )
-                )
-                appendSpace()
-                append(
-                    CommonComponents.formatTime(
+                    ),
+                    "time" to formatDuration(
                         Duration.between(OffsetDateTime.now(), nextBeam)
                             .coerceAtLeast(Duration.ZERO)
-                            .toKotlinDuration(),
-                        showSeconds = true,
-                        shortForms = false,
-                        timeColor = Colors.WHITE
+                            .toKotlinDuration()
                     )
                 )
-            })
+            )
         }
     }
 
@@ -559,7 +477,7 @@ class GeckoGame(
             gameInfoBarJob.cancel()
         }
 
-        forEachPlayer { gameInfoBossBar.removeViewer(it) }
+        forEachPlayer { gameInfoBossBar.hide(it) }
     }
 
     private var waitingBossBarIndex = 0
@@ -569,9 +487,9 @@ class GeckoGame(
             countDownBossBar(countdownSeconds!!)
         } else {
             val text = if (waitingBossBarIndex == 0) {
-                countdownBossBar2
+                translatable("game.bossbar.waiting.1")
             } else {
-                countdownBossBar3
+                translatable("game.bossbar.waiting.2")
             }
 
             waitingBossBarIndex = (waitingBossBarIndex + 1) % 2
@@ -580,7 +498,7 @@ class GeckoGame(
 
         bossBar.name(text)
         players.forEach { player ->
-            player.showBossBar(bossBar)
+            bossBar.show(player)
         }
     }
 
@@ -600,7 +518,7 @@ class GeckoGame(
         val secondsUntilSearch = currentTimer - searchStartAt
 
         if (state == GeckoGameState.HIDING && secondsUntilSearch in 1..GeckoSounds.COUNTDOWN_SECONDS) {
-            broadcastCountdown(secondsUntilSearch, SEARCH_COUNTDOWN_SUBTITLE)
+            broadcastCountdown(secondsUntilSearch, "game.countdown.search")
         }
 
         if (state == GeckoGameState.HIDING && currentTimer <= searchStartAt) {
@@ -610,17 +528,12 @@ class GeckoGame(
                 it.player.teleport(settings.map.mapLocations.spawn)
             }
 
-            sendText {
-                appendPrefix()
-                geckoPrimary("Die Suche beginnt.")
-            }
+            sendTranslated("game.search.started")
 
             forEachPlayer {
                 it.showTitle {
-                    title {
-                        text("Die Suche beginnt", GeckoGameRole.SEEKER.color, TextDecoration.BOLD)
-                    }
-                    subtitle = SEARCH_START_SUBTITLE
+                    title = it.translate("game.search.title")
+                    subtitle = it.translate("game.search.subtitle")
                     times {
                         fadeIn(2)
                         stay(30)
@@ -634,7 +547,7 @@ class GeckoGame(
         }
 
         if (state.isGame() && currentTimer in 1..GeckoSounds.COUNTDOWN_SECONDS) {
-            broadcastCountdown(currentTimer, END_COUNTDOWN_SUBTITLE)
+            broadcastCountdown(currentTimer, "game.countdown.end")
         }
 
         if (currentTimer <= 0) {
@@ -642,9 +555,9 @@ class GeckoGame(
         }
     }
 
-    private fun broadcastCountdown(secondsLeft: Int, subtitleText: Component) =
+    private fun broadcastCountdown(secondsLeft: Int, subtitleKey: String) =
         forEachPlayer { player ->
-            CountdownTitle.show(player, secondsLeft.toString(), subtitleText)
+            CountdownTitle.show(player, secondsLeft.toString(), player.translate(subtitleKey))
             player.playSound(GeckoSounds.countdownTick(secondsLeft), Sound.Emitter.self())
         }
 
@@ -700,7 +613,8 @@ class GeckoGame(
         }
     }
 
-    fun sendText(builder: SurfComponentBuilder.() -> Unit) = forEachPlayer { it.sendText(builder) }
+    fun sendTranslated(key: String, vararg args: Pair<String, Any?>) =
+        forEachPlayer { it.sendTranslated(key, *args) }
 
     val gameInfo
         get() = GeckoGameInfo(
@@ -709,18 +623,4 @@ class GeckoGame(
             settings.maxPlayers,
             settings.map.mapDisplayName
         )
-
-    private companion object {
-        val SEARCH_COUNTDOWN_SUBTITLE = buildText {
-            geckoUseless("bis die Sucher losgelassen werden".toSmallCaps())
-        }
-
-        val SEARCH_START_SUBTITLE = buildText {
-            geckoUseless("Versteckt euch gut".toSmallCaps())
-        }
-
-        val END_COUNTDOWN_SUBTITLE = buildText {
-            geckoUseless("bis das Spiel endet".toSmallCaps())
-        }
-    }
 }

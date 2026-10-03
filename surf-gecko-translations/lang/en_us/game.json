@@ -1,0 +1,63 @@
+{
+  "game.bossbar.waiting.1": "<primary><small_caps>Waiting for more players.. ",
+  "game.bossbar.waiting.2": "<primary><small_caps>Waiting for more players...",
+  "game.bossbar.countdown": "<primary><small_caps>The game starts in </small_caps><secondary><seconds></secondary><small_caps> seconds.",
+  "game.bossbar.back-to-lobby": "<primary><small_caps>Back to the lobby in </small_caps><secondary><seconds></secondary><small_caps> seconds...",
+  "game.bossbar.info": "<highlight><map>",
+  "game.bossbar.info-beam": "<highlight><map></highlight> <icon> <white><time>",
+
+  "game.countdown.search": "<muted><small_caps>until the seekers are released",
+  "game.countdown.end": "<muted><small_caps>until the game ends",
+
+  "game.search.started": "<prefix><primary>The search has begun.",
+  "game.search.title": "<seeker><b>The search begins",
+  "game.search.subtitle": "<muted><small_caps>Hide well",
+
+  "game.end.seeker-win": "<seeker><b>The seekers have won",
+  "game.end.hider-win": "<hider><b>The hiders have won",
+  "game.end.cancelled": "<error><b>The game has been ended",
+  "game.end.message": "<newline><prefix><result><newline><prefix><secondary><small_caps>You will be sent </small_caps>back to the lobby<newline><prefix>in <highlight><seconds></highlight> seconds.",
+
+  "game.role.assigned": "<prefix><primary>You are a <role><primary>.",
+  "game.role.subtitle": "<secondary><description>",
+
+  "game.found.spectator": "<prefix><primary>You have been found and are now a <role><primary>.",
+  "game.respawn.message": "<prefix><primary>You were killed and will respawn as a <role><primary> in <highlight><seconds></highlight> seconds.",
+  "game.respawn.actionbar": "<primary>Respawning in <highlight><seconds></highlight> seconds",
+  "game.respawn.back": "<prefix><primary>You are back in the game.",
+
+  "game.player-left": "<prefix><player><primary> has left the game.",
+  "game.seeker-left.self": "<newline><prefix><seeker><b>The seeker has left the game.</b></seeker><newline><prefix><primary>You have been randomly chosen as the new <role><primary>.",
+  "game.seeker-left.other": "<newline><prefix><seeker><b>The seeker has left the game.</b></seeker><newline><prefix><highlight><player></highlight><primary> is now the <role>",
+
+  "game.kill.actionbar.found": "<primary>You found <victim>",
+  "game.kill.actionbar.killed": "<primary>You killed <victim>",
+  "game.kill.broadcast.found": "<prefix><victim><primary> was found by <attacker>",
+  "game.kill.broadcast.killed": "<prefix><victim><primary> was killed by <attacker>",
+  "game.kill.broadcast.died": "<prefix><victim><primary> died",
+  "game.kill.title": "<b>Found",
+  "game.kill.subtitle.killer": "<primary>You were caught by <highlight><killer>",
+  "game.kill.subtitle.died": "<primary>You died",
+
+  "game.afk.title": "<error><b>AFK",
+  "game.afk.subtitle": "<secondary>Move, or you will be kicked in <highlight><seconds></highlight> seconds.",
+
+  "game.sonar.none": "<muted>Nobody within <range> blocks",
+  "game.sonar.found.one": "<highlight><found></highlight><primary> hider within <range> blocks",
+  "game.sonar.found.other": "<highlight><found></highlight><primary> hiders within <range> blocks",
+
+  "game.vent.hint": "<primary>Press <secondary><lang:key.sneak></secondary> to enter the vent",
+
+  "game.hotbar.lobby": "<error>Back to lobby",
+  "game.hotbar.next-round": "<success>Next round",
+  "game.hotbar.no-round": "<prefix><primary>There is no round available right now.",
+
+  "game.orbs.name": "<highlight>Orb",
+
+  "game.gear.seeker.helmet": "Seeker Helmet",
+  "game.gear.seeker.chestplate": "Seeker Chestplate",
+  "game.gear.seeker.leggings": "Seeker Leggings",
+  "game.gear.seeker.boots": "Seeker Boots",
+  "game.gear.seeker.sword": "Seeker Sword",
+  "game.gear.seeker.bow": "Seeker Bow"
+}
