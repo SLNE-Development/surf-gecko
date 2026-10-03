@@ -16,6 +16,11 @@ plugins {
 }
 
 repositories {
+    maven(url = "https://central.sonatype.com/repository/maven-snapshots/") {
+        content {
+            includeModule("net.minestom", "minestom")
+        }
+    }
     maven("https://reposilite.slne.dev/public") { name = "slne-repository-public" }
     maven("https://reposilite.slne.dev/releases") { name = "slne-repository-releases" }
     maven("https://repo.lucko.me/")
@@ -103,6 +108,10 @@ dependencies {
     runtimeDownload(libs.surf.queue.minestom)
     runtimeDownload(libs.surf.playtime.minestom)
     runtimeDownload(libs.surf.bitmap.provider.minestom)
+}
+
+configurations.configureEach {
+    resolutionStrategy.force("net.minestom:minestom:${libs.versions.minestom.asProvider().get()}")
 }
 
 kotlin {
