@@ -18,6 +18,11 @@ surfMinestomServerApi {
     withNpcLib()
     withConsole()
     withPlugins()
+
+    pluginDependencies {
+        register("surf-core-minestom")
+        register("surf-bitmap-provider-minestom")
+    }
 }
 
 dependencies {
