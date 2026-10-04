@@ -1,6 +1,8 @@
 package dev.slne.surf.gecko.server.gecko.lobby.listener
 
 import dev.slne.surf.api.minestom.event.EventRegistrar
+import dev.slne.surf.api.minestom.player.event.PlayerJoinEvent
+import dev.slne.surf.api.minestom.player.event.PlayerQuitEvent
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.i18n.GeckoLanguage
 import dev.slne.surf.gecko.server.i18n.GeckoTranslations
@@ -28,8 +30,19 @@ class GeckoLobbyListener : EventRegistrar {
         }
         node.addListener(AsyncPlayerPreLoginEvent::class.java) {
             if (!GeckoLobby.initialized) {
-                it.connection.kick(GeckoTranslations.render(GeckoLanguage.FALLBACK, "login.lobby-not-initialized"))
+                it.connection.kick(
+                    GeckoTranslations.render(
+                        GeckoLanguage.FALLBACK,
+                        "login.lobby-not-initialized"
+                    )
+                )
             }
+        }
+        node.addListener(PlayerJoinEvent::class.java) {
+            it.joinMessage = null
+        }
+        node.addListener(PlayerQuitEvent::class.java) {
+            it.quitMessage = null
         }
     }
 
