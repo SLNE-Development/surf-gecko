@@ -74,7 +74,8 @@ afterEvaluate {
         isZip64 = true
 
         manifest {
-            attributes["Launcher-Agent-Class"] = "dev.slne.surf.gecko.server.instrumentation.GeckoRunner"
+            attributes["Surf-Delegate-Agent-Classes"] =
+                "dev.slne.surf.gecko.server.instrumentation.GeckoRunner"
             attributes["Can-Redefine-Classes"] = "true"
             attributes["Can-Retransform-Classes"] = "true"
 
