@@ -10,6 +10,8 @@ repositories {
 surfMinestomServerApi {
     mainClass("dev.slne.surf.gecko.server.MainKt")
 
+    withCoreCommon()
+    withSurfRedis()
     withSignedChat()
     withLuckPerms()
     withSpark()
@@ -21,12 +23,8 @@ surfMinestomServerApi {
 dependencies {
     implementation(projects.surfGeckoCommon)
 
-    implementation(libs.surf.core.api.common)
-    implementation(libs.surf.playtime.api.common)
-    implementation(libs.surf.bitmap.provider.common)
-    implementation(libs.surf.redis.api) {
-        artifact { classifier = "all" }
-    }
+    compileOnly(libs.surf.playtime.api.common)
+    compileOnly(libs.surf.bitmap.provider.common)
     implementation(libs.surf.database.r2dbc) {
         artifact { classifier = "all" }
     }
