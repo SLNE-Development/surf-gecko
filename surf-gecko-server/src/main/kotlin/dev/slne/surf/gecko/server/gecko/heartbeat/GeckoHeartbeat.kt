@@ -1,7 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.heartbeat
 
 import dev.slne.surf.api.core.util.runAtFixedRate
-import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
 import dev.slne.surf.gecko.server.gecko.GeckoGame
 import dev.slne.surf.gecko.server.gecko.heartbeat.effect.GeckoScreenEffect
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
@@ -25,7 +25,7 @@ class GeckoHeartbeat(private val game: GeckoGame) {
             return
         }
 
-        job = geckoAsyncScope.runAtFixedRate(
+        job = minestomAsyncScope.runAtFixedRate(
             GeckoHeartbeatPulse.TICK_MILLIS.milliseconds,
             taskName = "gecko-heartbeat"
         ) {

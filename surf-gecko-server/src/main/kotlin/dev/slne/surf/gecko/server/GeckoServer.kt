@@ -1,12 +1,8 @@
 package dev.slne.surf.gecko.server
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
 import dev.slne.surf.gecko.server.config.Config
-import dev.slne.surf.gecko.server.console.GeckoConsole
 import dev.slne.surf.gecko.server.gecko.GeckoInstance
-import dev.slne.surf.gecko.server.lifecycle.ServerLifecycle
-import dev.slne.surf.gecko.server.plugin.MinestomPluginManager
+import dev.slne.surf.gecko.server.performance.monitor.StatusBarService
 import dev.slne.surf.gecko.server.redis.RedisService
 import kotlinx.coroutines.runBlocking
 import net.minestom.server.MinecraftServer
@@ -18,32 +14,16 @@ import kotlin.system.exitProcess
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.nanoseconds
 
-@Singleton
-class GeckoServer @Inject constructor(
-    private val minecraftServer: MinecraftServer,
-    private val config: Config,
-    private val serverLifecycle: ServerLifecycle,
-    private val pluginManager: MinestomPluginManager,
-) {
+object GeckoServer {
     private val started = AtomicBoolean()
     private val stopped = AtomicBoolean()
 
-    private var consoleThread: Thread? = null
-
-    suspend fun start(startupStartedAt: Long) {
+    suspend fun start(minecraftServer: MinecraftServer, config: Config, startupStartedAt: Long) {
         check(started.compareAndSet(false, true)) {
             "Gecko server has already been started"
         }
 
         try {
-            LOGGER.info("Initializing core server components.")
-            serverLifecycle.start()
-            LOGGER.info("Core server components initialized.")
-
-            LOGGER.info("Starting server plugins.")
-            pluginManager.startAll()
-            LOGGER.info("Server plugins started.")
-
             installShutdownHook()
 
             LOGGER.info(
@@ -52,8 +32,6 @@ class GeckoServer @Inject constructor(
                 config.address.port,
             )
             minecraftServer.start(config.address.host, config.address.port)
-
-            startConsole()
 
             RedisService.connect()
             GeckoInstance.enable()
@@ -71,37 +49,12 @@ class GeckoServer @Inject constructor(
                 startupFailure,
             )
 
-            runCatching {
-                LOGGER.info("Stopping plugins after failed startup.")
-                pluginManager.stopAll()
-            }.onFailure { failure ->
+            runCatching { stop() }.onFailure { failure ->
                 startupFailure.addSuppressed(failure)
-                LOGGER.error("Failed to stop plugins after startup failure.", failure)
-            }
-
-            runCatching {
-                LOGGER.info("Shutting down core components after failed startup.")
-                serverLifecycle.stop()
-            }.onFailure { failure ->
-                startupFailure.addSuppressed(failure)
-                LOGGER.error("Failed to shut down core components after startup failure.", failure)
+                LOGGER.error("Failed to stop surf-gecko after startup failure.", failure)
             }
 
             throw startupFailure
-        }
-    }
-
-    private fun startConsole() {
-        val console = GeckoConsole {
-            shutdownAndExit("console")
-        }
-
-        consoleThread = Thread(
-            console::start,
-            "surf-gecko-console",
-        ).apply {
-            isDaemon = true
-            start()
         }
     }
 
@@ -116,7 +69,7 @@ class GeckoServer @Inject constructor(
     }
 
     @Blocking
-    private fun shutdownAndExit(source: String) {
+    fun shutdownAndExit(source: String) {
         runBlocking {
             runCatching {
                 stop()
@@ -148,7 +101,19 @@ class GeckoServer @Inject constructor(
             failure = currentFailure
         }
 
-        RedisService.disconnect()
+        try {
+            RedisService.disconnect()
+        } catch (currentFailure: Throwable) {
+            LOGGER.error("Failed to disconnect from redis.", currentFailure)
+            failure = failure.alsoSuppress(currentFailure)
+        }
+
+        try {
+            StatusBarService.stop()
+        } catch (currentFailure: Throwable) {
+            LOGGER.error("Failed to stop the status bar.", currentFailure)
+            failure = failure.alsoSuppress(currentFailure)
+        }
 
         if (MinecraftServer.isStarted() && !MinecraftServer.isStopping()) {
             try {
@@ -157,24 +122,6 @@ class GeckoServer @Inject constructor(
                 LOGGER.error("Failed to stop the gecko server cleanly.", currentFailure)
                 failure = failure.alsoSuppress(currentFailure)
             }
-        }
-
-        try {
-            LOGGER.info("Stopping server plugins.")
-            pluginManager.stopAll()
-            LOGGER.info("Server plugins stopped.")
-        } catch (currentFailure: Throwable) {
-            LOGGER.error("Failed to stop server plugins.", currentFailure)
-            failure = failure.alsoSuppress(currentFailure)
-        }
-
-        try {
-            LOGGER.info("Shutting down core server components.")
-            serverLifecycle.stop()
-            LOGGER.info("Core server components shut down.")
-        } catch (currentFailure: Throwable) {
-            LOGGER.error("Failed to shut down core server components.", currentFailure)
-            failure = failure.alsoSuppress(currentFailure)
         }
 
         if (failure == null) {

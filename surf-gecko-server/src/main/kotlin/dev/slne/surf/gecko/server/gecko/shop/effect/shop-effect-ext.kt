@@ -1,6 +1,6 @@
 package dev.slne.surf.gecko.server.gecko.shop.effect
 
-import dev.slne.surf.gecko.server.coroutine.geckoScope
+import dev.slne.surf.api.minestom.coroutine.minestomScope
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
 import kotlinx.coroutines.launch
 import net.minestom.server.entity.Player
@@ -11,7 +11,7 @@ fun ShopItem.playOnce(player: Player, duration: Duration, effect: GeckoEffect): 
         return false
     }
 
-    geckoScope.launch {
+    minestomScope.launch {
         try {
             effect.playFor(duration)
         } finally {

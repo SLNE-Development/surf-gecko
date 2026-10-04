@@ -8,7 +8,7 @@ import dev.slne.surf.api.minestom.inventory.framework.view.onFirstRender
 import dev.slne.surf.api.minestom.inventory.framework.view.onOpen
 import dev.slne.surf.api.minestom.inventory.framework.view.settings
 import dev.slne.surf.api.minestom.inventory.framework.view.surfView
-import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
 import dev.slne.surf.gecko.server.i18n.*
 import kotlinx.coroutines.launch
 import net.minestom.server.entity.Player
@@ -61,7 +61,7 @@ private fun select(player: Player, language: GeckoLanguage) {
         return
     }
 
-    geckoAsyncScope.launch {
+    minestomAsyncScope.launch {
         runCatching { PlayerLanguages.set(player, language) }
             .onSuccess {
                 player.sendTranslated(

@@ -4,7 +4,7 @@ import dev.slne.surf.api.core.messages.adventure.key
 import dev.slne.surf.api.core.messages.adventure.playSound
 import dev.slne.surf.api.core.messages.adventure.showTitle
 import dev.slne.surf.api.core.util.runAtFixedRate
-import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
 import dev.slne.surf.gecko.server.gecko.GeckoGame
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.visual.ScreenFade
@@ -30,7 +30,7 @@ class GeckoAntiAfkWatcher(val game: GeckoGame) {
     private val afkPlayers = ConcurrentHashMap<UUID, OffsetDateTime>()
 
     fun start() {
-        watcherJob = geckoAsyncScope.runAtFixedRate(TICK_INTERVAL) {
+        watcherJob = minestomAsyncScope.runAtFixedRate(TICK_INTERVAL) {
             game.forEachGamePlayer {
                 val player = it.playerOrNull ?: return@forEachGamePlayer
                 val uuid = player.uuid
@@ -55,7 +55,7 @@ class GeckoAntiAfkWatcher(val game: GeckoGame) {
                 }
 
                 afkPlayers.remove(uuid)
-                geckoAsyncScope.launch {
+                minestomAsyncScope.launch {
                     ScreenFade.transition(listOf(player))
                     GeckoLobby.join(player)
                 }

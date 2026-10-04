@@ -1,13 +1,12 @@
 package dev.slne.surf.gecko.server.gecko.hotbar
 
-import dev.slne.minestom.lobby.api.event.EventRegistrar
-import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.api.minestom.event.EventRegistrar
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.visual.ScreenFade
 import dev.slne.surf.gecko.server.i18n.PlayerLanguages
 import dev.slne.surf.gecko.server.i18n.sendTranslated
-import jakarta.inject.Singleton
 import kotlinx.coroutines.launch
 import net.minestom.server.entity.Player
 import net.minestom.server.event.Event
@@ -20,7 +19,6 @@ import net.minestom.server.item.ItemStack
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-@Singleton
 class GeckoHotbarListener : EventRegistrar {
     override fun register(node: EventNode<Event>) {
         node.addListener(
@@ -49,7 +47,7 @@ class GeckoHotbarListener : EventRegistrar {
             return
         }
 
-        geckoAsyncScope.launch {
+        minestomAsyncScope.launch {
             ScreenFade.transition(listOf(player))
             when (action) {
                 GeckoHotbarAction.LOBBY -> GeckoLobby.join(player)

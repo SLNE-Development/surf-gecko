@@ -1,7 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.shop.items.hider
 
-import dev.slne.surf.gecko.server.coroutine.geckoScope
-import dev.slne.surf.gecko.server.coroutine.ticks
+import dev.slne.surf.api.minestom.coroutine.minestomScope
+import dev.slne.surf.api.minestom.coroutine.ticks
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
@@ -75,7 +75,7 @@ object HiderSmokeBombShopItem : ShopItem {
         val blinded = mutableSetOf<UUID>()
         val deadline = TimeSource.Monotonic.markNow() + 5.seconds
 
-        geckoScope.launch {
+        minestomScope.launch {
             while (deadline.hasNotPassedNow() && instance.isRegistered) {
                 emitCloud(instance, position)
 

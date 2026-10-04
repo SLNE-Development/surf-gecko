@@ -1,7 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.visual
 
-import dev.slne.surf.gecko.server.coroutine.geckoScope
-import dev.slne.surf.gecko.server.coroutine.ticks
+import dev.slne.surf.api.minestom.coroutine.minestomScope
+import dev.slne.surf.api.minestom.coroutine.ticks
 import dev.slne.surf.gecko.server.gecko.shop.effect.glow.GlowEffect
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.i18n.sendTranslatedActionBar
@@ -22,7 +22,7 @@ object SonarWave {
         val center = initiator.position.add(0.0, 0.05, 0.0).withView(0f, 0f)
         val duration = ceil(radius / 25.0 * 20.0).toInt().coerceIn(4, 127)
 
-        geckoScope.launch {
+        minestomScope.launch {
             launch {
                 delay(2.ticks)
                 instance.playSound(GeckoSounds.SONAR_WAVE, center)

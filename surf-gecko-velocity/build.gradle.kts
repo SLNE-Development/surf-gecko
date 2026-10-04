@@ -8,7 +8,6 @@ surfVelocityApi {
 }
 
 group = "dev.slne.surf.gecko.velocity"
-version = findProperty("version") as String
 
 velocityPluginFile {
     main = "dev.slne.surf.gecko.velocity.VelocityMain"
@@ -20,5 +19,5 @@ velocityPluginFile {
 }
 
 dependencies {
-    implementation("dev.slne.surf.gecko:surf-gecko-common:1.0.0-SNAPSHOT")
+    implementation(projects.surfGeckoCommon)
 }

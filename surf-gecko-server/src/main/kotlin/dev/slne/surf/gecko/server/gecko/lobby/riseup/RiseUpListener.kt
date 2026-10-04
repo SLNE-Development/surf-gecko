@@ -1,6 +1,6 @@
 package dev.slne.surf.gecko.server.gecko.lobby.riseup
 
-import dev.slne.surf.api.core.messages.adventure.hasPermission
+import dev.slne.surf.api.minestom.permission.hasPermission
 import dev.slne.surf.gecko.server.event.EventHandler
 import dev.slne.surf.gecko.server.event.MinestomListener
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby

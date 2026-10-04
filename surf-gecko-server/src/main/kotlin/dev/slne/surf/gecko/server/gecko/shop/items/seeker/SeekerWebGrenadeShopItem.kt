@@ -1,6 +1,6 @@
 package dev.slne.surf.gecko.server.gecko.shop.items.seeker
 
-import dev.slne.surf.gecko.server.coroutine.geckoScope
+import dev.slne.surf.api.minestom.coroutine.minestomScope
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
@@ -83,7 +83,7 @@ object SeekerWebGrenadeShopItem : ShopItem {
             )
         )
 
-        geckoScope.launch {
+        minestomScope.launch {
             delay(10.seconds)
 
             placed.forEach {

@@ -1,9 +1,8 @@
 package dev.slne.surf.gecko.server.gecko
 
-import com.google.inject.Singleton
-import dev.slne.minestom.lobby.api.event.EventRegistrar
-import dev.slne.minestom.lobby.api.extension.addListener
-import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.api.minestom.event.EventRegistrar
+import dev.slne.surf.api.minestom.extension.addListener
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
 import dev.slne.surf.gecko.server.gecko.display.scoreboard.GeckoScoreboardManager
 import dev.slne.surf.gecko.server.gecko.display.tablist.GeckoTablistRenderer
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
@@ -17,7 +16,6 @@ import net.minestom.server.event.player.AsyncPlayerConfigurationEvent
 import net.minestom.server.event.player.PlayerDisconnectEvent
 import net.minestom.server.event.player.PlayerSpawnEvent
 
-@Singleton
 class GeckoGameJoinService : EventRegistrar {
 
     override fun register(node: EventNode<Event>) {
@@ -42,7 +40,7 @@ class GeckoGameJoinService : EventRegistrar {
         }
 
         if (event.isFirstSpawn) {
-            geckoAsyncScope.launch { GeckoPunishmentService.handleJoin(event.player) }
+            minestomAsyncScope.launch { GeckoPunishmentService.handleJoin(event.player) }
         }
 
         val game = GeckoGameManager.findGame(event.player.uuid)
@@ -61,7 +59,7 @@ class GeckoGameJoinService : EventRegistrar {
         GeckoScoreboardManager.hideSidebar(player)
         SocialGroupManager.invalidate(player.uuid)
 
-        geckoAsyncScope.launch {
+        minestomAsyncScope.launch {
             GeckoGameManager.handleGameLeave(player)
             GeckoGameManager.releasePlayer(player.uuid)
             GeckoPunishmentService.release(player.uuid)

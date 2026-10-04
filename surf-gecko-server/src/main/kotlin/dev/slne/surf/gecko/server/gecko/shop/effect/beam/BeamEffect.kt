@@ -1,6 +1,6 @@
 package dev.slne.surf.gecko.server.gecko.shop.effect.beam
 
-import dev.slne.surf.gecko.server.coroutine.ticks
+import dev.slne.surf.api.minestom.coroutine.ticks
 import dev.slne.surf.gecko.server.gecko.shop.effect.GeckoEffect
 import net.minestom.server.coordinate.Point
 import net.minestom.server.entity.Player

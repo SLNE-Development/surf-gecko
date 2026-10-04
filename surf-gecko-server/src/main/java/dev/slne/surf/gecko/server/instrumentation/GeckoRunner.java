@@ -17,8 +17,6 @@ public final class GeckoRunner {
 
   public static void agentmain(String agentArgs, Instrumentation instrumentation) {
     try {
-      DependencyInstaller.install(instrumentation);
-
       InstrumentationMixinService.setInstrumentation(instrumentation);
       MixinBootstrap.init();
       MixinExtrasBootstrap.init();

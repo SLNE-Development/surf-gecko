@@ -1,6 +1,6 @@
 package dev.slne.surf.gecko.server.gecko.visual
 
-import dev.slne.minestom.lobby.api.command.entity.editEntityMeta
+import dev.slne.surf.api.minestom.extension.editEntityMeta
 import net.minestom.server.color.Color
 import net.minestom.server.component.DataComponents
 import net.minestom.server.coordinate.Pos

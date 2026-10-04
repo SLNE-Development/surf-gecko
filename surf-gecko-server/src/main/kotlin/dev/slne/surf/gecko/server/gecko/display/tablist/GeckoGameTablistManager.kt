@@ -1,7 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.display.tablist
 
 import dev.slne.surf.api.core.util.runAtFixedRate
-import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.i18n.LocalizedComponent
 import dev.slne.surf.gecko.server.i18n.PlayerLanguages
@@ -16,7 +16,7 @@ object GeckoGameTablistManager {
     private lateinit var job: Job
 
     fun init() {
-        job = geckoAsyncScope.runAtFixedRate(1.seconds) {
+        job = minestomAsyncScope.runAtFixedRate(1.seconds) {
             sendAdditions()
         }
 

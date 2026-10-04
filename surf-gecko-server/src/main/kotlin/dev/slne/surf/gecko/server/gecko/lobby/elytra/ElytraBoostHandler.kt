@@ -1,23 +1,26 @@
 package dev.slne.surf.gecko.server.gecko.lobby.elytra
 
-import dev.slne.minestom.lobby.api.player.playSpinAttackAnimation
-import dev.slne.surf.api.core.messages.adventure.hasPermission
+import dev.slne.surf.api.minestom.permission.hasPermission
 import dev.slne.surf.api.core.messages.adventure.playSound
 import dev.slne.surf.api.minestom.builder.buildItem
+import dev.slne.surf.api.minestom.extension.editEntityMeta
 import dev.slne.surf.gecko.server.i18n.translate
 import dev.slne.surf.gecko.server.permission.PermissionList
 import net.minestom.server.ServerFlag
 import net.minestom.server.component.DataComponents
 import net.minestom.server.coordinate.Point
 import net.minestom.server.coordinate.Vec
+import net.minestom.server.entity.EntityPose
 import net.minestom.server.entity.EquipmentSlot
 import net.minestom.server.entity.Player
+import net.minestom.server.entity.metadata.LivingEntityMeta
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
 import net.minestom.server.network.packet.server.play.ParticlePacket
 import net.minestom.server.particle.Particle
 import net.minestom.server.sound.SoundEvent
 import net.minestom.server.tag.Tag
+import net.minestom.server.timer.TaskSchedule
 import net.minestom.server.utils.Unit
 
 object ElytraBoostHandler {
@@ -81,6 +84,23 @@ object ElytraBoostHandler {
         if (ElytraBoostTracker.clear(player.uuid)) {
             player.setEquipment(EquipmentSlot.CHESTPLATE, ItemStack.AIR)
         }
+    }
+
+    private fun Player.playSpinAttackAnimation(durationTicks: Int) {
+        editEntityMeta<LivingEntityMeta> { meta ->
+            meta.isInRiptideSpinAttack = true
+            pose = EntityPose.SPIN_ATTACK
+        }
+
+        scheduler().buildTask {
+            editEntityMeta<LivingEntityMeta> { meta ->
+                meta.isInRiptideSpinAttack = false
+
+                if (pose == EntityPose.SPIN_ATTACK) {
+                    pose = EntityPose.STANDING
+                }
+            }
+        }.delay(TaskSchedule.tick(durationTicks)).schedule()
     }
 
     private fun Player.spawnCloudParticles(position: Point) {

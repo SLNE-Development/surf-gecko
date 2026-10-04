@@ -1,6 +1,6 @@
 package dev.slne.surf.gecko.server.gecko.shop
 
-import dev.slne.minestom.lobby.api.event.EventRegistrar
+import dev.slne.surf.api.minestom.event.EventRegistrar
 import dev.slne.surf.api.minestom.inventory.framework.open
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGamePlayer
@@ -12,7 +12,6 @@ import dev.slne.surf.gecko.server.i18n.PlayerLanguages
 import dev.slne.surf.gecko.server.i18n.language
 import dev.slne.surf.gecko.server.i18n.translate
 import dev.slne.surf.gecko.server.util.withTag
-import jakarta.inject.Singleton
 import net.kyori.adventure.text.Component
 import net.minestom.server.component.DataComponents
 import net.minestom.server.entity.Player
@@ -29,7 +28,6 @@ import net.minestom.server.tag.Tag
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-@Singleton
 class ShopItemListener : EventRegistrar {
     override fun register(node: EventNode<Event>) {
         node.addListener(

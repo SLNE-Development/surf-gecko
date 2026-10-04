@@ -1,7 +1,7 @@
 package dev.slne.surf.gecko.server.gecko
 
 import dev.slne.surf.api.core.util.runAtFixedRate
-import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
 import dev.slne.surf.gecko.server.database.repository.GeckoGameRepository
 import dev.slne.surf.gecko.server.database.repository.GeckoGameStatsRepository
 import dev.slne.surf.gecko.server.gecko.display.scoreboard.GeckoScoreboardManager
@@ -34,7 +34,7 @@ object GeckoGameManager {
     private lateinit var gameJob: Job
 
     fun init() {
-        gameJob = geckoAsyncScope.runAtFixedRate(3.seconds) {
+        gameJob = minestomAsyncScope.runAtFixedRate(3.seconds) {
             testFor()
         }
     }

@@ -1,6 +1,6 @@
 package dev.slne.surf.gecko.server.gecko.lobby.leaderbord
 
-import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
 import dev.slne.surf.gecko.server.database.repository.GeckoPlayerNameRepository
 import dev.slne.surf.gecko.server.event.EventHandler
 import dev.slne.surf.gecko.server.event.MinestomListener
@@ -13,7 +13,7 @@ object LeaderboardListener : MinestomListener {
     fun onSpawn(event: PlayerSpawnEvent) {
         val player = event.player
 
-        geckoAsyncScope.launch {
+        minestomAsyncScope.launch {
             if (event.isFirstSpawn) {
                 GeckoPlayerNameRepository.saveName(player.uuid, player.username)
             }

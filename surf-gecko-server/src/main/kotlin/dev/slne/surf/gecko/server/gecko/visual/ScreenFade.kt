@@ -2,7 +2,7 @@ package dev.slne.surf.gecko.server.gecko.visual
 
 import dev.slne.surf.api.core.messages.adventure.key
 import dev.slne.surf.api.core.messages.adventure.showTitle
-import dev.slne.surf.gecko.server.coroutine.ticks
+import dev.slne.surf.api.minestom.coroutine.ticks
 import kotlinx.coroutines.delay
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor

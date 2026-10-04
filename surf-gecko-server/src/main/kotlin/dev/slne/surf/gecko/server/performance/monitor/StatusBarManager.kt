@@ -2,7 +2,7 @@ package dev.slne.surf.gecko.server.performance.monitor
 
 import dev.slne.surf.api.core.messages.adventure.bossBar
 import dev.slne.surf.api.core.util.runAtFixedRate
-import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
 import dev.slne.surf.gecko.server.i18n.GeckoLanguage
 import dev.slne.surf.gecko.server.i18n.GeckoTranslations
 import dev.slne.surf.gecko.server.i18n.PlayerLanguages
@@ -33,7 +33,7 @@ object StatusBarManager {
     private var job: Job? = null
 
     fun init() {
-        job = geckoAsyncScope.runAtFixedRate(1.seconds) {
+        job = minestomAsyncScope.runAtFixedRate(1.seconds) {
             SystemStatistics.sample()
             update()
         }

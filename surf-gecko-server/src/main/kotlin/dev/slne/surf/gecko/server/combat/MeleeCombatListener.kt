@@ -1,9 +1,8 @@
 package dev.slne.surf.gecko.server.combat
 
-import dev.slne.minestom.lobby.api.event.EventRegistrar
+import dev.slne.surf.api.minestom.event.EventRegistrar
 import dev.slne.surf.api.core.messages.adventure.key
 import dev.slne.surf.api.core.messages.adventure.sound
-import jakarta.inject.Singleton
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.ServerFlag
 import net.minestom.server.entity.LivingEntity
@@ -20,7 +19,6 @@ import net.minestom.server.tag.Tag
 
 private val lastAttackTickTag = Tag.Long("surf_gecko_last_attack_tick").defaultValue(0L)
 
-@Singleton
 class MeleeCombatListener : EventRegistrar {
     override fun register(node: EventNode<Event>) {
         node.addListener(EntityAttackEvent::class.java, ::handleAttack)

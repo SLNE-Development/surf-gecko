@@ -1,10 +1,9 @@
 package dev.slne.surf.gecko.server.combat
 
-import dev.slne.minestom.lobby.api.event.EventRegistrar
+import dev.slne.surf.api.minestom.event.EventRegistrar
 import dev.slne.surf.api.core.messages.adventure.key
 import dev.slne.surf.api.core.messages.adventure.playSound
 import dev.slne.surf.api.core.messages.adventure.sound
-import jakarta.inject.Singleton
 import net.kyori.adventure.sound.Sound
 import net.minestom.server.ServerFlag
 import net.minestom.server.coordinate.Vec
@@ -34,7 +33,6 @@ private val arrowFixedDamageTag = Tag.Float("surf_gecko_arrow_fixed_damage")
 val bowFixedDamageTag: Tag<Float> = Tag.Float("surf_gecko_bow_fixed_damage")
 val bowConsumeOnShotTag: Tag<Boolean> = Tag.Boolean("surf_gecko_bow_consume_on_shot")
 
-@Singleton
 class BowCombatListener : EventRegistrar {
     override fun register(node: EventNode<Event>) {
         node.addListener(PlayerCancelItemUseEvent::class.java, ::handleBowRelease)

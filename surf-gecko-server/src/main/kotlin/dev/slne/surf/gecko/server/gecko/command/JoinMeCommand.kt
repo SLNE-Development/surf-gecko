@@ -1,13 +1,13 @@
 package dev.slne.surf.gecko.server.gecko.command
 
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.commandTree
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.playerExecutor
+import dev.slne.surf.api.minestom.command.dsl.commandTree
+import dev.slne.surf.api.minestom.command.dsl.playerExecutor
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.bitmap.common.head.composeHead
 import dev.slne.surf.bitmap.common.head.renderHead
 import dev.slne.surf.core.api.common.server.SurfServer
 import dev.slne.surf.gecko.common.joinme.PublishJoinMeRedisEvent
-import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.i18n.GeckoLanguage
 import dev.slne.surf.gecko.server.i18n.GeckoTranslations
@@ -28,7 +28,7 @@ fun joinMeCommand() = commandTree("joinme") {
             return@playerExecutor
         }
 
-        geckoAsyncScope.launch {
+        minestomAsyncScope.launch {
             val playerName = player.displayName ?: Component.text(player.username)
             val texture = renderHead(player.skin?.textures ?: "", 1)
 

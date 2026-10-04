@@ -1,7 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.visual
 
-import dev.slne.surf.gecko.server.coroutine.geckoScope
-import dev.slne.surf.gecko.server.coroutine.ticks
+import dev.slne.surf.api.minestom.coroutine.minestomScope
+import dev.slne.surf.api.minestom.coroutine.ticks
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -22,7 +22,7 @@ object ScreenShake {
         val power = (strength.coerceIn(0.0, 1.0) * 255).toInt()
         val start = instance.shaderTick(2)
 
-        val job = geckoScope.launch(start = CoroutineStart.LAZY) {
+        val job = minestomScope.launch(start = CoroutineStart.LAZY) {
             val probe = spawnVisualProbe(
                 instance,
                 player.eyePosition(),

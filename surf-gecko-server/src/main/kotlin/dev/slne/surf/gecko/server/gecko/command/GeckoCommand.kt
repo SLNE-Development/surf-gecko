@@ -1,9 +1,9 @@
 package dev.slne.surf.gecko.server.gecko.command
 
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.*
+import dev.slne.surf.api.minestom.command.dsl.*
 import dev.slne.surf.api.core.util.random
 import dev.slne.surf.api.minestom.inventory.framework.open
-import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
 import dev.slne.surf.gecko.server.database.repository.GeckoPunishmentRepository
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
@@ -130,7 +130,7 @@ fun geckoCommand() = commandTree("gecko") {
                 return@playerExecutor
             }
 
-            geckoAsyncScope.launch {
+            minestomAsyncScope.launch {
                 GeckoGameManager.endGame(game, GeckoGameEndReason.MANUELL)
 
                 player.sendTranslated("command.gecko.endcurrent")

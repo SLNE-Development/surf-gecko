@@ -4,7 +4,7 @@ import codes.bed.minestom.npc.api.NpcInteractionType
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.key
 import dev.slne.surf.api.minestom.inventory.framework.open
-import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.lobby.view.geckoGamesView
@@ -41,7 +41,7 @@ object LobbyNpcManager {
 
                 when (type) {
                     NpcInteractionType.RIGHT_CLICK -> {
-                        geckoAsyncScope.launch {
+                        minestomAsyncScope.launch {
                             if (GeckoGameManager.selectGame(player) == null) {
                                 player.sendTranslated("lobby.npc.games.no-game")
                             }

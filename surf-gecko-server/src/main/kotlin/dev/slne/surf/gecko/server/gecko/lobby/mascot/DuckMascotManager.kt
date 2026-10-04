@@ -1,7 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.lobby.mascot
 
-import dev.slne.surf.gecko.server.coroutine.geckoScope
-import dev.slne.surf.gecko.server.coroutine.ticks
+import dev.slne.surf.api.minestom.coroutine.minestomScope
+import dev.slne.surf.api.minestom.coroutine.ticks
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.gecko.sound.GeckoSounds
 import dev.slne.surf.gecko.server.i18n.sendTranslatedActionBar
@@ -51,7 +51,7 @@ object DuckMascotManager {
             return
         }
 
-        geckoScope.launch {
+        minestomScope.launch {
             player.playSound(GeckoSounds.DIALOG_OPEN, Sound.Emitter.self())
             mascot.play("nod")
             delay(0.7.seconds)

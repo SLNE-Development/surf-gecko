@@ -1,9 +1,9 @@
 package dev.slne.surf.gecko.server.i18n.command
 
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.anyExecutor
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.commandTree
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.literalArgument
-import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.api.minestom.command.dsl.anyExecutor
+import dev.slne.surf.api.minestom.command.dsl.commandTree
+import dev.slne.surf.api.minestom.command.dsl.literalArgument
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
 import dev.slne.surf.gecko.server.i18n.GeckoLanguage
 import dev.slne.surf.gecko.server.i18n.GeckoTranslations
 import dev.slne.surf.gecko.server.i18n.sendTranslated
@@ -17,7 +17,7 @@ fun i18nCommand() = commandTree("i18n") {
         anyExecutor { sender, _ ->
             sender.sendTranslated("i18n.reload.started")
 
-            geckoAsyncScope.launch {
+            minestomAsyncScope.launch {
                 runCatching { GeckoTranslations.reload() }
                     .onSuccess { result ->
                         sender.sendTranslated(

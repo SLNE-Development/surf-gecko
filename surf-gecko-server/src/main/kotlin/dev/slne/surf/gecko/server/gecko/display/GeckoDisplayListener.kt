@@ -1,12 +1,10 @@
 package dev.slne.surf.gecko.server.gecko.display
 
-import dev.slne.minestom.lobby.api.event.EventRegistrar
-import jakarta.inject.Singleton
+import dev.slne.surf.api.minestom.event.EventRegistrar
 import net.minestom.server.event.Event
 import net.minestom.server.event.EventNode
 import net.minestom.server.event.player.PlayerSpawnEvent
 
-@Singleton
 class GeckoDisplayListener : EventRegistrar {
     override fun register(node: EventNode<Event>) {
         node.addListener(PlayerSpawnEvent::class.java, ::handleSpawn)

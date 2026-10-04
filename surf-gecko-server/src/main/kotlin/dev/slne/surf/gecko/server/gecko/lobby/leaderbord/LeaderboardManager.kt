@@ -4,9 +4,9 @@ import dev.slne.surf.api.core.messages.Colors
 import dev.slne.surf.api.core.messages.adventure.buildText
 import dev.slne.surf.api.core.messages.adventure.text
 import dev.slne.surf.api.core.util.runAtFixedRate
-import dev.slne.surf.gecko.server.coroutine.MinestomDispatchers
-import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
-import dev.slne.surf.gecko.server.coroutine.geckoScope
+import dev.slne.surf.api.minestom.coroutine.MinestomDispatchers
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
+import dev.slne.surf.api.minestom.coroutine.minestomScope
 import dev.slne.surf.gecko.server.database.repository.GeckoLeaderboardRepository
 import dev.slne.surf.gecko.server.database.repository.GeckoPlayerNameRepository
 import dev.slne.surf.gecko.server.event.register
@@ -48,12 +48,12 @@ object LeaderboardManager {
         PlayerLanguages.onChange { player ->
             val playerHolograms = holograms[player.uuid] ?: return@onChange
 
-            geckoScope.launch {
+            minestomScope.launch {
                 update(player, playerHolograms)
             }
         }
 
-        refreshJob = geckoAsyncScope.runAtFixedRate(5.minutes) {
+        refreshJob = minestomAsyncScope.runAtFixedRate(5.minutes) {
             refresh()
             updateAll()
         }
@@ -93,7 +93,7 @@ object LeaderboardManager {
     fun invalidate(playerUuid: UUID) {
         val playerHolograms = holograms.remove(playerUuid) ?: return
 
-        geckoScope.launch {
+        minestomScope.launch {
             playerHolograms.values.forEach { it.remove() }
         }
     }

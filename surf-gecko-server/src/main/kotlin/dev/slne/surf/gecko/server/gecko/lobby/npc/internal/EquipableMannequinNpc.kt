@@ -4,7 +4,7 @@ import codes.bed.minestom.npc.StomNPCs
 import codes.bed.minestom.npc.api.NameDisplayMode
 import codes.bed.minestom.npc.api.NpcKind
 import codes.bed.minestom.npc.types.AbstractNpcEntity
-import dev.slne.minestom.lobby.api.command.entity.editEntityMeta
+import dev.slne.surf.api.minestom.extension.editEntityMeta
 import dev.slne.surf.gecko.server.i18n.GeckoLanguage
 import dev.slne.surf.gecko.server.i18n.LocalizedComponent
 import dev.slne.surf.gecko.server.i18n.PlayerLanguages

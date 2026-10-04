@@ -3,7 +3,7 @@ package dev.slne.surf.gecko.server.gecko.preriodicBeam
 import dev.slne.surf.api.core.messages.Colors
 import dev.slne.surf.api.core.util.random
 import dev.slne.surf.api.core.util.runAtFixedRate
-import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
 import dev.slne.surf.gecko.server.gecko.GeckoGame
 import dev.slne.surf.gecko.server.gecko.shop.effect.beam.BeamEffect
 import dev.slne.surf.gecko.server.gecko.shop.effect.beam.ParticleBeam
@@ -28,7 +28,7 @@ class PeriodicBeamManager(val game: GeckoGame) {
         val duration = settings.beamDuration ?: return
 
         nextBeam = OffsetDateTime.now().plus(interval)
-        job = geckoAsyncScope.runAtFixedRate(1.seconds) {
+        job = minestomAsyncScope.runAtFixedRate(1.seconds) {
             val now = OffsetDateTime.now()
             val target = nextBeam ?: return@runAtFixedRate
 

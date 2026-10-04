@@ -1,8 +1,8 @@
 package dev.slne.surf.gecko.server.gecko.map.mechanic.impl
 
 import dev.slne.surf.api.core.util.runAtFixedRate
-import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
-import dev.slne.surf.gecko.server.coroutine.geckoScope
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
+import dev.slne.surf.api.minestom.coroutine.minestomScope
 import dev.slne.surf.gecko.server.event.EventHandler
 import dev.slne.surf.gecko.server.event.MinestomListener
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
@@ -48,7 +48,7 @@ object VentMechanic : GeckoMapMechanic, MinestomListener {
     fun isInVent(player: Player) = isInVent(player.uuid)
 
     override suspend fun start() {
-        job = geckoAsyncScope.runAtFixedRate(1.seconds) {
+        job = minestomAsyncScope.runAtFixedRate(1.seconds) {
             GeckoGameManager.getGames().filter { hasThisMechanic(it) }
                 .forEach { game ->
                     game.gamePlayers.forEach { gamePlayer ->
@@ -169,7 +169,7 @@ object VentMechanic : GeckoMapMechanic, MinestomListener {
         player.entityMeta.isSwimming = true
         player.sendPacket(BlockChangePacket(head, Block.BARRIER))
 
-        geckoScope.launch {
+        minestomScope.launch {
             delay(VENT_ENTRY_DURATION)
 
             if (!player.isOnline) {

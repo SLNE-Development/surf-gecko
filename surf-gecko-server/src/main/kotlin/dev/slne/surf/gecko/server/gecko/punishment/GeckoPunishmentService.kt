@@ -2,7 +2,7 @@ package dev.slne.surf.gecko.server.gecko.punishment
 
 import dev.slne.surf.api.core.messages.adventure.bossBar
 import dev.slne.surf.api.core.util.runAtFixedRate
-import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
 import dev.slne.surf.gecko.server.database.repository.GeckoPunishmentRepository
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.i18n.GeckoTranslations
@@ -29,7 +29,7 @@ object GeckoPunishmentService {
     private lateinit var job: Job
 
     fun init() {
-        job = geckoAsyncScope.runAtFixedRate(1.seconds) {
+        job = minestomAsyncScope.runAtFixedRate(1.seconds) {
             update()
         }
     }

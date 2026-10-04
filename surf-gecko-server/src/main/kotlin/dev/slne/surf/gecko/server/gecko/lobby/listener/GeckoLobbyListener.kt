@@ -1,10 +1,9 @@
 package dev.slne.surf.gecko.server.gecko.lobby.listener
 
-import dev.slne.minestom.lobby.api.event.EventRegistrar
+import dev.slne.surf.api.minestom.event.EventRegistrar
 import dev.slne.surf.gecko.server.gecko.lobby.GeckoLobby
 import dev.slne.surf.gecko.server.i18n.GeckoLanguage
 import dev.slne.surf.gecko.server.i18n.GeckoTranslations
-import jakarta.inject.Singleton
 import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
 import net.minestom.server.event.Event
@@ -14,7 +13,6 @@ import net.minestom.server.event.item.ItemDropEvent
 import net.minestom.server.event.player.*
 import net.minestom.server.event.trait.CancellableEvent
 
-@Singleton
 class GeckoLobbyListener : EventRegistrar {
     override fun register(node: EventNode<Event>) {
         node.addListener(PlayerBlockPlaceEvent::class.java) { cancel(it, it.player) }

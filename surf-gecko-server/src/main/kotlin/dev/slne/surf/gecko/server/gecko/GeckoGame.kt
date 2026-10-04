@@ -4,8 +4,8 @@ import dev.slne.surf.api.core.messages.adventure.*
 import dev.slne.surf.api.core.util.random
 import dev.slne.surf.api.core.util.runAtFixedRate
 import dev.slne.surf.gecko.common.game.GeckoGameInfo
-import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
-import dev.slne.surf.gecko.server.coroutine.ticks
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
+import dev.slne.surf.api.minestom.coroutine.ticks
 import dev.slne.surf.gecko.server.database.repository.GeckoEventsRepository
 import dev.slne.surf.gecko.server.gecko.antiafk.GeckoAntiAfkWatcher
 import dev.slne.surf.gecko.server.gecko.display.scoreboard.GeckoScoreboardManager
@@ -59,7 +59,7 @@ class GeckoGame(
     var state: GeckoGameState = GeckoGameState.OFFLINE
     var countdownSeconds: Int? = null
 
-    private var lobbyCountdownJob: Job? = geckoAsyncScope.runAtFixedRate(1.seconds) {
+    private var lobbyCountdownJob: Job? = minestomAsyncScope.runAtFixedRate(1.seconds) {
         updateCountdown()
         tryStart()
         GeckoScoreboardManager.updateSidebar(this@GeckoGame)
@@ -157,7 +157,7 @@ class GeckoGame(
             "seconds" to (endingTimerSeconds ?: 30)
         )
 
-        endingJob = geckoAsyncScope.runAtFixedRate(1.seconds, 1.seconds) {
+        endingJob = minestomAsyncScope.runAtFixedRate(1.seconds, 1.seconds) {
             val currentEndingSeconds = endingTimerSeconds ?: return@runAtFixedRate
             endingTimerSeconds = currentEndingSeconds - 1
 
@@ -353,7 +353,7 @@ class GeckoGame(
 
         if (countdown <= 0 && state == GeckoGameState.LOBBY) {
             state = GeckoGameState.HIDING
-            geckoAsyncScope.launch {
+            minestomAsyncScope.launch {
                 phaseGame()
             }
         }
@@ -402,7 +402,7 @@ class GeckoGame(
             }.awaitAll()
         }
 
-        geckoAsyncScope.launch {
+        minestomAsyncScope.launch {
             delay(35.ticks)
             forEachGamePlayer {
                 if (it.playerOrNull != null) {
@@ -413,7 +413,7 @@ class GeckoGame(
         }
 
         gameTimerSeconds = settings.roundTimeSeconds
-        gameTimerJob = geckoAsyncScope.runAtFixedRate(1.seconds) {
+        gameTimerJob = minestomAsyncScope.runAtFixedRate(1.seconds) {
             tickGame()
         }
         heartbeat.start()
@@ -442,7 +442,7 @@ class GeckoGame(
             gameInfoBossBar.show(it)
         }
 
-        gameInfoBarJob = geckoAsyncScope.runAtFixedRate(500.milliseconds) {
+        gameInfoBarJob = minestomAsyncScope.runAtFixedRate(500.milliseconds) {
             forEachPlayer { gameInfoBossBar.show(it) }
 
             val nextBeam = periodicBeamManager.nextBeam

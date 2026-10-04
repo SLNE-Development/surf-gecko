@@ -1,7 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.command
 
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.commandTree
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.playerExecutor
+import dev.slne.surf.api.minestom.command.dsl.commandTree
+import dev.slne.surf.api.minestom.command.dsl.playerExecutor
 import dev.slne.surf.api.core.messages.adventure.uuidOrNull
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.state.GeckoGameState

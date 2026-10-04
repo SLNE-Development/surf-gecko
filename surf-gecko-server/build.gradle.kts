@@ -1,123 +1,45 @@
-import com.github.jengelman.gradle.plugins.shadow.relocation.SimpleRelocator
-import com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer
-import xyz.jpenilla.gremlin.gradle.ShadowGremlin
-
 plugins {
-    application
-    `maven-publish`
-    `java-library`
-    alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.shadow)
-    alias(libs.plugins.gremlim)
-
-    id("dev.slne.surf.api.gradle.minestom-relocations") version "+"
-    kotlin("kapt")
+    id("dev.slne.surf.api.gradle.minestom-server")
 }
 
 repositories {
-    maven("https://reposilite.slne.dev/public") { name = "slne-repository-public" }
     maven("https://reposilite.slne.dev/releases") { name = "slne-repository-releases" }
-    maven("https://repo.lucko.me/")
     maven("https://reposilite.atlasengine.ca/public") { name = "atlasengine-repository-public" }
 }
 
+surfMinestomServerApi {
+    mainClass("dev.slne.surf.gecko.server.MainKt")
+
+    withSignedChat()
+    withLuckPerms()
+    withSpark()
+    withNpcLib()
+    withConsole()
+    withPlugins()
+}
+
 dependencies {
-    implementation(projects.surfGeckoCommandApi)
-    implementation("dev.slne.surf.gecko:surf-gecko-common:1.0.0-SNAPSHOT")
+    implementation(projects.surfGeckoCommon)
 
-    compileOnly(libs.surf.api.minestom)
-    compileOnly(libs.minestom)
-    compileOnly(libs.minestom.lobby.api)
-    compileOnly(libs.surf.bitmap.provider.common)
-    compileOnly(libs.surf.playtime.api.common)
-    compileOnly(libs.surf.core.api.common)
-    compileOnly(libs.guice)
-    compileOnly(libs.coroutines.core)
-    compileOnly(libs.bundles.log4j)
-    compileOnly(libs.fastutil)
-    compileOnly(libs.npc)
-    compileOnly(libs.adventure.text.minimessage)
-    compileOnly(libs.configurate.yaml)
-    compileOnly(libs.configurate.kotlin)
-    compileOnly(libs.polar)
-    compileOnly(libs.brigadier)
-    compileOnly(libs.wsee)
-    compileOnly(libs.surf.database.r2dbc)
-    compileOnly(libs.surf.redis.api) {
+    implementation(libs.surf.core.api.common)
+    implementation(libs.surf.playtime.api.common)
+    implementation(libs.surf.bitmap.provider.common)
+    implementation(libs.surf.redis.api) {
+        artifact { classifier = "all" }
+    }
+    implementation(libs.surf.database.r2dbc) {
         artifact { classifier = "all" }
     }
 
-    runtimeDownload(libs.minestom)
-    runtimeDownload(libs.minestom.lobby.api)
-    runtimeDownload(libs.guice)
-    runtimeDownload(libs.guice.assistedinject)
-    implementation(libs.coroutines.core)
-    implementation(libs.bundles.log4j)
-    implementation(libs.slf4j.api)
-    implementation(libs.terminal.console.appender)
-    runtimeDownload(libs.fastutil)
+    implementation(libs.adventure.text.minimessage)
+    implementation(libs.polar)
+    implementation(libs.wsee)
     compileOnly(libs.flare.fastutil)
-    runtimeDownload(libs.polar)
-    runtimeDownload(libs.npc)
-    runtimeDownload(libs.wsee)
-    runtimeDownload(libs.brigadier)
-    runtimeDownload(libs.adventure.text.minimessage)
-
-    runtimeDownload(libs.komapper.annotation)
-    runtimeDownload(libs.komapper.jdbc)
-    runtimeDownload(libs.komapper.slf4j)
-    ksp(libs.komapper.processor)
-    runtimeDownload(libs.komapper.dialect.mariadb.jdbc)
-    runtimeDownload(libs.komapper.dialect.postgresql.jdbc)
-    runtimeDownload(libs.hikari)
-    runtimeDownload(libs.mariadb.jdbc)
-    runtimeDownload(libs.postgresql.jdbc)
-    runtimeDownload(libs.surf.database.r2dbc) {
-        artifact { classifier = "all" }
-    }
 
     implementation(libs.fabric.mixin)
     annotationProcessor(libs.fabric.mixin)
     implementation(libs.mixin.extra)
     annotationProcessor(libs.mixin.extra)
-
-    runtimeDownload(libs.configurate.yaml)
-    runtimeDownload(libs.configurate.kotlin)
-    implementation(libs.luckperms.minestom) {
-        exclude(group = "com.google.code.gson", module = "gson")
-        exclude(group = "com.google.guava", module = "guava")
-    }
-    compileOnly(libs.gson)
-    runtimeDownload(libs.gson)
-    runtimeDownload(libs.guava)
-    implementation(libs.spark.minestom)
-
-    runtimeDownload(libs.surf.api.minestom)
-    runtimeDownload(libs.surf.redis.minestom) {
-        artifact { classifier = "all" }
-    }
-    runtimeDownload(libs.surf.rabbitmq.minestom)
-    runtimeDownload(libs.surf.core.minestom)
-    // runtimeDownload(libs.surf.settings.minestom)
-    runtimeDownload(libs.surf.punish.minestom)
-    runtimeDownload(libs.surf.queue.minestom)
-    runtimeDownload(libs.surf.playtime.minestom)
-    runtimeDownload(libs.surf.bitmap.provider.minestom)
-}
-
-kotlin {
-    jvmToolchain(25)
-}
-
-val serverMainClass = "dev.slne.surf.gecko.server.MainKt"
-
-application {
-    mainClass = serverMainClass
-}
-
-tasks.jar {
-    archiveClassifier = "thin"
 }
 
 val bundleTranslations by tasks.registering {
@@ -144,53 +66,25 @@ sourceSets.main {
     resources.srcDir(bundleTranslations)
 }
 
-tasks.shadowJar {
-    isZip64 = true
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    mergeServiceFiles()
-    transform<Log4j2PluginsCacheFileTransformer>()
-
-    manifest {
-        attributes["Main-Class"] = serverMainClass
-        attributes["Launcher-Agent-Class"] =
-            "dev.slne.surf.gecko.server.instrumentation.GeckoRunner"
-
-        attributes["Can-Redefine-Classes"] = "true"
-        attributes["Can-Retransform-Classes"] = "true"
-
-        attributes["Multi-Release"] = "true"
-
-        attributes(
-            mapOf(
-                "Implementation-Version" to libs.versions.asm.get()
-            ),
-            "org/objectweb/asm/"
-        )
-    }
+tasks.jar {
+    archiveClassifier = "thin"
 }
 
-tasks.writeDependencies {
-    val patternField = SimpleRelocator::class.java.getDeclaredField("pattern")
-        .apply { isAccessible = true }
-    val shadedPatternField = SimpleRelocator::class.java.getDeclaredField("shadedPattern")
-        .apply { isAccessible = true }
+afterEvaluate {
+    tasks.shadowJar {
+        archiveClassifier = ""
+        isZip64 = true
 
-    val relocators = tasks.shadowJar.get().relocators.get()
-    val simpleRelocators = relocators.filterIsInstance<SimpleRelocator>()
-    require(simpleRelocators.size == relocators.size) {
-        "Cannot mirror relocations onto $name: " +
-                (relocators - simpleRelocators.toSet()).joinToString { it::class.java.name } +
-                " are no SimpleRelocators"
-    }
+        manifest {
+            attributes["Launcher-Agent-Class"] = "dev.slne.surf.gecko.server.instrumentation.GeckoRunner"
+            attributes["Can-Redefine-Classes"] = "true"
+            attributes["Can-Retransform-Classes"] = "true"
 
-    simpleRelocators.forEach { relocator ->
-        ShadowGremlin.relocate(
-            this,
-            patternField.get(relocator) as String,
-            shadedPatternField.get(relocator) as String,
-            relocator.includes.toSet(),
-            relocator.excludes.toSet()
-        )
+            attributes(
+                mapOf("Implementation-Version" to libs.versions.asm.get()),
+                "org/objectweb/asm/"
+            )
+        }
     }
 }
 

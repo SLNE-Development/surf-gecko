@@ -1,8 +1,8 @@
 package dev.slne.surf.gecko.server.antiesp
 
 import dev.slne.surf.api.core.util.runAtFixedRate
-import dev.slne.surf.gecko.server.coroutine.geckoAsyncScope
-import dev.slne.surf.gecko.server.coroutine.geckoScope
+import dev.slne.surf.api.minestom.coroutine.minestomAsyncScope
+import dev.slne.surf.api.minestom.coroutine.minestomScope
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap
 import it.unimi.dsi.fastutil.ints.IntArrayList
 import kotlinx.coroutines.Job
@@ -30,7 +30,7 @@ object PlayerCulling {
             return
         }
 
-        job = geckoAsyncScope.runAtFixedRate(INTERVAL, taskName = "player-culling") { cull() }
+        job = minestomAsyncScope.runAtFixedRate(INTERVAL, taskName = "player-culling") { cull() }
     }
 
     fun shutdown() {
@@ -67,7 +67,7 @@ object PlayerCulling {
             return
         }
 
-        geckoScope.launch { outdated.forEach(PlayerCullState::apply) }
+        minestomScope.launch { outdated.forEach(PlayerCullState::apply) }
     }
 
     private fun cullInstance(

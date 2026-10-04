@@ -1,7 +1,6 @@
 package dev.slne.surf.gecko.server.gecko.death
 
-import com.google.inject.Singleton
-import dev.slne.minestom.lobby.api.event.EventRegistrar
+import dev.slne.surf.api.minestom.event.EventRegistrar
 import dev.slne.surf.api.core.messages.adventure.showTitle
 import dev.slne.surf.gecko.server.gecko.GeckoGame
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
@@ -18,7 +17,6 @@ import net.minestom.server.event.Event
 import net.minestom.server.event.EventNode
 import net.minestom.server.event.entity.EntityDamageEvent
 
-@Singleton
 class GeckoDamageListener : EventRegistrar {
     override fun register(node: EventNode<Event>) {
         node.addListener(EntityDamageEvent::class.java) { handleDamage(it) }

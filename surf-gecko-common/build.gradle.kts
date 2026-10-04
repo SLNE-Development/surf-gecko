@@ -2,8 +2,6 @@ plugins {
     id("dev.slne.surf.api.gradle.core")
 }
 
-group = "dev.slne.surf.gecko"
-version = findProperty("version") as String
 
 surfCoreApi {
     withCoreCommon()

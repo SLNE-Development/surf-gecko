@@ -1,7 +1,7 @@
 package dev.slne.surf.gecko.server.gecko.shop.items.seeker
 
 import dev.slne.surf.api.core.messages.Colors
-import dev.slne.surf.gecko.server.coroutine.geckoScope
+import dev.slne.surf.api.minestom.coroutine.minestomScope
 import dev.slne.surf.gecko.server.gecko.GeckoGameManager
 import dev.slne.surf.gecko.server.gecko.player.game.GeckoGameRole
 import dev.slne.surf.gecko.server.gecko.shop.ShopItem
@@ -46,7 +46,7 @@ object SeekerLaserShopItem : ShopItem {
 
         seekers.forEach { it.playSound(GeckoSounds.SHOP_LASER, Sound.Emitter.self()) }
 
-        geckoScope.launch {
+        minestomScope.launch {
             BeamEffect(seekers, origins, beam).playFor(7.5.seconds)
         }
 

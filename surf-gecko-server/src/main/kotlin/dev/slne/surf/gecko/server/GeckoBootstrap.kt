@@ -1,29 +1,46 @@
 package dev.slne.surf.gecko.server
 
-import com.google.inject.Guice
-import com.google.inject.Injector
-import com.google.inject.Module
-import com.google.inject.Stage
-import dev.slne.minestom.lobby.api.plugin.MinestomPlugin
+import dev.slne.surf.api.minestom.inventory.framework.register
+import dev.slne.surf.api.minestom.server.chat.withSignedChat
+import dev.slne.surf.api.minestom.server.configuration.ConfigurationTasks
+import dev.slne.surf.api.minestom.server.console.withConsole
+import dev.slne.surf.api.minestom.server.luckperms.withLuckPerms
+import dev.slne.surf.api.minestom.server.npc.withNpcLib
+import dev.slne.surf.api.minestom.server.plugins.withPlugins
+import dev.slne.surf.api.minestom.server.spark.withSpark
+import dev.slne.surf.api.minestom.server.surfMinestomServer
+import dev.slne.surf.gecko.server.chat.GeckoChatListener
+import dev.slne.surf.gecko.server.combat.BowCombatListener
+import dev.slne.surf.gecko.server.combat.MeleeCombatListener
+import dev.slne.surf.gecko.server.command.ServerGeckoCommandRegistrar
 import dev.slne.surf.gecko.server.config.Config
 import dev.slne.surf.gecko.server.config.ConfigLoader
-import dev.slne.surf.gecko.server.di.GeckoServerModule
+import dev.slne.surf.gecko.server.gecko.GeckoGameJoinService
+import dev.slne.surf.gecko.server.gecko.death.GeckoDamageListener
+import dev.slne.surf.gecko.server.gecko.display.GeckoDisplayListener
+import dev.slne.surf.gecko.server.gecko.hotbar.GeckoHotbarListener
+import dev.slne.surf.gecko.server.gecko.lobby.listener.GeckoLobbyListener
+import dev.slne.surf.gecko.server.gecko.lobby.view.geckoGamesView
+import dev.slne.surf.gecko.server.gecko.orbs.GeckoOrbListener
+import dev.slne.surf.gecko.server.gecko.player.listener.GeckoPlayerListener
+import dev.slne.surf.gecko.server.gecko.shop.ShopItemListener
+import dev.slne.surf.gecko.server.gecko.shop.type.shops.hiderShopView
+import dev.slne.surf.gecko.server.gecko.shop.type.shops.seekerShopView
+import dev.slne.surf.gecko.server.i18n.GeckoTranslations
+import dev.slne.surf.gecko.server.i18n.view.languageView
 import dev.slne.surf.gecko.server.performance.EntityTickFilter
-import dev.slne.surf.gecko.server.plugin.MinestomPluginLoader
-import dev.slne.surf.gecko.server.plugin.PluginCatalog
-import dev.slne.surf.gecko.server.plugin.PluginModule
+import dev.slne.surf.gecko.server.performance.monitor.StatusBarService
+import dev.slne.surf.gecko.server.player.LoadLanguageTask
+import dev.slne.surf.gecko.server.player.PlayerConnectionService
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger
 import net.minestom.server.MinecraftServer
 import net.minestom.server.entity.EntityTypeKeys
-import java.nio.file.Path
 import kotlin.io.path.Path
-import kotlin.io.path.createDirectories
 
 val bootstrapLogger: ComponentLogger = ComponentLogger.logger("GeckoBootstrap")
 
 object GeckoBootstrap {
-    lateinit var injector: Injector
 
     fun boot() {
         val startupStartedAt = System.nanoTime()
@@ -40,11 +57,19 @@ object GeckoBootstrap {
 
         EntityTickFilter.configure(EntityTypeKeys.ARMOR_STAND.key())
 
-        val injector = createInjector(config, minecraftServer, discoverPlugins())
-        GeckoBootstrap.injector = injector
+        runBlocking {
+            GeckoTranslations.configure(config.translations)
+            GeckoTranslations.reload()
+        }
+
+        startSurfApi(config)
+        registerViews()
+        ServerGeckoCommandRegistrar.registerAll()
+        GeckoChatListener.register()
+        StatusBarService.start()
 
         runBlocking {
-            injector.getInstance(GeckoServer::class.java).start(startupStartedAt)
+            GeckoServer.start(minecraftServer, config, startupStartedAt)
         }
     }
 
@@ -61,40 +86,53 @@ object GeckoBootstrap {
         return minecraftServer
     }
 
-    private fun discoverPlugins(): PluginCatalog {
-        MinecraftServer.LOGGER.info("Discovering server plugins.")
+    private fun startSurfApi(config: Config) {
+        surfMinestomServer {
+            maxPlayers = config.maxPlayers
 
-        val catalog = PluginCatalog(MinestomPluginLoader.discover())
-
-        MinecraftServer.LOGGER.info(
-            "Discovered {} server plugin(s): {}.",
-            catalog.plugins.size,
-            catalog.plugins.joinToString { plugin -> plugin.meta.id },
-        )
-
-        return catalog
-    }
-
-    private fun createInjector(
-        config: Config,
-        minecraftServer: MinecraftServer,
-        pluginCatalog: PluginCatalog,
-    ): Injector {
-        MinecraftServer.LOGGER.info("Creating dependency injector.")
-
-        val modules = buildList<Module> {
-            add(GeckoServerModule(config, minecraftServer, pluginCatalog))
-
-            for (plugin in pluginCatalog.plugins) {
-                add(PluginModule(plugin, createDataDirectory(plugin)))
+            withConfigurationPhase {
+                after(ConfigurationTasks.AWAIT_SETTINGS, LoadLanguageTask.ID, LoadLanguageTask)
             }
-        }
 
-        return Guice.createInjector(Stage.PRODUCTION, modules)
+            withLuckPerms()
+            withSignedChat {
+                enforceSecureProfile = config.chat.enforceSecureProfile
+                chatSpamThresholdSeconds = config.chat.chatSpamThresholdSeconds
+                commandSpamThresholdSeconds = config.chat.commandSpamThresholdSeconds
+            }
+            withSpark {
+                profileOnStartup = config.performance.spark.profileOnStartup
+            }
+            withNpcLib()
+            withConsole {
+                threadName = "surf-gecko-console"
+                onShutdown = { GeckoServer.shutdownAndExit("console") }
+            }
+            withPlugins()
+
+            listeners(
+                PlayerConnectionService,
+                StatusBarService,
+                GeckoGameJoinService(),
+                GeckoPlayerListener(),
+                MeleeCombatListener(),
+                BowCombatListener(),
+                GeckoDamageListener(),
+                GeckoLobbyListener(),
+                ShopItemListener(),
+                GeckoHotbarListener(),
+                GeckoOrbListener(),
+                GeckoDisplayListener(),
+            )
+        }
     }
 
-    private fun createDataDirectory(plugin: MinestomPlugin): Path =
-        Path("plugins").resolve(plugin.meta.id).createDirectories()
+    private fun registerViews() {
+        seekerShopView.register()
+        hiderShopView.register()
+        geckoGamesView.register()
+        languageView.register()
+    }
 
     private const val DISPATCHER_THREADS_PROPERTY = "minestom.dispatcher-threads"
     private const val KEEP_ALIVE_DELAY_PROPERTY = "minestom.keep-alive-delay"

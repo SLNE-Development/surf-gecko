@@ -1,6 +1,6 @@
 package dev.slne.surf.gecko.server.gecko
 
-import dev.slne.minestom.lobby.api.command.commandapi.CommandAPI
+import dev.slne.surf.api.minestom.command.CommandAPI
 import dev.slne.surf.gecko.server.antiesp.PlayerCulling
 import dev.slne.surf.gecko.server.antimap.AntiMap
 import dev.slne.surf.gecko.server.database.GeckoDatabaseManager

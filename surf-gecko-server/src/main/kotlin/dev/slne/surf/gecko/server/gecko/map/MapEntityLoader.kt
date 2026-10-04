@@ -1,6 +1,6 @@
 package dev.slne.surf.gecko.server.gecko.map
 
-import dev.slne.minestom.lobby.api.command.entity.editEntityMeta
+import dev.slne.surf.api.minestom.extension.editEntityMeta
 import net.kyori.adventure.nbt.BinaryTagIO
 import net.kyori.adventure.nbt.BinaryTagTypes
 import net.kyori.adventure.nbt.CompoundBinaryTag

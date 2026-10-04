@@ -1,6 +1,6 @@
 package dev.slne.surf.gecko.server.gecko.lobby.leaderbord
 
-import dev.slne.minestom.lobby.api.command.entity.editEntityMeta
+import dev.slne.surf.api.minestom.extension.editEntityMeta
 import net.kyori.adventure.text.Component
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.Entity

@@ -1,8 +1,8 @@
 package dev.slne.surf.gecko.server.command.commands
 
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.commandTree
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.greedyStringArgument
-import dev.slne.minestom.lobby.api.command.commandapi.dsl.playerExecutor
+import dev.slne.surf.api.minestom.command.dsl.commandTree
+import dev.slne.surf.api.minestom.command.dsl.greedyStringArgument
+import dev.slne.surf.api.minestom.command.dsl.playerExecutor
 import dev.slne.surf.api.core.minimessage.miniMessage
 import dev.slne.surf.gecko.server.permission.PermissionList
 
